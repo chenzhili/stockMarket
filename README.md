@@ -1,2 +1,0 @@
-# stockMarket
-stockMarket

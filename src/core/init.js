@@ -1,9 +1,9 @@
-import { isObject,isString } from "../utils/types"
+import { isObject, isString } from "../utils/types"
 import { initTimeSharingDiagram, paintTimeSharingDiagram } from "./timeSharingDiagram"
 import { initkLineGraph, kLineGraphPaint } from "./kLineGraph"
 import { browserRedirect } from "../utils/index"
 // import initEvent from "../events"
-import { insType,Theme } from "../enums"
+import { insType, Theme } from "../enums"
 
 export default function initCanvas(QLStockMarket) {
     QLStockMarket.prototype.init = function (options) {
@@ -18,12 +18,13 @@ export default function initCanvas(QLStockMarket) {
         if (!DOM) return "入口node未找到";
 
         const { width, height } = DOM.getBoundingClientRect();
+        let { "border-left-width": leftWidth, "border-right-width": rightWidth, "border-top-width": topWidth, "border-bottom-width": bottomWidth, } = getComputedStyle(DOM);
 
         const device = browserRedirect();
 
         console.log(DOM, width, height);
 
-        dealTheme(QL,config.theme);
+        dealTheme(QL, config.theme);
 
         // 配置只读属性
         Object.defineProperties(QL, {
@@ -34,12 +35,12 @@ export default function initCanvas(QLStockMarket) {
             },
             _DOMWidth: {
                 get() {
-                    return width
+                    return width - (parseFloat(leftWidth) + parseFloat(rightWidth))
                 }
             },
             _DOMHeight: {
                 get() {
-                    return height;
+                    return height - (parseFloat(topWidth) + parseFloat(bottomWidth));
                 }
             },
             _device: {
@@ -87,19 +88,19 @@ export default function initCanvas(QLStockMarket) {
 }
 
 /* 处理 主题，这里可能 对应的 值 不存在，在内部 初始化的时候需要 设置 默认值 */
-function dealTheme(QL,theme){
-    let defaultTheme = "light",paintTheme = null;
-    if(isString(theme)){
-        defaultTheme = Theme[theme]?theme:"light";
+function dealTheme(QL, theme) {
+    let defaultTheme = "light", paintTheme = null;
+    if (isString(theme)) {
+        defaultTheme = Theme[theme] ? theme : "light";
         paintTheme = Theme[defaultTheme];
     }
 
-    if(isObject(theme)){
+    if (isObject(theme)) {
         paintTheme = theme;
     }
     console.log(paintTheme);
-    Object.defineProperty(QL,"_theme",{
-        get(){
+    Object.defineProperty(QL, "_theme", {
+        get() {
             return paintTheme
         }
     })

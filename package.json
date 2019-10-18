@@ -7,7 +7,10 @@
     "start": "cross-env NODE_ENV=development webpack-dev-server --config ./webpack-config/webpack-dev.js --color --progress",
     "dev": "cross-env NODE_ENV=development webpack --config ./webpack-config/webpack-dev.js --color --progress",
     "build": "cross-env NODE_ENV=production webpack --config ./webpack-config/webpack-prod.js --color --progress",
-    "build:dll": "webpack --config ./webpack-config/webpack-dll.js --color --progress"
+    "build:dll": "webpack --config ./webpack-config/webpack-dll.js --color --progress",
+
+    "start:vue": "cross-env NODE_ENV=development Frame=Vue webpack-dev-server --config ./webpack-config/webpack-dev.js --color --progress",
+    "dev:vue":"cross-env NODE_ENV=development Frame=Vue webpack --config ./webpack-config/webpack-dev.js --color --progress"
   },
   "author": "ql",
   "license": "MIT",
@@ -29,6 +32,8 @@
     "purgecss-webpack-plugin": "^1.6.0",
     "sass-loader": "^8.0.0",
     "style-loader": "^1.0.0",
+    "vue-loader": "^15.7.1",
+    "vue-template-compiler": "^2.6.10",
     "webpack": "^4.41.1",
     "webpack-cli": "^3.3.9",
     "webpack-dev-server": "^3.8.2",
@@ -36,6 +41,7 @@
   },
   "dependencies": {
     "jquery": "^3.4.1",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "vue": "^2.6.10"
   }
 }

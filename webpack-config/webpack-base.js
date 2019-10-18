@@ -1,10 +1,12 @@
 const path = require("path");
 const webpack = require("webpack");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-module.exports = {
-    entry: ["./src/core/index.js"],
+const Frame = process.env.Frame; //如果 有 对应的 框架
+
+const config = {
+    // entry: ["./src/core/index.js"],
     output: {
         path: path.resolve(__dirname, "../dist")
     },
@@ -47,7 +49,7 @@ module.exports = {
                     },
                     // "postcss-loader",
                     "sass-loader" */
-                    
+
                 ]
             }
         ]
@@ -59,12 +61,28 @@ module.exports = {
         }
     },
     plugins: [
-        // new CleanWebpackPlugin({
-        //     cleanOnceBeforeBuildPatterns: ['**/*', '!dll/**'],
-        // }),
         new MiniCssExtractPlugin({
             filename: '[name].css',
             chunkFilename: '[id].css',
         }),
     ]
+};
+switch (Frame) {
+    case "Vue":
+        config.entry = ["./src/vueCom/index.js"];
+        config.module.rules.push({
+            test: /\.vue$/,
+            loader: 'vue-loader',
+            // options: vueLoaderConfig
+        });
+        config.resolve.alias['vue$'] = 'vue/dist/vue.esm.js';
+        config.plugins.push(new VueLoaderPlugin());
+        break;
+    case "React":
+        config.entry = ["./src/reactCom/index.js"];
+        break;
+    default:
+        config.entry = ["./src/core/index.js"];
 }
+
+module.exports = config

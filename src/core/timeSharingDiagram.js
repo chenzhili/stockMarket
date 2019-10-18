@@ -263,7 +263,7 @@ export function paintTimeSharingDiagram(data) {
             }
         })
     }
-    paintLine({
+    /* paintLine({
         ctx,
         sx: parseInt(xFactor * (chartData.length - 1)) - 2,
         sy: config[allGraph.line].baseHeight + config[allGraph.line].totalHeight - LYFactor * (chartData[chartData.length - 1].curPrice - LMin),
@@ -273,7 +273,7 @@ export function paintTimeSharingDiagram(data) {
             color: QL._theme.time.line.curPrice || "#000",
             setLineDash: [4],
         }
-    })
+    }) */
     ctx.closePath();
     ctx.fill();
     /* 重新 配置 data 的 值 */

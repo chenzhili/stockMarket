@@ -2,6 +2,7 @@ const path = require("path");
 const webpack = require("webpack");
 const merge = require('webpack-merge')
 const commonConfig = require('./webpack-base.js')
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 // const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
 
 module.exports = merge(commonConfig, {
@@ -27,6 +28,9 @@ module.exports = merge(commonConfig, {
         },
     },
     plugins: [
+        new CleanWebpackPlugin({
+            cleanOnceBeforeBuildPatterns: ['**/*', '!dll/**'],
+        }),
         new PurgecssPlugin({
             only: ['main'], //仅对于 这里包含的 css 文件 进行 tree-shaking
             paths: glob.sync([
@@ -34,10 +38,10 @@ module.exports = merge(commonConfig, {
                 path.resolve(__dirname, '..', 'src/**/*.*'),
             ]),
         }),
-        /* 引入公共库 */
-        new webpack.DllReferencePlugin({
-            manifest: require(path.resolve(__dirname, "../dll/main-manifest.json"))
-        }),
+        // /* 引入公共库 */
+        // new webpack.DllReferencePlugin({
+        //     manifest: require(path.resolve(__dirname, "../dll/main-manifest.json"))
+        // }),
         /* new AddAssetHtmlPlugin({
             filepath: path.resolve(__dirname, "..", "dll/dll_main.js"),
         }), */

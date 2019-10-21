@@ -1,4 +1,4 @@
-import { isObject, isString } from "../utils/types"
+import { isObject, isString,isFunction } from "../utils/types"
 import { initTimeSharingDiagram, paintTimeSharingDiagram } from "./timeSharingDiagram"
 import { initkLineGraph, kLineGraphPaint } from "./kLineGraph"
 import { browserRedirect } from "../utils/index"
@@ -11,7 +11,11 @@ export default function initCanvas(QLStockMarket) {
         console.log(1111);
         if (!isObject(options)) return "数据格式不对";
 
-        const { selector, data, config } = options;
+        const { selector, data, config,emit } = options;
+
+        if(isFunction(emit.getUpToDataData)){
+            QLStockMarket.prototype.getUpToDataData = emit.getUpToDataData;
+        }
 
         if (!selector) return "没有入口文件";
         const DOM = document.querySelector(selector);
@@ -62,6 +66,9 @@ export default function initCanvas(QLStockMarket) {
                     if (config.insType === insType.kLineGraph) {
                         return data.kData
                     }
+                },
+                set(newValue){
+                    return newValue;
                 },
                 configurable: true
             }

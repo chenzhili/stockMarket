@@ -10,6 +10,7 @@ import initEvent from "../events"
         selector:为选择器
         data:数据量
         config:必要的配置信息
+        emit:接受到的 方法，用于 给 父组件 通信
     
  */
 function QLStockMarket(options) {
@@ -19,10 +20,10 @@ initCanvas(QLStockMarket);
 initEvent(QLStockMarket);
 
 
+export default QLStockMarket;
 
 
-
-new QLStockMarket({
+/* new QLStockMarket({
     selector: ".container1", data: {
         chartData: {
             data: timeSharing,
@@ -44,4 +45,4 @@ new QLStockMarket({
         insType: insType.kLineGraph,
         theme:"light"
     }
-});
+}); */

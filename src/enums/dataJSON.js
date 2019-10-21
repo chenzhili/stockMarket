@@ -9,7 +9,7 @@ const prevPrice = "2973.66"
 //量267 8902 00 万     额25 8340 4600 亿
 timeSharing = timeSharing.split(";").map(item => {
     let [time, curPrice, totalMoney, avPrice, dealMount] = item.split(",");
-    let rate = (curPrice / prevPrice - 1) * 100;//这里是加了百分比
+    let rate = (curPrice / prevPrice - 1) * 100;//这里是加了百分比 对于  rate的 算法 不对，不清楚怎么算的
     return {
         time,
         curPrice,

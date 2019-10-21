@@ -123,6 +123,31 @@ function genMaskCav(QL) {
     return canvas;
 
 }
+
+/* 计算 对应的 坐标 系数 */
+function calValuePos({ min, max, factorMaxInc, totalHeight, baseHeight, n }) {
+    console.log(totalHeight);
+    const valueIncrement = (max - min) / (n - 1), yPosIncrement = totalHeight / (n - 1);
+    const config = {
+        actuallyValue: [],
+        valueYPos: [],
+    };
+    let f = null;
+    if (factorMaxInc) {
+        f = factorMaxInc / ((n - 1) / 2);
+        config.factorInc = [];
+    }
+    
+    return new Array(n).fill(1).reduce((prev, next, index) => {
+        let tempValue = parseInt((max - index * valueIncrement) * 100) / 100;
+        let tempPos = parseInt((baseHeight + index * yPosIncrement) * 100) / 100;
+        let tempF = f ? parseInt((factorMaxInc - f * index) * 100) / 100 : null;
+        prev.actuallyValue.push(tempValue);
+        prev.valueYPos.push(tempPos);
+        f && prev.factorInc.push(tempF);
+        return prev;
+    }, config);
+}
 export function paintTimeSharingDiagram(data) {
     const QL = this;
 
@@ -133,6 +158,9 @@ export function paintTimeSharingDiagram(data) {
     const config = calActuallyHeight(QL, calcConfig.timeSharingDiagram);
 
     const { data: chartData, preClosePrice } = data;
+
+    // 用于外部 绘制 ui 用的信息 
+    const paintConfig = {};
 
     // console.log(chartData, preClosePrice);
     let LMin = null, LMax = null, LYFactor = null,//这是 line图的
@@ -146,6 +174,7 @@ export function paintTimeSharingDiagram(data) {
     // 时分的 line 图
     if (config[allGraph.line]) {
         let lineRange = calRangeValue(chartData, preClosePrice);
+        console.log("lineRange", lineRange, preClosePrice);
         LMin = lineRange.min, LMax = lineRange.max;
         LYFactor = config[allGraph.line].totalHeight / (LMax - LMin);
         Object.defineProperty(QL, "_gapD", {
@@ -153,6 +182,11 @@ export function paintTimeSharingDiagram(data) {
                 return xFactor;
             }
         })
+
+        paintConfig.dealMountPos = config[allGraph.line].totalHeight;
+
+        // 计算 指数 对应 位置的值
+        paintConfig.valueRange = calValuePos({ min: LMin, max: LMax, factorMaxInc: LMax / preClosePrice, totalHeight: config[allGraph.line].totalHeight, baseHeight: config[allGraph.line].baseHeight, n: 5 });
 
         /* paintLine({
             ctx,
@@ -163,35 +197,38 @@ export function paintTimeSharingDiagram(data) {
             style: {
                 color: "#00f"
             }
-        })
+        }) */
         paintLine({
             ctx,
             sx: 0,
             sy: config[allGraph.line].totalHeight / 2,
             ex: QL._DOMWidth,
             ey: config[allGraph.line].totalHeight / 2,
-        }) */
+            style: {
+                color: "#CCCCCC"
+            }
+        })
     }
-    /* paintLine({
+    paintLine({
         ctx,
         sx: 0,
-        sy: 304.5,//config[allGraph.text].baseHeight,
+        sy: config[allGraph.text].baseHeight,
         ex: QL._DOMWidth,
-        ey: 304.5,//config[allGraph.text].baseHeight,
-        style:{
-            color:"#eee"
+        ey: config[allGraph.text].baseHeight,
+        style: {
+            color: "#eee"
         }
     })
     paintLine({
         ctx,
         sx: 0,
-        sy: config[allGraph.text].baseHeight + 10,
+        sy: config[allGraph.text].baseHeight + config[allGraph.text].totalHeight,
         ex: QL._DOMWidth,
-        ey: config[allGraph.text].baseHeight + 10,
+        ey: config[allGraph.text].baseHeight + config[allGraph.text].totalHeight,
         style: {
-            color: "#f00"
+            color: "#eee"
         }
-    }) */
+    })
 
     // 时分 的 deal 图
     if (config[allGraph.dealMount]) {
@@ -199,6 +236,9 @@ export function paintTimeSharingDiagram(data) {
         DMin = dealRange.min, DMax = dealRange.max;
         DYFactor = config[allGraph.dealMount].totalHeight / (DMax - DMin);
 
+        console.log("成交量", DMin, DMax, config[allGraph.dealMount].totalHeight);
+        // 计算 指数 对应 位置的值
+        paintConfig.dealRange = calValuePos({ min: DMin, max: DMax, totalHeight: config[allGraph.dealMount].totalHeight, baseHeight: config[allGraph.dealMount].baseHeight, n: 3 });
 
         /* paintLine({
             ctx,
@@ -221,16 +261,34 @@ export function paintTimeSharingDiagram(data) {
             }
         }) */
     }
+
+    /* 初始化 时间的 位置信息 */
+
+    paintConfig.paintTimeX = [0];
+
     /* 若果到时候 需要 绘制 区域 面积，重新 绘制一个 */
 
     for (let i = 0, len = chartData.length; i < len; i++) {
-        if (i % 60 === 0 && i != 240 && i!== 0) {
+        const curX = xFactor * i;
+        if (i % 60 === 0 && i != 240 && i !== 0) {
+            paintConfig.paintTimeX.push(curX);
             paintLine({
                 ctx,
-                sx: xFactor * i,
+                sx: curX,//xFactor * i,
                 sy: config[allGraph.line].baseHeight,
                 ex: xFactor * i,
                 ey: config[allGraph.line].baseHeight + config[allGraph.line].totalHeight,
+                style: {
+                    color: "#ddd",
+                    setLineDash: [4],
+                }
+            })
+            paintLine({
+                ctx,
+                sx: curX,//xFactor * i,
+                sy: config[allGraph.dealMount].baseHeight,
+                ex: xFactor * i,
+                ey: config[allGraph.dealMount].baseHeight + config[allGraph.dealMount].totalHeight,
                 style: {
                     color: "#ddd",
                     setLineDash: [4],
@@ -254,15 +312,17 @@ export function paintTimeSharingDiagram(data) {
         }
         DYFactor && paintLine({
             ctx,
-            sx: xFactor * i,
+            sx: curX,//xFactor * i,
             sy: config[allGraph.dealMount].baseHeight + config[allGraph.dealMount].totalHeight - DYFactor * (chartData[i].dealMount - DMin),
-            ex: xFactor * i,
+            ex: curX,//xFactor * i,
             ey: config[allGraph.dealMount].baseHeight + config[allGraph.dealMount].totalHeight,
             style: {
                 color: i % 2 === 0 ? (QL._theme.time.dealMount.even || "#000") : QL._theme.time.dealMount.odd || "#000"
             }
         })
     }
+    paintConfig.paintTimeX.push(240 * xFactor);
+
     /* paintLine({
         ctx,
         sx: parseInt(xFactor * (chartData.length - 1)) - 2,
@@ -276,6 +336,12 @@ export function paintTimeSharingDiagram(data) {
     }) */
     ctx.closePath();
     ctx.fill();
+    /* 配置 绘制信息 */
+    Object.defineProperty(QL, "_paintConfig", {
+        get() {
+            return paintConfig;
+        }
+    });
     /* 重新 配置 data 的 值 */
     Object.defineProperty(QL, "_data", {
         get() {

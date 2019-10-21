@@ -6,14 +6,13 @@ import App from "./AppTest"
 
 
 
-
-function QLStockMarket(){
+function QLStockMarketAll(){
     
 }
-QLStockMarket.install = install;
+QLStockMarketAll.install = install;
 
 
-Vue.use(QLStockMarket);
+Vue.use(QLStockMarketAll);
 
 
 

@@ -1,5 +1,6 @@
 import $ from "jquery";
 import _ from "lodash"
+import {isFunction} from "../utils/types"
 
 import { pcOrH5 } from "../enums/device"
 import { insType } from "../enums"
@@ -114,6 +115,9 @@ function mouseLeave(e) {
         },
         configurable: true
     })
+    if(isFunction(QL.getUpToDataData)){
+        QL.getUpToDataData({});
+    }
     QL._maskCtx.clearRect(0, 0, QL._DOMWidth, QL._DOMHeight);
     $(QL._DOM).off(`mousemove.${QL._insType}`);
     if (QL._insType === insType.kLineGraph) {
@@ -127,7 +131,7 @@ function mouseLeave(e) {
 /* 绑定的 事件  */
 /* pc 画布上的 mousemove 的事件 ,h5 上的 长按 然后 move 事件 */
 function mouseMove(e) {
-    // console.log("move"); 
+    // console.log("move",this); 
     const QL = this;
     const { layerX: x } = e.originalEvent;
 
@@ -164,6 +168,10 @@ function mouseMove(e) {
                 color:QL._theme.maskLine || "#000"
             }
         });
+        if(isFunction(QL.getUpToDataData)){
+            QL.getUpToDataData(existObj);
+        }
+        
     }
     QL.prevX = x;
 }

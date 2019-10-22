@@ -1,9 +1,11 @@
 import { paintLine, paintRect } from "../utils/paintCom"
 // import { calRangeValue, dealCalRangeValue } from "../utils/calculation"
-import { isObject, isArray } from "../utils/types"
+import { isObject, isArray, isFunction } from "../utils/types"
 import { calcConfig, allGraph } from "../enums/calcEnum"
 import { timeSharing } from "../enums/dataJSON";
 import { strokeOrFill } from "../enums"
+
+import { calValuePos } from "../utils"
 
 import style from "./index.scss"
 
@@ -57,7 +59,7 @@ export function initkLineGraph(QL, data) {
     最小值的 产生：低，收，开
 */
 function calRangeRect(targetValue) {
-    if (!isArray(targetValue) && targetValue.length) return "calRangeRect：没数据";
+    if (!isArray(targetValue) || !targetValue.length) return "calRangeRect：没数据";
     const newTargetArr = targetValue.concat();
     const len = newTargetArr.length;
 
@@ -83,7 +85,7 @@ function calRangeRect(targetValue) {
 
 /* 计算 成交量的 范围 */
 function dealCalRangeValue(targetValue) {
-    if (!isArray(targetValue) && targetValue.length) return "dealCalRangeValue：没数据";
+    if (!isArray(targetValue) || !targetValue.length) return "dealCalRangeValue：没数据";
     const newTargetArr = targetValue.concat();
     const len = newTargetArr.length;
 
@@ -142,12 +144,15 @@ export function kLineGraphPaint(data) {
 
     const { _kMess: { startI, endI }, _mainCtx: ctx } = QL;
 
+    ctx.clearRect(0,0,QL._DOMWidth,QL._DOMHeight);
+
     const config = calActuallyHeight(QL, calcConfig.kLineGraph);
     // console.log("config,", config);
 
     const showData = data.data.slice(startI, endI);
 
-
+    // 用于外部 绘制 ui 用的信息 
+    const paintConfig = {};
 
     let RLMin = null, RLMax = null, RYFactor = null,//这是 k 线的 走势图
         RDMin = null, RDMax = null, DDFactor = null,//这是成交量 的 图
@@ -165,12 +170,17 @@ export function kLineGraphPaint(data) {
         RLMin = RLRange.min, RLMax = RLRange.max;
         RYFactor = config[allGraph.rectLine].totalHeight / (RLMax - RLMin);
 
-        Object.defineProperty(QL, "_gapD", {
-            get() {
-                return (perRectWidth + calcConfig.kLineGraph.kLineGap) / 2;
-            },
-            configurable: true
-        })
+        if (!QL._gapD) {
+            Object.defineProperty(QL, "_gapD", {
+                get() {
+                    return (perRectWidth + calcConfig.kLineGraph.kLineGap) / 2;
+                },
+                configurable: true
+            })
+        }
+
+        // 计算 指数 对应 位置的值
+        paintConfig.valueRange = calValuePos({ min: RLMin, max: RLMax, totalHeight: config[allGraph.rectLine].totalHeight, baseHeight: config[allGraph.rectLine].baseHeight, n: 5 });
 
         paintLine({
             ctx,
@@ -179,7 +189,7 @@ export function kLineGraphPaint(data) {
             ex: QL._DOMWidth,
             ey: config[allGraph.rectLine].totalHeight,
             style: {
-                color: "rgab(0,0,0,.1)"
+                color: "#CCCCCC"
             }
         })
     }
@@ -189,6 +199,9 @@ export function kLineGraphPaint(data) {
         RDMin = RDRange.min, RDMax = RDRange.max;
         DDFactor = config[allGraph.rectDealMount].totalHeight / (RDMax - RDMin);
 
+        // 计算 指数 对应 位置的值
+        paintConfig.dealRange = calValuePos({ min: RDMin, max: RDMax, totalHeight: config[allGraph.rectDealMount].totalHeight, baseHeight: config[allGraph.rectDealMount].baseHeight, n: 3 });
+
         paintLine({
             ctx,
             sx: 0,
@@ -196,7 +209,7 @@ export function kLineGraphPaint(data) {
             ex: QL._DOMWidth,
             ey: config[allGraph.text].baseHeight + config[allGraph.text].totalHeight,
             style: {
-                color: "#ff0"
+                color: "#CCCCCC"
             }
         })
     }
@@ -211,7 +224,7 @@ export function kLineGraphPaint(data) {
         showData[i].actuallyY = config[allGraph.rectLine].baseHeight + config[allGraph.rectLine].totalHeight - (showItem.close - RLMin) * RYFactor;
 
         const asend = showItem.close > showItem.open ? true : false;
-        
+
         let colorStroke = "#000";
         let colorFill = "#000";
         try {
@@ -258,6 +271,19 @@ export function kLineGraphPaint(data) {
             }
         });
     }
+
+    /* 配置 绘制信息 */
+    Object.defineProperty(QL, "_paintConfig", {
+        get() {
+            return paintConfig;
+        },
+        configurable: true
+    });
+    /* 暴露 给 ui 层 的 数据 */
+    if (isFunction(QL.getChangeData)) {
+        QL.getChangeData(showData);
+    }
+
     Object.defineProperty(QL, "_kPaintData", {
         get() {
             return showData

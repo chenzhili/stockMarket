@@ -31,3 +31,28 @@ export function splitNumber(num) {
     }
     return num;
 }
+
+/* 计算 对应的 坐标 系数 */
+export function calValuePos({ min, max, factorMaxInc, totalHeight, baseHeight, n }) {
+    console.log(totalHeight);
+    const valueIncrement = (max - min) / (n - 1), yPosIncrement = totalHeight / (n - 1);
+    const config = {
+        actuallyValue: [],
+        valueYPos: [],
+    };
+    let f = null;
+    if (factorMaxInc) {
+        f = factorMaxInc / ((n - 1) / 2);
+        config.factorInc = [];
+    }
+
+    return new Array(n).fill(1).reduce((prev, next, index) => {
+        let tempValue = parseInt((max - index * valueIncrement) * 100) / 100;
+        let tempPos = parseInt((baseHeight + index * yPosIncrement) * 100) / 100;
+        let tempF = f ? parseInt((factorMaxInc - f * index) * 100) / 100 : null;
+        prev.actuallyValue.push(tempValue);
+        prev.valueYPos.push(tempPos);
+        f && prev.factorInc.push(tempF);
+        return prev;
+    }, config);
+}

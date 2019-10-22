@@ -60,6 +60,7 @@ kDate = kDate.map((item, index) => {
 });
 kData = kData.split(";").map(item => {
     let tempArr = item.split(",");
+    let rate = (tempArr[5] / tempArr[2] - 1) * 100;//这里是加了百分比 对于  rate的 算法 不对，不清楚怎么算的
     return ({
         date: moment(new Date(tempArr[0] - 0)).format("YYYYMMDD"),
         dealMount: tempArr[1],
@@ -67,6 +68,7 @@ kData = kData.split(";").map(item => {
         high: tempArr[3],
         low: tempArr[4],
         close: tempArr[5],
+        rate
     })
 })
 

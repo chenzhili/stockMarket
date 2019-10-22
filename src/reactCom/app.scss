@@ -1,0 +1,27 @@
+.container {
+    border: 1px solid #ddd;
+    height: 100%;
+    .btn {
+        padding: 4px 6px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+    .title {
+        text-align: center;
+    }
+    .content {
+        display: flex;
+        height: 100%;
+        align-items: flex-start;
+        text-align: center;
+        .main {
+        width: 578px;
+        height: 555px;
+        border: 1px solid #f00;
+        }
+        .left,
+        .right {
+        flex: 2;
+        }
+    }
+}

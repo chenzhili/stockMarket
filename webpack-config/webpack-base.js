@@ -13,7 +13,7 @@ const config = {
     module: {
         rules: [
             {
-                test: /\.js$/i,
+                test: /\.js|jsx$/i,
                 exclude: /node_modules/,
                 use: [
                     // "happypack/loader?id=happyBabel"

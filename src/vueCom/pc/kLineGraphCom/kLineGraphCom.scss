@@ -4,34 +4,10 @@
     flex-direction: row;
     font-size:0.75rem;
     overflow: hidden;
-    // background:#000;
-}
-.leftMess,.rightMess{
-    flex:1.2;
-    position: relative;
-    top:1.4rem;
-    height: calc(100% - 1.4rem);
-    .valueItem{
-        position: absolute;
-        z-index:99;
-        transform: translateY(-50%);
-    }
-}
-.leftMess{
-    border-right:1px solid #EEEEEE;
-    .valueItem{
-        right:0;
-    }
-}
-.rightMess{
-    border-left:1px solid #EEEEEE;
-    .valueItem{
-        left:0;
-    }
 }
 .content{
-    position: relative;
     flex:12;
+    position: relative;
     display:flex;
     flex-direction: column;
     .marketMess{
@@ -48,44 +24,50 @@
     }
     .qlContainer{
         flex:1;
-        position:relative;
-        .dealMount{
-            position: absolute;
-            margin-left:0.2rem;
-            z-index:99;
-            line-height:20px;
-        }
-        .updateValue,.updateRate{
+        position: relative;
+        .updateValue,.updateDate{
             position: absolute;
             z-index:100;
             color:#fff;
         }
         .updateValue{
-            left:0;
-            transform:translate(-100%,-50%);
-        }
-        .updateRate{
             right:0;
             transform:translate(100%,-50%);
         }
-    }
-    .marketTime{
-        position: relative;
-        height:1.4rem;
-        .marketTimeItem{
-            position:absolute;
-            z-index:99;
+        .updateDate{
+            line-height:20px;
             transform:translateX(-50%);
         }
     }
 }
-/* 简单的主体配置 */
+.rightMess{
+    flex:1.2;
+    position: relative;
+    top:1.4rem;
+    height: calc(100% - 1.4rem);
+    border-left:1px solid #ddd;
+    .valueItem{
+        position: absolute;
+        left:0;
+        z-index:99;
+        transform: translateY(-50%);
+    }
+}
+
+
+/* 简单的主体配置 到时候可以 配置 变量 */
 
 .lightUpColor{
     color:#f00;
 }
+.lightUpColorBg{
+    background:#f00;
+}
 .lightDownColor{
     color:#66A588;
+}
+.lightDownColorBg{
+    background:#66A588;
 }
 .lightGenText{
     color:#000;
@@ -99,8 +81,14 @@
 .darkUpColor{
     color:#FF2B1C;
 }
+.darkUpColorBg{
+    background:#FF2B1C;
+}
 .darkDownColor{
     color:#00E600;
+}
+.darkDownColorBg{
+    background:#00E600;
 }
 .darkGenText{
     color:#fff;

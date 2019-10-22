@@ -2,6 +2,7 @@ import { paintLine, paintRect } from "../utils/paintCom"
 import { isObject, isArray } from "../utils/types"
 import { calcConfig, allGraph } from "../enums/calcEnum"
 import { timeSharing } from "../enums/dataJSON";
+import {calValuePos} from "../utils"
 
 
 import style from "./index.scss"
@@ -46,7 +47,7 @@ export function initTimeSharingDiagram(QL, data) {
     获取的 值 包括 curPrice,avPrice
 */
 function calRangeValue(targetValue, closePrice) {
-    if (!isArray(targetValue) && targetValue.length) return "calRangeValue：没数据";
+    if (!isArray(targetValue) || !targetValue.length) return "calRangeValue：没数据";
     const newTargetArr = targetValue.concat();
     const len = newTargetArr.length;
     // 按照 curPrice 排序
@@ -73,7 +74,7 @@ function calRangeValue(targetValue, closePrice) {
 
 
 function dealCalRangeValue(targetValue) {
-    if (!isArray(targetValue) && targetValue.length) return "dealCalRangeValue：没数据";
+    if (!isArray(targetValue) || !targetValue.length) return "dealCalRangeValue：没数据";
     const newTargetArr = targetValue.concat();
     const len = newTargetArr.length;
 
@@ -125,35 +126,37 @@ function genMaskCav(QL) {
 }
 
 /* 计算 对应的 坐标 系数 */
-function calValuePos({ min, max, factorMaxInc, totalHeight, baseHeight, n }) {
-    console.log(totalHeight);
-    const valueIncrement = (max - min) / (n - 1), yPosIncrement = totalHeight / (n - 1);
-    const config = {
-        actuallyValue: [],
-        valueYPos: [],
-    };
-    let f = null;
-    if (factorMaxInc) {
-        f = factorMaxInc / ((n - 1) / 2);
-        config.factorInc = [];
-    }
-    
-    return new Array(n).fill(1).reduce((prev, next, index) => {
-        let tempValue = parseInt((max - index * valueIncrement) * 100) / 100;
-        let tempPos = parseInt((baseHeight + index * yPosIncrement) * 100) / 100;
-        let tempF = f ? parseInt((factorMaxInc - f * index) * 100) / 100 : null;
-        prev.actuallyValue.push(tempValue);
-        prev.valueYPos.push(tempPos);
-        f && prev.factorInc.push(tempF);
-        return prev;
-    }, config);
-}
+// function calValuePos({ min, max, factorMaxInc, totalHeight, baseHeight, n }) {
+//     console.log(totalHeight);
+//     const valueIncrement = (max - min) / (n - 1), yPosIncrement = totalHeight / (n - 1);
+//     const config = {
+//         actuallyValue: [],
+//         valueYPos: [],
+//     };
+//     let f = null;
+//     if (factorMaxInc) {
+//         f = factorMaxInc / ((n - 1) / 2);
+//         config.factorInc = [];
+//     }
+
+//     return new Array(n).fill(1).reduce((prev, next, index) => {
+//         let tempValue = parseInt((max - index * valueIncrement) * 100) / 100;
+//         let tempPos = parseInt((baseHeight + index * yPosIncrement) * 100) / 100;
+//         let tempF = f ? parseInt((factorMaxInc - f * index) * 100) / 100 : null;
+//         prev.actuallyValue.push(tempValue);
+//         prev.valueYPos.push(tempPos);
+//         f && prev.factorInc.push(tempF);
+//         return prev;
+//     }, config);
+// }
 export function paintTimeSharingDiagram(data) {
     const QL = this;
 
     data = data || QL._data;
 
     const { _mainCtx: ctx } = QL;
+
+    ctx.clearRect(0,0,QL._DOMWidth,QL._DOMHeight);
 
     const config = calActuallyHeight(QL, calcConfig.timeSharingDiagram);
 
@@ -177,11 +180,15 @@ export function paintTimeSharingDiagram(data) {
         console.log("lineRange", lineRange, preClosePrice);
         LMin = lineRange.min, LMax = lineRange.max;
         LYFactor = config[allGraph.line].totalHeight / (LMax - LMin);
-        Object.defineProperty(QL, "_gapD", {
-            get() {
-                return xFactor;
-            }
-        })
+
+        if (!QL._gapD) {
+            Object.defineProperty(QL, "_gapD", {
+                get() {
+                    return xFactor;
+                }
+            })
+        }
+
 
         paintConfig.dealMountPos = config[allGraph.line].totalHeight;
 
@@ -340,13 +347,17 @@ export function paintTimeSharingDiagram(data) {
     Object.defineProperty(QL, "_paintConfig", {
         get() {
             return paintConfig;
-        }
+        },
+        configurable:true
     });
     /* 重新 配置 data 的 值 */
+    // QL._data = {...data,data:chartData}
     Object.defineProperty(QL, "_data", {
         get() {
             return { ...data, data: chartData }
         },
         configurable: true
     })
+    console.info(Object.getOwnPropertyDescriptor(QL,"_data").get);
+
 }

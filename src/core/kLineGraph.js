@@ -14,12 +14,17 @@ export function initkLineGraph(QL, data) {
     if (!isObject(data)) return "initkLineGraph:数据格式不对";
     const canvas = document.createElement("canvas");
     canvas.innerHTML = "不支持canvas";
-    canvas.width = QL._DOMWidth, canvas.height = QL._DOMHeight;
+
+    canvas.width = QL._DOMWidth * QL._defulatSale, canvas.height = QL._DOMHeight * QL._defulatSale;
+    canvas.style.width = `${QL._DOMWidth}px`, canvas.style.height = `${QL._DOMHeight}px`;
+
     canvas.style.background = QL._theme.bg || "transparent";
-    canvas.style.width = QL._DOMWidth, canvas.style.height = QL._DOMHeight;
+    
     const ctx = canvas.getContext("2d");
 
     if (!ctx) return "initkLineGraph:canvas不支持";
+    console.log(QL._defulatSale)
+    ctx.scale(QL._defulatSale, QL._defulatSale);
 
     Object.defineProperty(QL, "_mainCtx", {
         get() {
@@ -122,10 +127,13 @@ function genMaskCav(QL) {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
     canvas.innerHTML = "不支持canvas";
-    canvas.width = QL._DOMWidth, canvas.height = QL._DOMHeight;
-    canvas.style.width = QL._DOMWidth, canvas.style.height = QL._DOMHeight;
+
+    canvas.width = QL._DOMWidth*QL._defulatSale, canvas.height = QL._DOMHeight*QL._defulatSale;
+    canvas.style.width = `${QL._DOMWidth}px`, canvas.style.height = `${QL._DOMHeight}px`;
+
     canvas.className = style["mask-cav"];
 
+    ctx.scale(QL._defulatSale,QL._defulatSale);
     /* 把 遮罩层 的 canvas 的 ctx 存储到 实例上,可能这个 canvas 会提取到  外部 让 两个 实例 共用 */
     Object.defineProperty(QL, "_maskCtx", {
         get() {
@@ -145,7 +153,7 @@ export function kLineGraphPaint(data) {
 
     const { _kMess: { startI, endI }, _mainCtx: ctx } = QL;
 
-    ctx.clearRect(0,0,QL._DOMWidth,QL._DOMHeight);
+    ctx.clearRect(0, 0, QL._DOMWidth, QL._DOMHeight);
 
     const config = calActuallyHeight(QL, calcConfig.kLineGraph);
     // console.log("config,", config);

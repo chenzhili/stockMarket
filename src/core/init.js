@@ -45,6 +45,11 @@ export default function initCanvas(QLStockMarket) {
             }
             // 配置只读属性
             Object.defineProperties(QL, {
+                _defulatSale:{
+                    get(){
+                        return window.devicePixelRatio || 1;
+                    }
+                },
                 _DOM: {
                     get() {
                         return DOM

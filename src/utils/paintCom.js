@@ -2,12 +2,12 @@ import { isObject } from "./types"
 import { strokeOrFill } from "../enums"
 
 /* 画线段图 */
-export function paintLine({ ctx, sx, sy, ex, ey, style: { lineWidth = 1, color = "#000", setLineDash = [0] } = {} }) {
+export function paintLine({ ctx, sx, sy, ex, ey, style: { lineWidth = 1, color = "#000", setLineDash = [] } = {} }) {
     ctx.lineWidth = lineWidth;
     ctx.strokeStyle = color;
     ctx.lineCap = "round";
     ctx.beginPath();
-    ctx.setLineDash(setLineDash);
+    setLineDash && ctx.setLineDash(setLineDash);
     ctx.moveTo(sx, sy);
     ctx.lineTo(ex, ey);
     ctx.stroke();

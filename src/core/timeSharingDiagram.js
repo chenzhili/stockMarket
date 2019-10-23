@@ -2,7 +2,7 @@ import { paintLine, paintRect } from "../utils/paintCom"
 import { isObject, isArray } from "../utils/types"
 import { calcConfig, allGraph } from "../enums/calcEnum"
 import { timeSharing } from "../enums/dataJSON";
-import {calValuePos} from "../utils"
+import { calValuePos } from "../utils"
 
 
 import style from "./index.scss"
@@ -15,9 +15,9 @@ export function initTimeSharingDiagram(QL, data) {
     if (!isObject(data)) return "initTimeSharingDiagram:数据格式不对";
     const canvas = document.createElement("canvas");
     canvas.innerHTML = "不支持canvas";
-    canvas.width = QL._DOMWidth, canvas.height = QL._DOMHeight;
+    canvas.width = QL._DOMWidth * QL._defulatSale, canvas.height = QL._DOMHeight * QL._defulatSale;
 
-    canvas.style.width = QL._DOMWidth, canvas.style.height = QL._DOMHeight;
+    canvas.style.width = `${QL._DOMWidth}px`, canvas.style.height = `${QL._DOMHeight}px`;
 
     canvas.style.background = QL._theme.bg || "transparent";
 
@@ -25,6 +25,7 @@ export function initTimeSharingDiagram(QL, data) {
 
     if (!ctx) return "initTimeSharingDiagram:canvas不支持";
 
+    ctx.scale(QL._defulatSale, QL._defulatSale);
     Object.defineProperty(QL, "_mainCtx", {
         get() {
             return ctx;
@@ -112,10 +113,14 @@ function genMaskCav(QL) {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
     canvas.innerHTML = "不支持canvas";
-    canvas.width = QL._DOMWidth, canvas.height = QL._DOMHeight;
-    canvas.style.width = QL._DOMWidth, canvas.style.height = QL._DOMHeight;
+
+    canvas.width = QL._DOMWidth * QL._defulatSale, canvas.height = QL._DOMHeight * QL._defulatSale;
+    canvas.style.width = `${QL._DOMWidth}px`, canvas.style.height = `${QL._DOMHeight}px`;
+
+    
     canvas.className = style["mask-cav"];
 
+    ctx.scale(QL._defulatSale,QL._defulatSale);
     /* 把 遮罩层 的 canvas 的 ctx 存储到 实例上,可能这个 canvas 会提取到  外部 让 两个 实例 共用 */
     Object.defineProperty(QL, "_maskCtx", {
         get() {
@@ -159,7 +164,7 @@ export function paintTimeSharingDiagram(data) {
 
     const { _mainCtx: ctx } = QL;
 
-    ctx.clearRect(0,0,QL._DOMWidth,QL._DOMHeight);
+    ctx.clearRect(0, 0, QL._DOMWidth, QL._DOMHeight);
 
     const config = calActuallyHeight(QL, calcConfig.timeSharingDiagram);
 
@@ -316,15 +321,15 @@ export function paintTimeSharingDiagram(data) {
                 ex: cx,
                 ey: cy,
                 style: {
-                    color: QL._theme.time.line.curPrice || "#000"
+                    color: QL._theme.time.line.curPrice || "#000",
                 }
             });
         }
         DYFactor && paintLine({
             ctx,
-            sx: curX,//xFactor * i,
+            sx: curX,
             sy: config[allGraph.dealMount].baseHeight + config[allGraph.dealMount].totalHeight - DYFactor * (chartData[i].dealMount - DMin),
-            ex: curX,//xFactor * i,
+            ex: curX,
             ey: config[allGraph.dealMount].baseHeight + config[allGraph.dealMount].totalHeight,
             style: {
                 color: i % 2 === 0 ? (QL._theme.time.dealMount.even || "#000") : QL._theme.time.dealMount.odd || "#000"
@@ -344,14 +349,11 @@ export function paintTimeSharingDiagram(data) {
             setLineDash: [4],
         }
     }) */
-    ctx.closePath();
-    ctx.fill();
-    /* 配置 绘制信息 */
     Object.defineProperty(QL, "_paintConfig", {
         get() {
             return paintConfig;
         },
-        configurable:true
+        configurable: true
     });
     /* 重新 配置 data 的 值 */
     // QL._data = {...data,data:chartData}

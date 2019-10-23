@@ -14,7 +14,6 @@ import initEvent from "../events"
     
  */
 function QLStockMarket(options) {
-    // alert(window.devicePixelRatio)
     this.init(options);
 }
 initCanvas(QLStockMarket);

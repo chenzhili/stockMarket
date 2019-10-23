@@ -45,7 +45,7 @@
   </div>
 </template>
 <script>
-import styles from "./kLineGraphCom.scss";
+import styles from "../../../common/kLineGraph.scss";
 
 import QLStockMarket from "../../../core";
 import { splitNumber } from "../../../utils/index";

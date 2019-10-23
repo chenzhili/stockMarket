@@ -14,6 +14,11 @@
         height: 100%;
         align-items: flex-start;
         text-align: center;
+        .btn {
+            padding: 4px 6px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
         .main {
         width: 578px;
         height: 555px;

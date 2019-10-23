@@ -14,6 +14,7 @@ import initEvent from "../events"
     
  */
 function QLStockMarket(options) {
+    // alert(window.devicePixelRatio)
     this.init(options);
 }
 initCanvas(QLStockMarket);
@@ -23,7 +24,7 @@ initEvent(QLStockMarket);
 export default QLStockMarket;
 
 
-/* new QLStockMarket({
+new QLStockMarket({
     selector: ".container1", data: {
         chartData: {
             data: timeSharing,
@@ -45,4 +46,4 @@ new QLStockMarket({
         insType: insType.kLineGraph,
         theme:"light"
     }
-}); */
+});

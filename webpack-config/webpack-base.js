@@ -79,7 +79,7 @@ switch (Frame) {
         config.plugins.push(new VueLoaderPlugin());
         break;
     case "React":
-        config.entry = ["./src/reactCom/index.js"];
+        config.entry = ["./src/reactCom/app.js"];
         break;
     default:
         config.entry = ["./src/core/index.js"];

@@ -14,11 +14,11 @@ export default function initCanvas(QLStockMarket) {
 
         const { selector, data, config, emit } = options;
 
-        if (isFunction(emit.getUpToDataData)) {
+        if (isObject(emit) && isFunction(emit.getUpToDataData)) {
             QLStockMarket.prototype.getUpToDataData = emit.getUpToDataData;
         }
 
-        if (isFunction(emit.getChangeData)) {
+        if (isObject(emit) && isFunction(emit.getChangeData)) {
             QLStockMarket.prototype.getChangeData = emit.getChangeData;
         }
 
@@ -79,6 +79,7 @@ export default function initCanvas(QLStockMarket) {
                         if (config.insType === insType.timeSharingDiagram) {
                             // console.log(newValue);
                             tempData = newValue;
+                            debugger
                             /* 这里 进行重绘 */
                             QL.paintTimeSharingDiagram(tempData);
                         }

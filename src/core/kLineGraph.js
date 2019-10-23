@@ -16,7 +16,7 @@ export function initkLineGraph(QL, data) {
     canvas.innerHTML = "不支持canvas";
     canvas.width = QL._DOMWidth, canvas.height = QL._DOMHeight;
     canvas.style.background = QL._theme.bg || "transparent";
-
+    canvas.style.width = QL._DOMWidth, canvas.style.height = QL._DOMHeight;
     const ctx = canvas.getContext("2d");
 
     if (!ctx) return "initkLineGraph:canvas不支持";
@@ -123,6 +123,7 @@ function genMaskCav(QL) {
     const ctx = canvas.getContext("2d");
     canvas.innerHTML = "不支持canvas";
     canvas.width = QL._DOMWidth, canvas.height = QL._DOMHeight;
+    canvas.style.width = QL._DOMWidth, canvas.style.height = QL._DOMHeight;
     canvas.className = style["mask-cav"];
 
     /* 把 遮罩层 的 canvas 的 ctx 存储到 实例上,可能这个 canvas 会提取到  外部 让 两个 实例 共用 */

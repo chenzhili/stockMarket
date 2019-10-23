@@ -7,8 +7,8 @@
         <div class="btn" @click="click">点击</div>
       </div>
       <div class="main">
-        <!-- <TimeSharing :dataGraph="dataGraphForTime" :config="configForTime"></TimeSharing> -->
-        <KLineGraphCom :dataGraph="dataGraphForK" :config="configForK"></KLineGraphCom>
+        <TimeSharing :dataGraph="dataGraphForTime" :config="configForTime"></TimeSharing>
+        <!-- <KLineGraphCom :dataGraph="dataGraphForK" :config="configForK"></KLineGraphCom> -->
       </div>
       <div
         class="right"

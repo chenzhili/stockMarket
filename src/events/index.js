@@ -1,17 +1,24 @@
 import $ from "jquery";
 import _ from "lodash"
-import {isFunction} from "../utils/types"
+import Hammer from "hammerjs"
+import { isFunction } from "../utils/types"
 
 import { pcOrH5 } from "../enums/device"
 import { insType } from "../enums"
 import { paintLine } from "../utils/paintCom"
 import { calcConfig } from "../enums/calcEnum"
 
+
+
+
+
 export default function initEvent(QLStockMarket) {
     QLStockMarket.prototype.eventInit = function () {
         const QL = this;
         const DOM = QL._DOM, device = QL._device, ins = QL._insType;
         // console.log(QL);
+        /* 记录 上一个位置 */
+        QL.prevX = null;
         /* 判断 不同的 客户端 */
         if (device === pcOrH5.pc) {
             /* 判断不同的 实例  */
@@ -43,7 +50,6 @@ export default function initEvent(QLStockMarket) {
             // }
 
             // 最后合并
-            QL.prevX = null;
             Object.defineProperty(QL, "_isLeave", {
                 get() {
                     return false
@@ -53,38 +59,79 @@ export default function initEvent(QLStockMarket) {
             $(DOM).on(`mouseenter.${ins}`, mouseEnter.bind(QL));
             /* 监听 事件 是否 移除画布 */
             $(QL._DOM).on(`mouseleave.${ins}`, mouseLeave.bind(QL));
+        }
 
+        if (device === pcOrH5.h5) {
+            console.log("=======", "h5");
+            let hammer = new Hammer(DOM);
+
+            Object.defineProperty(QL, "_hammer", {
+                get() {
+                    return hammer
+                },
+                configurable: true
+            })
+
+            hammer.on("press", touchPress.bind(QL));
+
+            if (QL._insType === insType.kLineGraph) {
+                hammer.on("panstart", mouseDown.bind(QL))
+            }
         }
     }
     QLStockMarket.prototype.cancelEventListener = function () {
         const QL = this;
-        /* if (QL._insType === insType.timeSharingDiagram) {
-            $(QL.DOM).off("mouseenter.timeSharingDiagram");
-            $(QL.DOM).off("mousemove.timeSharingDiagram");
-            $(QL.DOM).off("mouseleave.timeSharingDiagram");
+        if (QL._device === pcOrH5.pc) {
+            // 最后合并
+            $(QL.DOM).off(`mouseenter.${QL._insType}`);
+            $(QL.DOM).off(`mousemove.${QL._insType}`);
+            $(QL.DOM).off(`mouseleave.${QL._insType}`);
+            if (QL._insType === insType.kLineGraph) {
+                $(QL._DOM).off(`wheel.${QL._insType}`);
+
+                $(QL._DOM).off(`mousedown.${QL._insType}`);
+                $(document).off("mouseup.QL");
+                $(QL._DOM).off(`mousemove.${QL._insType}2`);
+            }
             return;
         }
-        if (QL._insType === insType.kLineGraph) {
-            $(QL.DOM).off("mouseenter.kLineGraph");
-            $(QL.DOM).off("mousemove.kLineGraph");
-            $(QL.DOM).off("mouseleave.kLineGraph");
-            return;
-        } */
-
-        // 最后合并
-        $(QL.DOM).off(`mouseenter.${QL._insType}`);
-        $(QL.DOM).off(`mousemove.${QL._insType}`);
-        $(QL.DOM).off(`mouseleave.${QL._insType}`);
-        if (QL._insType === insType.kLineGraph) {
-            $(QL._DOM).off(`wheel.${QL._insType}`);
-
-            $(QL._DOM).off(`mousedown.${QL._insType}`);
-            $(document).off("mouseup.QL");
-            $(QL._DOM).off(`mousemove.${QL._insType}2`);
+        if (QL._device === pcOrH5.h5) {
+            QL._hammer.off("panstart panmove panend press");
         }
-        return;
+
     }
 }
+/* 
+    H5
+*/
+/* 判定当前 是 长按 */
+function touchPress(e) {
+    const QL = this;
+    const hammer = QL._hammer;
+    hammer.off("panstart panmove panend");
+    mouseMove.call(QL, e);
+    const move = function(e){
+        if (e.type === "panstart") {
+            mouseMove.call(QL, e);
+        }
+        if (e.type === "panmove") {
+            mouseMove.call(QL, e);
+        }
+        if (e.type === "panend") {
+            hammer.off("panmove panend");
+            hammer.off("panstart",move);
+            hammer.on("panstart", mouseDown.bind(QL))
+        }
+    }
+    hammer.on("panstart panmove panend", move)
+}
+
+
+
+/* 
+
+    PC
+*/
 /* 需要 绑定一系列事件，来取消 绑定，防止 内存溢出 */
 function mouseEnter(e) {
     // console.log("enter");
@@ -115,7 +162,7 @@ function mouseLeave(e) {
         },
         configurable: true
     })
-    if(isFunction(QL.getUpToDataData)){
+    if (isFunction(QL.getUpToDataData)) {
         QL.getUpToDataData({});
     }
     QL._maskCtx.clearRect(0, 0, QL._DOMWidth, QL._DOMHeight);
@@ -128,12 +175,19 @@ function mouseLeave(e) {
     }
 
 }
-/* 绑定的 事件  */
+
+/*
+
+    public
+*/
 /* pc 画布上的 mousemove 的事件 ,h5 上的 长按 然后 move 事件 */
 function mouseMove(e) {
-    // console.log("move",this); 
+    // console.log("move", e);
     const QL = this;
-    const { layerX: x } = e.originalEvent;
+
+    // 这里 根据 设备端 的不同
+    const eventPos = QL._device === pcOrH5.pc ? "originalEvent" : "srcEvent";
+    const { layerX: x } = e[eventPos];
 
     // 如果 对应的 x 的变动 不在 刷新范围内，就直接退出
     if (Math.abs(QL.prevX - x) <= QL._gapD) {
@@ -154,7 +208,7 @@ function mouseMove(e) {
             ey: QL._DOMHeight,
             style: {
                 setLineDash: [2],
-                color:QL._theme.maskLine || "#000"
+                color: QL._theme.maskLine || "#000"
             }
         });
         paintLine({
@@ -165,13 +219,13 @@ function mouseMove(e) {
             ey: existObj.actuallyY,
             style: {
                 setLineDash: [2],
-                color:QL._theme.maskLine || "#000"
+                color: QL._theme.maskLine || "#000"
             }
         });
-        if(isFunction(QL.getUpToDataData)){
+        if (isFunction(QL.getUpToDataData)) {
             QL.getUpToDataData(existObj);
         }
-        
+
     }
     QL.prevX = x;
 }
@@ -199,7 +253,7 @@ function calSES(QL, ssValue, posX) {
     let { _kMess: { startI, endI, showNumber }, _DOMWidth: width, _data: data } = QL;
     // console.log(startI, endI, showNumber);
 
-    /* 判断边界 这里的边界 算法有问题，现在只是先这样测试；
+    /* 
         边界 应该 是 要 指定 canvas 最多 显示的 条数 showMaxData.length，以及 最小 展示条数 showMinData.length ，在此基础上进行计算
     */
     const borderRight = data.data.length, borderLeft = 0;
@@ -247,15 +301,24 @@ function calSES(QL, ssValue, posX) {
 /* 页面 进行 translate 的 逻辑 */
 function mouseDown(e) {
     const QL = this;
-    let { layerX: preX } = e.originalEvent;
+
+    // 这里 根据 设备端 的不同
+    const eventPos = QL._device === pcOrH5.pc ? "originalEvent" : "srcEvent";
+    let { layerX: preX } = e[eventPos];
+
     const mousemove2 = function mousemove2(e) {
-        let { layerX: curX } = e.originalEvent;
+
+        const eventPos = QL._device === pcOrH5.pc ? "originalEvent" : "srcEvent";
+        const { layerX: curX } = e[eventPos];
 
         let { _kMess: { startI, endI, showNumber }, _perRectWidth: perRectWidth, _data: data } = QL;
 
+        /* 这的计算可能 还要考虑下 */
         const n = Math.abs(curX - preX) / perRectWidth,
             delta = curX - preX > 0 ? 1 : -1;
 
+        
+        
         const borderRight = data.data.length, borderLeft = 0;
 
         startI -= n * delta, endI -= n * delta;
@@ -286,8 +349,18 @@ function mouseDown(e) {
 
         // console.log("第二个 mousemove");
     };
-    $(QL._DOM).on(`mousemove.${QL._insType}2`, _.debounce(mousemove2.bind(QL)));
-    $(document).on("mouseup.QL", function () {
-        $(QL._DOM).off(`mousemove.${QL._insType}2`)
-    })
+    if (QL._device === pcOrH5.pc) {
+        $(QL._DOM).on(`mousemove.${QL._insType}2`, _.debounce(mousemove2.bind(QL)));
+        $(document).on("mouseup.QL", function () {
+            $(QL._DOM).off(`mousemove.${QL._insType}2`)
+        })
+    }
+
+    if(QL._device === pcOrH5.h5){
+        QL._hammer.on("panmove", _.debounce(mousemove2.bind(QL)))
+        Hammer.on(document,"panend",function(){
+            QL._hammer.off("panmove panstart panend");
+        })
+    }
+
 }

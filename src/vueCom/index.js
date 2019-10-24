@@ -2,7 +2,10 @@ import Vue from "vue"
 
 import install from "./install"
 
-import App from "./AppTest"
+// import App from "./AppTest"
+import App from "./AppTestForH5"
+
+console.log(App);
 
 
 
@@ -13,10 +16,6 @@ QLStockMarketAll.install = install;
 
 
 Vue.use(QLStockMarketAll);
-
-
-
-
 
 
 

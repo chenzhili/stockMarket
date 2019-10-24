@@ -1,79 +1,67 @@
 <template>
   <div :style="{width:width,height:height}" :class="[styles.container,styles[`${theme}Bg`]]">
-    <div :class="styles.leftMess">
-      <template v-for="(item,index) of QLStockMarketIns._paintConfig.valueRange.actuallyValue">
-        <span
-          :class="[styles.valueItem,{[styles[`${theme}DownColor`]]:index>valueBorder,[styles[`${theme}UpColor`]]:index<valueBorder}]"
-          :key="index"
-          :style="{top:`${QLStockMarketIns._paintConfig.valueRange.valueYPos[index] || 0}px`}"
-        >{{item}}</span>
-      </template>
-    </div>
-    <div :class="styles.content">
-      <div :class="[styles.marketMess,styles[`${theme}GenText`]]">
-        <span>{{upToData.time || curData.time}}</span>
-        <template v-for="(item,index) of showMess">
-          <span :key="index">
-            {{item.name}}:
-            <span
-              :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}"
-            >{{splitNumber(upToData[item.key] || curData[item.key])}}</span>
-          </span>
-        </template>
-      </div>
-      <div :class="styles.qlContainer" id="qlStockMarket">
-        <div
-          v-if="upToData.curPrice"
-          :class="styles.updateValue"
-          :style="{background:'#f00',top:upToData.actuallyY+'px'}"
-        >{{upToData.curPrice}}</div>
-        <div
-          v-if="upToData.rate"
-          :class="styles.updateRate"
-          :style="{background:'#f00',top:upToData.actuallyY+'px'}"
-        >{{splitNumber(upToData.rate)}}%</div>
-        <div
-          :class="[styles.dealMount,styles[`${theme}GenText`]]"
-          :style="{top:QLStockMarketIns._paintConfig.dealMountPos+'px'}"
-        >成交量:{{splitNumber(upToData.dealMount || curData.dealMount)}}</div>
-      </div>
-      <div :class="styles.marketTime">
-        <template v-for="(item,index) of QLStockMarketIns._paintConfig.paintTimeX">
+    <div :class="[styles.marketMess,styles[`${theme}GenText`]]">
+      <span>{{upToData.time || curData.time}}</span>
+      <template v-for="(item,index) of showMess">
+        <span :key="index">
           <span
-            :class="[styles.marketTimeItem,styles[`${theme}GenText`]]"
-            :key="index"
-            :style="{left:item+'px'}"
-          >{{timeArr[index]}}</span>
+            :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}"
+          >{{splitNumber(upToData[item.key] || curData[item.key])}}</span>
+        </span>
+      </template>
+    </div>
+    <div :class="styles.qlContainer" id="qlStockMarket">
+      <div>
+        <template v-for="(item,index) of QLStockMarketIns._paintConfig.valueRange.factorInc">
+          <span
+            v-if="index%2===0"
+            :class="[styles.valueItem,styles.valueItemRight,{[styles[`${theme}DownColor`]]:index>valueBorder,[styles[`${theme}UpColor`]]:index<valueBorder}]"
+            :key="index+'right'"
+            :style="{top:`${QLStockMarketIns._paintConfig.valueRange.valueYPos[index] || 0}px`}"
+          >{{item+"%"}}</span>
         </template>
       </div>
+      <div>
+        <template v-for="(item,index) of QLStockMarketIns._paintConfig.valueRange.actuallyValue">
+          <span
+            v-if="index%2===0"
+            :class="[styles.valueItem,{[styles[`${theme}DownColor`]]:index>valueBorder,[styles[`${theme}UpColor`]]:index<valueBorder}]"
+            :key="index"
+            :style="{top:`${QLStockMarketIns._paintConfig.valueRange.valueYPos[index] || 0}px`}"
+          >{{item}}</span>
+        </template>
+      </div>
+      <div
+        v-if="upToData.curPrice"
+        :class="styles.updateValue"
+        :style="{background:'#f00',top:upToData.actuallyY+'px'}"
+      >{{upToData.curPrice}}</div>
+      <div
+        v-if="upToData.rate"
+        :class="styles.updateRate"
+        :style="{background:'#f00',top:upToData.actuallyY+'px'}"
+      >{{splitNumber(upToData.rate)}}%</div>
+      <div
+        :class="[styles.dealMount,styles[`${theme}GenText`]]"
+        :style="{top:QLStockMarketIns._paintConfig.dealMountPos+'px'}"
+      >成交量:{{splitNumber(upToData.dealMount || curData.dealMount)}}</div>
     </div>
-    <div :class="styles.rightMess">
-      <template v-for="(item,index) of QLStockMarketIns._paintConfig.valueRange.factorInc">
+    <div :class="styles.marketTime">
+      <template v-for="(item,index) of QLStockMarketIns._paintConfig.paintTimeX">
         <span
-          :class="[styles.valueItem,{[styles[`${theme}DownColor`]]:index>valueBorder,[styles[`${theme}UpColor`]]:index<valueBorder}]"
+          :class="[styles.marketTimeItem,styles[`${theme}GenText`]]"
           :key="index"
-          :style="{top:`${QLStockMarketIns._paintConfig.valueRange.valueYPos[index] || 0}px`}"
-        >{{item+"%"}}</span>
-      </template>
-      <template v-for="(item,index) of QLStockMarketIns._paintConfig.dealRange.actuallyValue">
-        <span
-          :class="[styles.valueItem,styles[`${theme}DealMount`]]"
-          :key="index+'bottom'"
-          :style="{top:`${QLStockMarketIns._paintConfig.dealRange.valueYPos[QLStockMarketIns._paintConfig.dealRange.valueYPos.length-1-index] || 0}px`}"
-        >{{splitNumber(item)}}</span>
+          :style="{left:item+'px'}"
+        >{{timeArr[index]}}</span>
       </template>
     </div>
   </div>
 </template>
 <script>
-import styles from "../../../common/timeSharing.scss";
+import styles from "../../common/timeSharingH5.scss";
 
-import QLStockMarket from "../../../core";
-import { splitNumber } from "../../../utils/index";
-
-// 外部传进来
-import { timeSharing, prevPrice, kData } from "../../../enums/dataJSON";
-import { insType } from "../../../enums";
+import QLStockMarket from "../../core";
+import { splitNumber } from "../../utils/index";
 
 const timeArr = ["09:30", "10:30", "11:30/13:00", "14:00", "15:00"];
 const showMess = [
@@ -85,9 +73,8 @@ const showMess = [
   { key: "totalMoney", name: "额" }
 ];
 
-console.log(styles);
 export default {
-  name: "TimeSharing",
+  name: "TimeSharingH5",
   data: function() {
     return {
       styles,

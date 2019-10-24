@@ -63,7 +63,7 @@ export default function initEvent(QLStockMarket) {
 
         if (device === pcOrH5.h5) {
             console.log("=======", "h5");
-            let hammer = new Hammer(DOM);
+            const hammer = new Hammer(DOM);
 
             Object.defineProperty(QL, "_hammer", {
                 get() {
@@ -75,7 +75,34 @@ export default function initEvent(QLStockMarket) {
             hammer.on("press", touchPress.bind(QL));
 
             if (QL._insType === insType.kLineGraph) {
-                hammer.on("panstart", mouseDown.bind(QL))
+                hammer.on("panstart", mouseDown.bind(QL));
+
+                hammer.get('pinch').set({ enable: true });
+                hammer.on("pinchstart", touchPinch.bind(QL))
+
+                // function test(e) {
+                //     // alert(e.scale.toString())
+                //     let center = Object.keys(e.center).join("\n").toString();
+                //     alert(e.scale + "\n" + e.center.x+"\n"+e.center.y);
+                // }
+                // hammer.get('pinch').set({ enable: true });
+                // hammer.on("pinchstart pinchout pinchin pinchend", function (e) {
+                //     if (e.type === "pinchstart") {
+                //         /* alert("pinchstart")
+                //         alert(Object.keys(e).join("\n").toString()); */
+                //     }
+                //     if (e.type === "pinchin") {
+                //         test(e);
+                //     }
+                //     if (e.type === "pinchout") {
+                //         alert("pinchout")
+                //         test(e);
+                //     }
+                //     if (e.type === "pinchend") {
+                //         // alert("pinchend")
+                //         // alert(Object.keys(e).toString());
+                //     }
+                // })
             }
         }
     }
@@ -96,7 +123,7 @@ export default function initEvent(QLStockMarket) {
             return;
         }
         if (QL._device === pcOrH5.h5) {
-            QL._hammer.off("panstart panmove panend press");
+            QL._hammer.off("panstart panmove panend press tap");
         }
 
     }
@@ -110,23 +137,47 @@ function touchPress(e) {
     const hammer = QL._hammer;
     hammer.off("panstart panmove panend");
     mouseMove.call(QL, e);
-    const move = function(e){
+    const move = function (e) {
+        if (e.type === "tap") {
+            // console.log("=====","tap");
+            QL._maskCtx.clearRect(0, 0, QL._DOMWidth, QL._DOMHeight);
+            if (isFunction(QL.getUpToDataData)) {
+                QL.getUpToDataData({});
+            }
+            hammer.off("tap");
+        }
         if (e.type === "panstart") {
             mouseMove.call(QL, e);
+            return
         }
         if (e.type === "panmove") {
             mouseMove.call(QL, e);
+            return
         }
         if (e.type === "panend") {
             hammer.off("panmove panend");
-            hammer.off("panstart",move);
-            hammer.on("panstart", mouseDown.bind(QL))
+            hammer.off("panstart", move);
+            hammer.on("panstart", mouseDown.bind(QL));
+            return
         }
     }
-    hammer.on("panstart panmove panend", move)
+    hammer.on("panstart panmove panend tap", move)
 }
-
-
+/* 判定当前位 pinch 事件 */
+function touchPinch() {
+    const QL = this;
+    QL._hammer.on("pinchout pinchin pinchend", function (e) {
+        if (e.type === "pinchout") {
+            scalOrSkewForH5.call(QL, e);
+        }
+        if (e.type === "pinchin") {
+            scalOrSkewForH5.call(QL, e);
+        }
+        if (e.type === "pinchend") {
+            QL._hammer.off("pinchout pinchin pinchend");
+        }
+    })
+}
 
 /* 
 
@@ -231,6 +282,7 @@ function mouseMove(e) {
 }
 
 /* 对于 k 线图 需要的 缩放 方法 */
+// 这是对于 pc 的
 function scalOrSkew(e) {
     e.preventDefault();
 
@@ -239,11 +291,19 @@ function scalOrSkew(e) {
     const { layerX: x } = e.originalEvent;
 
     // 判定当前缩放
-    const delta = (e.originalEvent.wheelDelta && (e.originalEvent.wheelDelta > 0 ? 1 : -1)) ||  // chrome & ie
+    const delta = (e.originalEvent.wheelDelta && (e.originalEvent.wheelDelta > 0 ? -1 : 1)) ||  // chrome & ie
 
         (e.originalEvent.detail && (e.originalEvent.detail > 0 ? -1 : 1));              // firefox
 
     calSES(QL, calcConfig.kLineGraph.scaleOrSkewN * delta, x);
+}
+// 这是 h5 的 
+function scalOrSkewForH5(e) {
+    e.preventDefault();
+    const QL = this;
+    const { scale, center: { x } } = e;
+    const ssValue = Math.floor(calcConfig.kLineGraph.scaleOrSkewN * (1 - scale));
+    calSES(QL, ssValue, x);
 }
 /* 计算  startI,endI,showNumber 的值 */
 /* 
@@ -261,11 +321,16 @@ function calSES(QL, ssValue, posX) {
     let rightN = ssValue - leftN;//带符号
 
     startI -= leftN, endI += rightN;
-    if (startI - endI >= 0) {
-        return "不能在缩小了"
+    if (startI >= endI || endI - startI < calcConfig.kLineGraph.showMinData) {
+        return "不能在放大了"
     }
     /* 判断边界 */
     if (startI >= borderLeft && endI <= borderRight) {
+        // /* 这里面 加一个 判断 放大 的 界限，不能小于 最小展示条数 */
+        // if(endI - startI < 10 || showNumber < 10){
+        //     console.log(endI,startI);
+        //     return "不能在放大了";
+        // }
         showNumber += ssValue;
     } else if (startI >= borderLeft) {
         showNumber += (ssValue - Math.abs(endI - borderRight))
@@ -274,7 +339,7 @@ function calSES(QL, ssValue, posX) {
         showNumber += (ssValue - Math.abs(startI - borderLeft))
         startI = borderLeft;
     } else {
-        return "不能在放大了"
+        return "不能在缩小了"
     }
 
     /* 禁止 一屏最多 显示 的 条数 */
@@ -317,8 +382,8 @@ function mouseDown(e) {
         const n = Math.abs(curX - preX) / perRectWidth,
             delta = curX - preX > 0 ? 1 : -1;
 
-        
-        
+
+
         const borderRight = data.data.length, borderLeft = 0;
 
         startI -= n * delta, endI -= n * delta;
@@ -356,10 +421,10 @@ function mouseDown(e) {
         })
     }
 
-    if(QL._device === pcOrH5.h5){
+    if (QL._device === pcOrH5.h5) {
         QL._hammer.on("panmove", _.debounce(mousemove2.bind(QL)))
-        Hammer.on(document,"panend",function(){
-            QL._hammer.off("panmove panstart panend");
+        QL._hammer.on("panend", function () {
+            QL._hammer.off("panmove panend");
         })
     }
 

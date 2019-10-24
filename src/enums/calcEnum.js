@@ -17,6 +17,7 @@ export const calcConfig = Object.freeze({
     },
 
     kLineGraph: { //k线图 包括 n 日的 配置信息 
+        showMinData:10,//最少 canvas 显示的 数据条数
         showMaxData: 200,//最多 canvas 显示 的 数据条数
         scaleOrSkewN: 6,//没缩放 一次 需要 减少 或者 增多 的个数
         kLineGap: 4,//图形之间的间距

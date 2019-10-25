@@ -1,8 +1,9 @@
 {
   "name": "QLStockMarket",
   "version": "1.0.0",
-  "description": "这是一个有关 股市行情的 组件库",
+  "description": "这是一个有关 股市行情的 组件库", 
   "keywords": ["股市", "曲线", "QL","ql","stockMarket"],
+  "private": false,
   "main": "core/index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack-dev-server --config ./webpack-config/webpack-dev.js --color --progress",
@@ -12,7 +13,9 @@
     "start:vue": "cross-env NODE_ENV=development Frame=Vue webpack-dev-server --config ./webpack-config/webpack-dev.js --color --progress",
     "dev:vue": "cross-env NODE_ENV=development Frame=Vue webpack --config ./webpack-config/webpack-dev.js --color --progress",
     "start:react": "cross-env NODE_ENV=development Frame=React webpack-dev-server --config ./webpack-config/webpack-dev.js --color --progress",
-    "dev:react": "cross-env NODE_ENV=development Frame=React webpack --config ./webpack-config/webpack-dev.js --color --progress"
+    "dev:react": "cross-env NODE_ENV=development Frame=React webpack --config ./webpack-config/webpack-dev.js --color --progress",
+    "build:vue": "cross-env NODE_ENV=production Frame=Vue webpack --config ./webpack-config/webpack-prod.js --color --progress",
+    "build:react": "cross-env NODE_ENV=production Frame=React webpack --config ./webpack-config/webpack-prod.js --color --progress"
   },
   "author": "ql",
   "license": "MIT",

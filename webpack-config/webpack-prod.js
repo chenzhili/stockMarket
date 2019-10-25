@@ -3,6 +3,8 @@ const webpack = require("webpack");
 const merge = require('webpack-merge')
 const commonConfig = require('./webpack-base.js')
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const glob = require("glob-all");
+const PurgecssPlugin = require('purgecss-webpack-plugin')
 // const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
 
 module.exports = merge(commonConfig, {
@@ -11,10 +13,12 @@ module.exports = merge(commonConfig, {
         // 输出目录
         path: path.resolve(__dirname, "../dist"),
         // 文件名称
-        filename: '[name].[contenthash].js',
-        chunkFilename: '[name].[contenthash].js'
+        filename: 'test.min.js',
+        // chunkFilename: '[name].[contenthash].js',
+        library: "test",
+        libraryTarget: "umd",
     },
-    devtool: 'cheap-module-source-map',
+    // devtool: 'cheap-module-source-map',
     optimization: {
         usedExports: true,
         splitChunks: {

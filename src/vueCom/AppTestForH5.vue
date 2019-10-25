@@ -4,8 +4,8 @@
       头部内容
     </div>
     <div class="content">
-      <!-- <TimeSharingH5 :dataGraph="dataGraphForTime" :config="configForTime" height="267px"></TimeSharingH5> -->
-      <KLineGraphComH5 :dataGraph="dataGraphForK" :config="configForK" height="267px"></KLineGraphComH5>
+      <TimeSharingH5 :dataGraph="dataGraphForTime" :config="configForTime" height="267px"></TimeSharingH5>
+      <!-- <KLineGraphComH5 :dataGraph="dataGraphForK" :config="configForK" height="267px"></KLineGraphComH5> -->
     </div>
     <div class="btn" @click="click">click</div>
   </div>

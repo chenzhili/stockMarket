@@ -62,6 +62,7 @@ import styles from "../../common/timeSharingH5.scss";
 
 import QLStockMarket from "../../core";
 import { splitNumber } from "../../utils/index";
+import { isFunction } from "../../utils/types";
 
 const timeArr = ["09:30", "10:30", "11:30/13:00", "14:00", "15:00"];
 const showMess = [
@@ -165,7 +166,12 @@ export default {
     console.log(this, this.QLStockMarketIns, QLStockMarketIns._paintConfig);
   },
   destroyed() {
-    this.QLStockMarketIns.cancelEventListener();
+    if (
+      this.QLStockMarketIns &&
+      isFunction(this.QLStockMarketIns.cancelEventListener)
+    ) {
+      this.QLStockMarketIns.cancelEventListener();
+    }
   },
   props: {
     width: {

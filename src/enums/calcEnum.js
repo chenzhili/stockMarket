@@ -25,7 +25,5 @@ export const calcConfig = Object.freeze({
         [`${allGraph.rectDealMount}Height`]: 1 / 4,//k线的 走势图
         sort: [allGraph.rectLine, allGraph.text, allGraph.rectDealMount],//在 canvas中 对于 不同模块在 纵轴方向的 排列
         initShowN: 20,//这里可能 到时候 获取 屏幕 尺寸 进行 调整，canvas 需要 展示的 多少数量 
-
-
     }
 });

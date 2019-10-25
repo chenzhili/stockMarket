@@ -1,15 +1,15 @@
 <template>
   <div :style="{width:width,height:height}" :class="[styles.container,styles[`${theme}Bg`]]">
     <div v-if="upToData.date" :class="[styles.marketMessSpecial,styles[`${theme}GenText`]]">
-        <span>{{upToData.date || curData.date}}</span>
-        <template v-for="(item,index) of showMess">
-          <span :key="index">
-            {{item.name || curData.date}}:
-            <span
-              :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}"
-            >{{splitNumber(upToData[item.key] || curData[item.key])}}</span>
-          </span>
-        </template>
+      <span>{{upToData.date || curData.date}}</span>
+      <template v-for="(item,index) of showMess">
+        <span :key="index">
+          {{item.name || curData.date}}:
+          <span
+            :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}"
+          >{{splitNumber(upToData[item.key] || curData[item.key])}}</span>
+        </span>
+      </template>
     </div>
     <div :class="styles.qlContainer" id="qlStockMarket">
       <div>
@@ -24,7 +24,7 @@
       <div>
         <template v-for="(item,index) of QLStockMarketIns._paintConfig.dealRange.actuallyValue">
           <span
-            :class="[styles.valueItem,styles.valueItemRight,styles[`${theme}DealMount`]]" 
+            :class="[styles.valueItem,styles.valueItemRight,styles[`${theme}DealMount`]]"
             :key="index+'bottom'"
             :style="{top:`${QLStockMarketIns._paintConfig.dealRange.valueYPos[QLStockMarketIns._paintConfig.dealRange.valueYPos.length-1-index] || 0}px`}"
           >{{splitNumber(item)}}</span>
@@ -49,6 +49,7 @@ import styles from "../../common/kLineGraphH5.scss";
 
 import QLStockMarket from "../../core";
 import { splitNumber } from "../../utils/index";
+import { isFunction } from "../../utils/types";
 
 // 外部传进来
 import { timeSharing, prevPrice, kData } from "../../enums/dataJSON";
@@ -158,7 +159,12 @@ export default {
     );
   },
   destroyed() {
-    this.QLStockMarketIns.cancelEventListener();
+    if (
+      this.QLStockMarketIns &&
+      isFunction(this.QLStockMarketIns.cancelEventListener)
+    ) {
+      this.QLStockMarketIns.cancelEventListener();
+    }
   },
   props: {
     width: {

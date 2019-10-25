@@ -2,8 +2,10 @@
 const webpack = require("webpack");
 const path = require("path");
 
-module.exports = {
-    entry: ['jquery'],
+const Frame = process.env.Frame; //如果 有 对应的 框架
+
+const config = {
+    // entry: ['jquery'],
     output: {
         path: path.resolve(__dirname, "..", "dll"),
         filename: "dll_[name].js",
@@ -16,3 +18,17 @@ module.exports = {
         })
     ]
 }
+config.entry = ['jquery', 'lodash', 'hammerjs'];
+switch (Frame) {
+    case "Vue":
+        config.entry.push('vue');
+        break;
+    case "React":
+        config.entry.push('react');
+        config.entry.push('react-dom');
+        break;
+    default:
+        break;
+}
+
+module.exports = config;

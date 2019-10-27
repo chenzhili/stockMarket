@@ -15,9 +15,9 @@ function QLStockMarketAll(){
 QLStockMarketAll.install = install;
 
 export default QLStockMarketAll;
-Vue.use(QLStockMarketAll);
+/* Vue.use(QLStockMarketAll);
 
 new Vue({
     el: '#root',
     render: h => h(App)
-});
+}); */

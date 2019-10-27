@@ -1,21 +1,30 @@
 {
   "name": "QLStockMarket",
   "version": "1.0.0",
-  "description": "这是一个有关 股市行情的 组件库", 
-  "keywords": ["股市", "曲线", "QL","ql","stockMarket"],
+  "description": "这是一个有关 股市行情的 组件库",
+  "keywords": [
+    "股市",
+    "曲线",
+    "QL",
+    "ql",
+    "stockMarket"
+  ],
   "private": false,
   "main": "core/index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack-dev-server --config ./webpack-config/webpack-dev.js --color --progress",
-    "dev": "cross-env NODE_ENV=development webpack --config ./webpack-config/webpack-dev.js --color --progress",
-    "build": "cross-env NODE_ENV=production webpack --config ./webpack-config/webpack-prod.js --color --progress",
-    "build:dll": "webpack --config ./webpack-config/webpack-dll.js --color --progress",
     "start:vue": "cross-env NODE_ENV=development Frame=Vue webpack-dev-server --config ./webpack-config/webpack-dev.js --color --progress",
-    "dev:vue": "cross-env NODE_ENV=development Frame=Vue webpack --config ./webpack-config/webpack-dev.js --color --progress",
     "start:react": "cross-env NODE_ENV=development Frame=React webpack-dev-server --config ./webpack-config/webpack-dev.js --color --progress",
+    "dev": "cross-env NODE_ENV=development webpack --config ./webpack-config/webpack-dev.js --color --progress",
+    "dev:vue": "cross-env NODE_ENV=development Frame=Vue webpack --config ./webpack-config/webpack-dev.js --color --progress",
     "dev:react": "cross-env NODE_ENV=development Frame=React webpack --config ./webpack-config/webpack-dev.js --color --progress",
-    "build:vue": "cross-env NODE_ENV=production Frame=Vue webpack --config ./webpack-config/webpack-prod.js --color --progress",
-    "build:react": "cross-env NODE_ENV=production Frame=React webpack --config ./webpack-config/webpack-prod.js --color --progress"
+    "build:dll": "webpack --config ./webpack-config/webpack-dll.js --color --progress",
+    "publish:vue:min": "cross-env MINIFY=true Frame=Vue webpack --progress --config ./webpack-config/webpack-bundle.js",
+    "publish:vue:full": "cross-env MINIFY=false Frame=Vue webpack --progress --config ./webpack-config/webpack-bundle.js",
+    "publish:vue": "npm run publish:vue:min && npm run publish:vue:full",
+    "publish:react:min": "cross-env MINIFY=true Frame=React webpack --progress --config ./webpack-config/webpack-bundle.js",
+    "publish:react:full": "cross-env MINIFY=false Frame=React webpack --progress --config ./webpack-config/webpack-bundle.js",
+    "publish:react": "npm run publish:react:min && npm run publish:react:full"
   },
   "author": "ql",
   "license": "MIT",

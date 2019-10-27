@@ -54,6 +54,17 @@ const config = {
             }
         ]
     },
+    performance: {
+        hints: "warning", // 枚举
+        hints: "error", // 性能提示中抛出错误
+        hints: false, // 关闭性能提示
+        maxAssetSize: 200000, // 整数类型（以字节为单位）
+        maxEntrypointSize: 400000, // 整数类型（以字节为单位）
+        assetFilter: function (assetFilename) {
+            // 提供资源文件名的断言函数
+            return assetFilename.endsWith('.css') || assetFilename.endsWith('.js');
+        }
+    },
     resolve: {
         extensions: ['.js', '.vue', '.json'],
         alias: {
@@ -69,7 +80,7 @@ const config = {
 };
 switch (Frame) {
     case "Vue":
-        config.entry = ["./src/vueCom/index.js"];
+        config.entry = [path.join(__dirname, "../src/vueCom/index.js")];
         config.module.rules.push({
             test: /\.vue$/,
             loader: 'vue-loader',
@@ -79,10 +90,10 @@ switch (Frame) {
         config.plugins.push(new VueLoaderPlugin());
         break;
     case "React":
-        config.entry = ["./src/reactCom/app.js"];
+        config.entry = [path.join(__dirname, "../src/reactCom/app.js")];
         break;
     default:
-        config.entry = ["./src/core/index.js"];
+        config.entry = [path.join(__dirname, "../src/core/index.js")];
 }
 
 module.exports = config

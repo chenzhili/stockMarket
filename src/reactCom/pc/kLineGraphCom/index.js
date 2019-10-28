@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import { splitNumber } from "../../../utils/index";
 import QLStockMarket from "../../../core"
-import styles from "../../../common/kLineGraph.scss"
+import styles from "../../../common/pc/kLineGraph.scss"
 
 // 外部传进来
 import { timeSharing, prevPrice, kData } from "../../../enums/dataJSON";

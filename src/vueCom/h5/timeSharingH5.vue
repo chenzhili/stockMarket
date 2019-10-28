@@ -58,7 +58,7 @@
   </div>
 </template>
 <script>
-import styles from "../../common/timeSharingH5.scss";
+import styles from "../../common/h5/timeSharingH5.scss";
 
 import QLStockMarket from "../../core";
 import { splitNumber } from "../../utils/index";

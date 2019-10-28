@@ -5,7 +5,7 @@ import { splitNumber } from "../../../utils"
 import QLStockMarket from "../../../core"
 import { isFunction } from "../../../utils/types"
 
-import styles from "../../../common/timeSharing.scss"
+import styles from "../../../common/pc/timeSharing.scss"
 
 // 外部传进来
 import { timeSharing, prevPrice, kData } from "../../../enums/dataJSON";

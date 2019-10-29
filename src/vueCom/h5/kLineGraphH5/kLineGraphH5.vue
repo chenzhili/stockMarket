@@ -45,15 +45,12 @@
   </div>
 </template>
 <script>
-import styles from "../../common/h5/kLineGraphH5.scss";
+import styles from "../../../common/h5/kLineGraphH5.scss";
 
-import QLStockMarket from "../../core";
-import { splitNumber } from "../../utils/index";
-import { isFunction } from "../../utils/types";
+import QLStockMarket from "../../../core";
+import { splitNumber } from "../../../utils/index";
+import { isFunction } from "../../../utils/types";
 
-// 外部传进来
-import { timeSharing, prevPrice, kData } from "../../enums/dataJSON";
-import { insType } from "../../enums";
 
 const showMess = [
   { key: "open", name: "开" },

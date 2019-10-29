@@ -24,7 +24,10 @@
     "publish:vue": "npm run publish:vue:min && npm run publish:vue:full",
     "publish:react:min": "cross-env MINIFY=true Frame=React webpack --progress --config ./webpack-config/webpack-bundle.js",
     "publish:react:full": "cross-env MINIFY=false Frame=React webpack --progress --config ./webpack-config/webpack-bundle.js",
-    "publish:react": "npm run publish:react:min && npm run publish:react:full"
+    "publish:react": "npm run publish:react:min && npm run publish:react:full",
+
+    "publish:coms:vue":"cross-env Frame=Vue webpack --progress --config ./webpack-config/webapck-component.js",
+    "publish:coms:react":"cross-env Frame=React webpack --progress --config ./webpack-config/webapck-component.js"
   },
   "author": "ql",
   "license": "MIT",
@@ -41,6 +44,7 @@
     "cross-env": "^6.0.3",
     "css-loader": "^3.2.0",
     "glob-all": "^3.1.0",
+    "html-webpack-plugin": "^3.2.0",
     "mini-css-extract-plugin": "^0.8.0",
     "node-sass": "^4.12.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",

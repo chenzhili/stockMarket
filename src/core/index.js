@@ -1,5 +1,3 @@
-import { timeSharing, prevPrice,kData } from "../enums/dataJSON"
-import { insType } from "../enums"
 
 import initCanvas from "./init"
 import initEvent from "../events"
@@ -20,29 +18,6 @@ initCanvas(QLStockMarket);
 initEvent(QLStockMarket);
 
 
-export default QLStockMarket;  
+export default QLStockMarket;
 
 
-/* new QLStockMarket({
-    selector: ".container1", data: {
-        chartData: {
-            data: timeSharing,
-            preClosePrice: prevPrice
-        }
-    },
-    config: {
-        insType: insType.timeSharingDiagram,
-        theme:"light"
-    }
-});
-new QLStockMarket({
-    selector: ".container2", data: {
-        kData: {
-            data: kData,
-        }
-    },
-    config: {
-        insType: insType.kLineGraph,
-        theme:"light"
-    }
-}); */

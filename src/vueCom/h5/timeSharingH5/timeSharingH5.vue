@@ -58,11 +58,11 @@
   </div>
 </template>
 <script>
-import styles from "../../common/h5/timeSharingH5.scss";
+import styles from "../../../common/h5/timeSharingH5.scss";
 
-import QLStockMarket from "../../core";
-import { splitNumber } from "../../utils/index";
-import { isFunction } from "../../utils/types";
+import QLStockMarket from "../../../core";
+import { splitNumber } from "../../../utils/index";
+import { isFunction } from "../../../utils/types";
 
 const timeArr = ["09:30", "10:30", "11:30/13:00", "14:00", "15:00"];
 const showMess = [

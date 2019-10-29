@@ -90,7 +90,7 @@ switch (Frame) {
         config.plugins.push(new VueLoaderPlugin());
         break;
     case "React":
-        config.entry = [path.join(__dirname, "../src/reactCom/app.js")];
+        config.entry = [path.join(__dirname, "../src/reactCom/index.js")];
         break;
     default:
         config.entry = [path.join(__dirname, "../src/core/index.js")];

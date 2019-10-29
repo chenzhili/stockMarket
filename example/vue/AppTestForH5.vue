@@ -11,8 +11,8 @@
   </div>
 </template>
 <script>
-import { timeSharing, prevPrice, kData } from "../enums/dataJSON";
-import { insType } from "../enums";
+import { timeSharing, prevPrice, kData } from "../../src/enums/dataJSON";
+import { insType } from "../../src/enums";
 
 export default {
   data() {

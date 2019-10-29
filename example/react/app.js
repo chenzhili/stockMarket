@@ -3,15 +3,11 @@ import ReactDOM from "react-dom"
 
 import styles from "./app.scss"
 
-import KLineGraphCom from "./pc/kLineGraphCom"
-import TimeSharingCom from "./pc/timeSharingCom"
-
-import TimeSharingH5 from "./h5/TimeSharingH5"
-import KLineGraphH5 from "./h5/KLineGraphH5"
+import {KLineGraphCom,TimeSharingCom,TimeSharingH5,KLineGraphH5} from "../../src/reactCom"
 
 // 外部传进来
-import { timeSharing, prevPrice, kData } from "../enums/dataJSON";
-import { insType } from "../enums";
+import { timeSharing, prevPrice, kData } from "../../src/enums/dataJSON";
+import { insType } from "../../src/enums";
 
 
 class App extends Component {

@@ -1,15 +1,27 @@
-import React from "react"
-import ReactDOM from "react-dom"
+import KLineGraphPC from "./pc/kLineGraphPC/index"
+import TimeSharingPC from "./pc/timeSharingPC/index"
 
-import App from "./app"
+import TimeSharingH5 from "./h5/timeSharingH5/index"
+import KLineGraphH5 from "./h5/kLineGraphH5/index"
 
-import KLineGraphCom from "./pc/kLineGraphCom"
-import TimeSharingCom from "./pc/timeSharingCom"
+/* import { pcOrH5 } from "../enums"
 
-import TimeSharingH5 from "./h5/timeSharingH5"
-import KLineGraphH5 from "./h5/kLineGraphH5"
+const requireComponent = require.context("./", true, /.js$/);
 
-export { KLineGraphCom, TimeSharingCom,TimeSharingH5,KLineGraphH5 }
+const exportComs = {};
+requireComponent.keys().forEach(rc => {
+    console.log(rc.split("/"))
+    if (rc.split("/").some(item => ((item === pcOrH5.pc) || item === pcOrH5.h5))) {
+        const com = requireComponent(rc).default;
+        console.log(com, com.name);
+        if (com) {
+            exportComs[com.name] = com;
+        }
+    }
+}); */
+
+export { KLineGraphPC, TimeSharingPC, TimeSharingH5, KLineGraphH5 }
+
 
 
 

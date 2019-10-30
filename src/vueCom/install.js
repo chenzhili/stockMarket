@@ -1,6 +1,4 @@
-import { browserRedirect } from "../utils"
-import { pcOrH5 } from "../enums/device"
-import QLStockMarket from "../core"
+import { pcOrH5 } from "../enums"
 
 
 const requireComponent = require.context("./", true, /.vue$/);

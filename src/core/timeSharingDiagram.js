@@ -1,12 +1,8 @@
-import { paintLine, paintRect } from "../utils/paintCom"
-import { isObject, isArray } from "../utils/types"
-import { calcConfig, allGraph } from "../enums/calcEnum"
-import { timeSharing } from "../enums/dataJSON";
-import { calValuePos } from "../utils"
+import { paintLine,isObject, isArray,calValuePos } from "../utils"
+import { calcConfig, allGraph } from "../enums"
 
 
 import style from "./index.scss"
-console.log(style);
 
 // 初始化 分时图
 export function initTimeSharingDiagram(QL, data) {

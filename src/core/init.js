@@ -1,10 +1,8 @@
-import { isObject, isString, isFunction } from "../utils/types"
+import { isObject, isString, isFunction,browserRedirect } from "../utils"
+import { insType, Theme,calcConfig } from "../enums"
+
 import { initTimeSharingDiagram, paintTimeSharingDiagram } from "./timeSharingDiagram"
 import { initkLineGraph, kLineGraphPaint } from "./kLineGraph"
-import { browserRedirect } from "../utils/index"
-import {calcConfig} from "../enums/calcEnum"
-// import initEvent from "../events"
-import { insType, Theme } from "../enums"
 
 export default function initCanvas(QLStockMarket) {
     QLStockMarket.prototype.init = function (options) {

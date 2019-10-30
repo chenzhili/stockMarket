@@ -1,15 +1,19 @@
 import React, { Component } from "react"
 import _ from "lodash"
 
-import { splitNumber } from "../../utils"
-import QLStockMarket from "../../core"
-import { isFunction } from "../../utils/types"
+import { splitNumber } from "../../../utils"
+import QLStockMarket from "../../../core"
+import { isFunction } from "../../../utils/types"
 
-import styles from "../../common/h5/TimeSharingH5.scss"
+import styles from "../../../common/h5/TimeSharingH5.scss"
 
-// 外部传进来
-import { timeSharing, prevPrice, kData } from "../../enums/dataJSON";
-import { insType } from "../../enums";
+/* 
+    传入的props的值：
+        dataGraph
+        config
+        width
+        height
+*/
 
 const timeArr = ["09:30", "10:30", "11:30/13:00", "14:00", "15:00"];
 const showMess = [

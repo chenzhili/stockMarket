@@ -1,4 +1,11 @@
 
+/* 统一 当前 文件 的 出口 */
+import { allGraph, calcConfig } from "./calcEnum"
+import { pcOrH5 } from "./device"
+
+export {
+    allGraph, calcConfig, pcOrH5
+};
 
 /* 对于 canvas 绘制 是 stroke 还是 fill */
 export const strokeOrFill = Object.freeze({
@@ -30,14 +37,14 @@ export const Theme = Object.freeze({
                 curPrice: "#fff"
             },
         },
-        k:{
-            descFill:"#54FFFF",
-            descStroke:"#54FFFF",
-            asendFill:"#000000",
-            asendStroke:"#FF5454",
+        k: {
+            descFill: "#54FFFF",
+            descStroke: "#54FFFF",
+            asendFill: "#000000",
+            asendStroke: "#FF5454",
         },
         bg: "#000",
-        maskLine:"rgba(255,255,255,1)"
+        maskLine: "rgba(255,255,255,1)"
     },
     light: {
         time: {
@@ -53,13 +60,13 @@ export const Theme = Object.freeze({
                 curPrice: "#4188B9"
             },
         },
-        k:{
-            descFill:"#6BA583",
-            descStroke:"#15713B",
-            asendFill:"#EC5F4C",
-            asendStroke:"#900F00",
+        k: {
+            descFill: "#6BA583",
+            descStroke: "#15713B",
+            asendFill: "#EC5F4C",
+            asendStroke: "#900F00",
         },
         bg: "#fff",
-        maskLine:"rgba(0,0,0,.3)"
+        maskLine: "rgba(0,0,0,.3)"
     }
 })

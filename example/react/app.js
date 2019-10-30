@@ -3,7 +3,8 @@ import ReactDOM from "react-dom"
 
 import styles from "./app.scss"
 
-import {KLineGraphCom,TimeSharingCom,TimeSharingH5,KLineGraphH5} from "../../src/reactCom"
+import {KLineGraphPC,TimeSharingPC,TimeSharingH5,KLineGraphH5} from "../../src/reactCom"
+
 
 // 外部传进来
 import { timeSharing, prevPrice, kData } from "../../src/enums/dataJSON";
@@ -47,17 +48,18 @@ class App extends Component {
             }
         }
         return (
-            <div className={styles.container}>
+            <div className={styles.containerH5}>
                 <div className={styles.header}>
                     头部内容
                 </div>
                 <div className={styles.content}>
-                    {/* <TimeSharingH5 {...timeProps} height="267px"></TimeSharingH5> */}
-                    <KLineGraphH5 {...kProps} height="267px"></KLineGraphH5>
+                    <TimeSharingH5 {...timeProps} height="267px"></TimeSharingH5>
+                    {/* <KLineGraphH5 {...kProps} height="267px"></KLineGraphH5> */}
                 </div>
                 <div className={styles.btn} onClick={this.click.bind(this)}>click</div>
             </div>
-            // <div className={styles.container}>
+
+            // <div className={styles.containerPC}>
             //     <h2 className={styles.title}>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Debitis perspiciatis</h2>
             //     <div className={styles.content}>
             //         <div className={styles.left}>
@@ -65,8 +67,8 @@ class App extends Component {
             //         <div className={styles.btn} onClick={this.click.bind(this)}>点击</div>
             //         </div>
             //         <div className={styles.main}>
-            //             {/* <TimeSharingCom {...timeProps} /> */}
-            //             <KLineGraphCom {...kProps} />
+            //             <TimeSharingPC {...timeProps} />
+            //             {/* <KLineGraphPC {...kProps} /> */}
             //         </div>
             //         <div
             //             className={styles.right}

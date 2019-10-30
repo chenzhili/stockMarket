@@ -7,9 +7,13 @@ import { isFunction } from "../../../utils/types"
 
 import styles from "../../../common/pc/timeSharing.scss"
 
-// 外部传进来
-import { timeSharing, prevPrice, kData } from "../../../enums/dataJSON";
-import { insType } from "../../../enums";
+/* 
+    传入的props的值：
+        dataGraph
+        config
+        width
+        height
+*/
 
 const timeArr = ["09:30", "10:30", "11:30/13:00", "14:00", "15:00"];
 const showMess = [
@@ -20,7 +24,7 @@ const showMess = [
     { key: "dealMount", name: "量" },
     { key: "totalMoney", name: "额" }
 ];
-class TimeSharingCom extends Component {
+class TimeSharingPC extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -199,4 +203,4 @@ class TimeSharingCom extends Component {
     }
 }
 
-export default TimeSharingCom;
+export default TimeSharingPC;

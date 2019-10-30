@@ -6,9 +6,9 @@
         "TimeSharingH5": "./src/vueCom/h5/timeSharingH5/index.js"
     },
     "React": {
-        "kLineGraphPC": "./src/reactCom/pc/kLineGraphCom/index.js",
-        "TimeSharingPC": "./src/reactCom/pc/timeSharingCom/index.js",
-        "kLineGraphForH5": "./src/reactCom/h5/kLineGraphH5.js",
-        "TimeSharingH5": "./src/reactCom/h5/timeSharingH5.js"
+        "kLineGraphPC": "./src/reactCom/pc/kLineGraphPC/index.js",
+        "TimeSharingPC": "./src/reactCom/pc/timeSharingPC/index.js",
+        "kLineGraphForH5": "./src/reactCom/h5/kLineGraphH5/index.js",
+        "TimeSharingH5": "./src/reactCom/h5/timeSharingH5/index.js"
     }
 }

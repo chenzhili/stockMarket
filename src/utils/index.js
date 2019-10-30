@@ -1,6 +1,14 @@
-import { pcOrH5 } from "../enums/device"
-import { isNumber, isString } from "./types"
+import { pcOrH5 } from "../enums"
 
+/* 统一 文件 出口 */
+// import {} from "./calculation"
+import { paintLine, paintRect } from "./paintCom"
+import { isString, isNumber, isBoolean, isArray, isObject, isFunction, isNull, isUndefined } from "./types"
+
+export {
+    paintLine, paintRect,
+    isString, isNumber, isBoolean, isArray, isObject, isFunction, isNull, isUndefined
+}
 
 /* 判断 当前 是 pc 还是 h5 */
 export function browserRedirect() {
@@ -18,7 +26,7 @@ export function splitNumber(num) {
     if (isNaN(num)) {
         return "无效数据";
     }
-    num = Math.round(num*100)/100;
+    num = Math.round(num * 100) / 100;
     const len = num.toString().split(".")[0].length;
     if (len > 16) {
         num = Math.round(num / (1e16) * 100) / 100 + "兆";

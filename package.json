@@ -27,7 +27,8 @@
     "publish:react": "npm run publish:react:min && npm run publish:react:full",
 
     "publish:coms:vue":"cross-env Frame=Vue webpack --progress --config ./webpack-config/webapck-component.js",
-    "publish:coms:react":"cross-env Frame=React webpack --progress --config ./webpack-config/webapck-component.js"
+    "publish:coms:react":"cross-env Frame=React webpack --progress --config ./webpack-config/webapck-component.js",
+    "publish:common":"cross-env MINIFY=fals webpack --progress --config ./webpack-config/webpack-common.js"
   },
   "author": "ql",
   "license": "MIT",

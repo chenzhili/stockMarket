@@ -1,11 +1,5 @@
-import { paintLine, paintRect } from "../utils/paintCom"
-// import { calRangeValue, dealCalRangeValue } from "../utils/calculation"
-import { isObject, isArray, isFunction } from "../utils/types"
-import { calcConfig, allGraph } from "../enums/calcEnum"
-import { timeSharing } from "../enums/dataJSON";
-import { strokeOrFill } from "../enums"
-
-import { calValuePos } from "../utils"
+import { paintLine, paintRect,isObject, isArray, isFunction,calValuePos } from "../utils"
+import { strokeOrFill,calcConfig, allGraph } from "../enums"
 
 import style from "./index.scss"
 

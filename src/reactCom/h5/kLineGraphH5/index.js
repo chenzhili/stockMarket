@@ -1,13 +1,17 @@
 import React, { Component } from "react"
 
-import { splitNumber } from "../../utils/index";
-import QLStockMarket from "../../core"
-import { isFunction } from "../../utils/types"
-import styles from "../../common/h5/KLineGraphH5.scss"
+import { splitNumber } from "../../../utils/index";
+import QLStockMarket from "../../../core"
+import { isFunction } from "../../../utils/types"
+import styles from "../../../common/h5/KLineGraphH5.scss"
 
-// 外部传进来
-import { timeSharing, prevPrice, kData } from "../../enums/dataJSON";
-import { insType } from "../../enums";
+/* 
+    传入的props的值：
+        dataGraph
+        config
+        width
+        height
+*/
 
 const showMess = [
     { key: "open", name: "开" },

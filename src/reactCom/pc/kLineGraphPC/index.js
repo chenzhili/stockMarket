@@ -3,9 +3,13 @@ import { splitNumber } from "../../../utils/index";
 import QLStockMarket from "../../../core"
 import styles from "../../../common/pc/kLineGraph.scss"
 
-// 外部传进来
-import { timeSharing, prevPrice, kData } from "../../../enums/dataJSON";
-import { insType } from "../../../enums";
+/* 
+    传入的props的值：
+        dataGraph
+        config
+        width
+        height
+*/
 
 const showMess = [
     { key: "open", name: "开" },
@@ -15,7 +19,7 @@ const showMess = [
     { key: "rate", name: "涨跌" },
     { key: "rate", name: "涨幅" }
 ];
-class KLineGraphCom extends Component {
+class KLineGraphPC extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -143,4 +147,4 @@ class KLineGraphCom extends Component {
     }
 }
 
-export default KLineGraphCom;
+export default KLineGraphPC;

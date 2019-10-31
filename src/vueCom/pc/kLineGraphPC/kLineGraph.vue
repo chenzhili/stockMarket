@@ -124,14 +124,9 @@ export default {
     let QLStockMarketIns = new QLStockMarket({
       selector: "#qlStockMarket",
       data: {
-        kData: {
-          data: kData
-        }
+        kData: this.dataGraph
       },
-      config: {
-        insType: insType.kLineGraph,
-        theme: "light"
-      },
+      config: this.config,
       emit: {
         getUpToDataData: this.getUpToDataData,
         getChangeData: this.getChangeData

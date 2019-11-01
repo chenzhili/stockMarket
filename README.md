@@ -16,9 +16,9 @@
     将 canvas 看做 是 img，在 canvas 上 有 style.width style.height attr.width attr.height,这四个值 代表 在 浏览器 绘制的宽高 和 canvas 画布 实际 的 宽高；我们 放大 canvas 的 宽 和 高 ，让他 和 物理像素 一样就可以了；
 
 ```js
-    html 
+    //html 
         <canvas></canvas>
-    js
+    //js
         canvas.style.width = "100px"
         canvas.style.height = "100px"
         const dps = window.devicePixelRatio;
@@ -29,3 +29,20 @@
         ctx.scale(dps,dps);
 ```
 
+
+# npm 包的 发布等一些列问题
+    ```js
+    //1、新增注册 用户
+        npm adduser
+    //2、有的 用户，登录
+        npm login
+    //3、发布包到npm上
+        npm publish 
+    //4、查看某个包的所有这
+        npm owner ls "具体的包名"
+    //5、由于默认对于当前包只有创建者有编辑权限，可以通过下面的 命令进行 新增权限 和 删除权限
+        npm owner add "用户名" "包名"
+
+        npm owner rm "用户名" "包名"
+    ```
+    

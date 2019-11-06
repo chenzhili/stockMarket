@@ -11,7 +11,7 @@
         </span>
       </template>
     </div>
-    <div :class="styles.qlContainer" id="qlStockMarket">
+    <div :class="styles.qlContainer" id="qlStockMarketK">
       <div>
         <template v-for="(item,index) of QLStockMarketIns._paintConfig.valueRange.actuallyValue">
           <span
@@ -124,7 +124,7 @@ export default {
   },
   async mounted() {
     let QLStockMarketIns = new QLStockMarket({
-      selector: "#qlStockMarket",
+      selector: "#qlStockMarketK",
       data: {
         kData: this.dataGraph
       },

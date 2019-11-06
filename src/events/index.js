@@ -235,7 +235,6 @@ function mouseLeave(e) {
 function mouseMove(e) {
     // console.log("move", e);
     const QL = this;
-
     // 这里 根据 设备端 的不同
     const eventPos = QL._device === pcOrH5.pc ? "originalEvent" : "srcEvent";
     const { layerX: x } = e[eventPos];

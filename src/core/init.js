@@ -7,17 +7,31 @@ import { initkLineGraph, kLineGraphPaint } from "./kLineGraph"
 export default function initCanvas(QLStockMarket) {
     QLStockMarket.prototype.init = function (options) {
         const QL = this;
-        console.log(1111);
+        // console.log(1111);
         if (!isObject(options)) return "数据格式不对";
 
         const { selector, data, config, emit } = options;
 
         if (isObject(emit) && isFunction(emit.getUpToDataData)) {
-            QLStockMarket.prototype.getUpToDataData = emit.getUpToDataData;
+            /*这里要注意私有方法 和 共有方法 的区别 */
+            // 这种写法 有问题，这种放到 原型链上 共享 是有 问题的，特别注意
+            // QLStockMarket.prototype.getUpToDataData = emit.getUpToDataData;
+            // 解决 办法 应该 是吧 当前 方法 作为 私有方法
+            Object.defineProperty(QL,"getUpToDataData",{
+                get(){
+                    return emit.getUpToDataData;
+                }
+            })
         }
 
         if (isObject(emit) && isFunction(emit.getChangeData)) {
-            QLStockMarket.prototype.getChangeData = emit.getChangeData;
+            // QLStockMarket.prototype.getChangeData = emit.getChangeData;
+            // 同上
+            Object.defineProperty(QL,"getChangeData",{
+                get(){
+                    return emit.getChangeData;
+                }
+            })
         }
 
         if (!selector) return "没有入口文件";

@@ -66,7 +66,7 @@ class KLineGraphPC extends Component {
     componentDidMount() {
         const me = this;
         let QLStockMarketIns = new QLStockMarket({
-            selector: "#qlStockMarket",
+            selector: "#qlStockMarketK",
             data: {
                 kData: me.props.dataGraph || {},
             },
@@ -109,7 +109,7 @@ class KLineGraphPC extends Component {
                             ))
                         }
                     </div>
-                    <div className={styles.qlContainer} id="qlStockMarket">
+                    <div className={styles.qlContainer} id="qlStockMarketK">
                         {
                             upToData.close ? (
                                 <div

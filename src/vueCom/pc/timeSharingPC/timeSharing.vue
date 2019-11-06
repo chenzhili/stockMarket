@@ -21,7 +21,7 @@
           </span>
         </template>
       </div>
-      <div :class="styles.qlContainer" id="qlStockMarket">
+      <div :class="styles.qlContainer" id="qlStockMarketT">
         <div
           v-if="upToData.curPrice"
           :class="styles.updateValue"
@@ -146,13 +146,13 @@ export default {
   async mounted() {
     // console.log(this.$emit); //用这个进行 子组件向 父组件 传值
     let QLStockMarketIns = new QLStockMarket({
-      selector: "#qlStockMarket",
+      selector: "#qlStockMarketT",
       data: {
         chartData: this.dataGraph
       },
       config: this.config,
       emit: {
-        getUpToDataData: this.getUpToDataData
+        getUpToDataData: this.getUpToDataData.bind(this)
       }
     });
 

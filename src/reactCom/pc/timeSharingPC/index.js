@@ -71,7 +71,7 @@ class TimeSharingPC extends Component {
         const me = this;
         console.log(me.props.dataGraph);
         let QLStockMarketIns = new QLStockMarket({
-            selector: "#qlStockMarket",
+            selector: "#qlStockMarketT",
             data: {
                 chartData: me.props.dataGraph || {},
             },
@@ -133,7 +133,7 @@ class TimeSharingPC extends Component {
                             ))
                         }
                     </div>
-                    <div className={styles.qlContainer} id="qlStockMarket">
+                    <div className={styles.qlContainer} id="qlStockMarketT">
                         {
                             upToData.curPrice ? (
                                 <div

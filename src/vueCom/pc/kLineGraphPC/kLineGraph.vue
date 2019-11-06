@@ -12,7 +12,7 @@
           </span>
         </template>
       </div>
-      <div :class="styles.qlContainer" id="qlStockMarket">
+      <div :class="styles.qlContainer" id="qlStockMarketK">
         <div
           v-if="upToData.close"
           :class="[styles.updateValue,styles[upToData.rate>0?`${theme}UpColorBg`:`${theme}DownColorBg`]]"
@@ -96,7 +96,7 @@ export default {
     splitNumber,
     /* 在 hover 事件 的运用 */
     getUpToDataData(data) {
-      //   console.log("==============", data);
+      console.log("==============", data);
       this.upToData = data;
       // 判定当前 是 涨还是 跌;
       this.upOrDown = this.upToData.rate < 0 ? "down" : "up";
@@ -122,13 +122,13 @@ export default {
   },
   async mounted() {
     let QLStockMarketIns = new QLStockMarket({
-      selector: "#qlStockMarket",
+      selector: "#qlStockMarketK",
       data: {
         kData: this.dataGraph
       },
       config: this.config,
       emit: {
-        getUpToDataData: this.getUpToDataData,
+        getUpToDataData: this.getUpToDataData.bind(this),
         getChangeData: this.getChangeData
       }
     });

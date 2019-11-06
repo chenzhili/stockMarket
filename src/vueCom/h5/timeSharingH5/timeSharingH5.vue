@@ -10,7 +10,7 @@
         </span>
       </template>
     </div>
-    <div :class="styles.qlContainer" id="qlStockMarket">
+    <div :class="styles.qlContainer" id="qlStockMarketT">
       <div>
         <template v-for="(item,index) of QLStockMarketIns._paintConfig.valueRange.factorInc">
           <span
@@ -137,7 +137,7 @@ export default {
   async mounted() {
     // console.log(this.$emit); //用这个进行 子组件向 父组件 传值
     let QLStockMarketIns = new QLStockMarket({
-      selector: "#qlStockMarket",
+      selector: "#qlStockMarketT",
       data: {
         chartData: this.dataGraph
       },

@@ -68,7 +68,7 @@ class KLineGraphH5 extends Component {
     componentDidMount() {
         const me = this;
         let QLStockMarketIns = new QLStockMarket({
-            selector: "#qlStockMarket",
+            selector: "#qlStockMarketK",
             data: {
                 kData: me.props.dataGraph || {},
             },
@@ -119,7 +119,7 @@ class KLineGraphH5 extends Component {
                         </div>
                     ) : null
                 }
-                <div className={styles.qlContainer} id="qlStockMarket">
+                <div className={styles.qlContainer} id="qlStockMarketK">
                     <div>
                         {
                             QLStockMarketIns._paintConfig.valueRange.actuallyValue.length ? (QLStockMarketIns._paintConfig.valueRange.actuallyValue.map((item, index) => (

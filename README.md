@@ -49,3 +49,14 @@
 # 对于单元测试 jest 的理解
     概况：这是一个比较完整的测试库，包括了断言，mock等等，可以开箱即用；并且对于不同的 js 框架 比如 react，vue 都有很好的支持
     理解：对于前端测试 大方向 主要模块，方法结构断言、数据请求、以及框架不同模板比如.jsx、.vue、.node 等；
+
+    实际在单元测试，不只是对于 function的测试，可能还包括 通用的 vue或者react组件的单元测试，这里其实可以对于 core的实例 进行单元测试
+
+# 对于 此库的 e2e 测试 准备使用 Nightwatch
+    对于 Nightwatch 的定义：Nightwatch.js is an automated testing framework for web applications and websites, written in Node.js and using the W3C WebDriver API.
+
+## 这里出现 的 几个东西与 Nightwatch 的关系：
+    1、WebDriver：这是w3c 指定的 一种标准，用于自动化控制浏览器，注意这是一种标准；
+    2、Selenium：这个算是对于 webDriver 这套东西的 实现，比较流行并且全面的实现；相当于是一种库；安装：selenium-server(由于这个是 java写的，虽然实现了其他语言，实测需要安装 java JDK)
+    3、对于webDriver 针对不同的厂商，实现了不同的 WebDriver(微型浏览器)，比如：geckodriver、chromedriver等等，到 Nightwatch 官网上看；
+

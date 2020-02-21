@@ -50,6 +50,8 @@ import styles from "../../../common/pc/kLineGraph.scss";
 import QLStockMarket from "../../../core";
 import { splitNumber } from "../../../utils/index";
 
+// 周期转换
+
 const showMess = [
   { key: "open", name: "开" },
   { key: "high", name: "高" },
@@ -96,7 +98,7 @@ export default {
     splitNumber,
     /* 在 hover 事件 的运用 */
     getUpToDataData(data) {
-      console.log("==============", data);
+      // console.log("==============", data);
       this.upToData = data;
       // 判定当前 是 涨还是 跌;
       this.upOrDown = this.upToData.rate < 0 ? "down" : "up";
@@ -114,7 +116,7 @@ export default {
       handler(nv) {
         // console.log("============");
         this.QLStockMarketIns._data = {
-          data: nv.data,
+          data: nv.data
         };
       }
       // immediate: true,
@@ -148,6 +150,11 @@ export default {
       this.valueBorder
     );
   },
+  created() {
+    // 这里对于 数据进行转换
+    console.log(this.dataGraph);
+    
+  },
   destroyed() {
     this.QLStockMarketIns.cancelEventListener();
   },
@@ -170,6 +177,12 @@ export default {
       type: Object,
       default: function() {
         return {};
+      }
+    },
+    sTt: { // source 到 target 的装换 ，数组(模拟字典)的格式 ['m1','m5']
+      type: Array,
+      default: function() {
+        return [];
       }
     }
   }

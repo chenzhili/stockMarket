@@ -51,6 +51,7 @@ import QLStockMarket from "../../../core";
 import { splitNumber } from "../../../utils/index";
 import { isFunction } from "../../../utils/types";
 
+import dealData from "../../../transformCal";
 
 const showMess = [
   { key: "open", name: "开" },
@@ -115,18 +116,37 @@ export default {
       deep: true,
       handler(nv) {
         // console.log("============");
+        const me = this;
         this.QLStockMarketIns._data = {
-          data: nv.data
+          // data: nv.data
+          data: dealData(nv, me.sTt)
         };
+      }
+      // immediate: true,
+    },
+    sTt: {
+      deep: true,
+      handler(nv) {
+        console.log("============", nv);
+        const me = this;
+        this.QLStockMarketIns._data = {
+          // data: nv.data
+          data: dealData(me.dataGraph, nv)
+        };
+        console.log(this.QLStockMarketIns._data);
       }
       // immediate: true,
     }
   },
   async mounted() {
+    const dataGraph = {
+      data: dealData(this.dataGraph, this.sTt)
+    };
+    console.log(dataGraph);
     let QLStockMarketIns = new QLStockMarket({
       selector: "#qlStockMarketK",
       data: {
-        kData: this.dataGraph
+        kData: dataGraph //this.dataGraph
       },
       config: this.config,
       emit: {
@@ -177,6 +197,13 @@ export default {
       type: Object,
       default: function() {
         return {};
+      }
+    },
+    sTt: {
+      // source 到 target 的转换 ，数组(模拟字典)的格式 ['m1','m5']
+      type: Array,
+      default: function() {
+        return [];
       }
     }
   }

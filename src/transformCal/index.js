@@ -1,14 +1,9 @@
 import { periodConfig, staticPeriod } from './staticConfig';
-import { isArray } from '../utils/types';
+import { isArray, isString } from '../utils/types';
 
 import { dData, mData } from "./response";
 /* 存储对应的 历史数据的最后一项值，用于对于 收盘价的 获取 */
 let tempItem = {};
-
-// /* 这里用于是否 进行转换 */
-// function dealData(data = { curData: '', hisData: '' }, dataConfig = []) {
-
-// }
 
 /**
  * 转换数据
@@ -26,7 +21,7 @@ function transform(data = { curData: '', hisData: '' }, target, source) {
     // 临时数据的 配置
     let resultCurData = [], resultHisData = [];
     if (!curData && !hisData) { return '元数据有问题'; }
-    if (isArray(curData) && isArray(hisData)) { return '元数据格式不对'; }
+    if (!isArray(curData) && !isArray(hisData)) { return '元数据格式不对'; }
 
     /* 对于 当天数据 的 处理 */
     if (isArray(curData) && curData.length) {
@@ -40,13 +35,40 @@ function transform(data = { curData: '', hisData: '' }, target, source) {
         resultHisData = dealHisData(hisData, target, source);
         // console.timeEnd();
     }
-    if(!isArray(resultCurData)){
+    if (!isArray(resultCurData)) {
         resultCurData = [];
     }
-    if(!isArray(resultHisData)){
+    if (!isArray(resultHisData)) {
         resultHisData = [];
     }
-    return [...resultHisData,...resultCurData];
+    return [...resultHisData, ...resultCurData];
+}
+
+/* 时间格式化 */
+/* 
+    date 的形式:
+    202002201500
+    20200220
+    202002
+*/
+transform.timeReg = /^[0-9]{4}-[0-9]{2}-[0-9]{2}/;
+transform.splitTime = function (date) {
+    if (!isString(date) || transform.timeReg.test(date)) { return date; }
+    const len = date.length - 1;
+    let i = 0;
+    let str = "", param = 0;
+    const config = Object.freeze({
+        0: "-",
+        4: "-",
+        6: " ",
+        8: ":"
+    });
+    while (i < len) {
+        param = i === 0 ? 4 : 2;
+        str += (date.slice(i, i + param) + (config[i] ? config[i] : ""));
+        i += param;
+    }
+    return str;
 }
 
 // 当天数据的 处理方式
@@ -90,7 +112,7 @@ function dealHisData(hisData, target, source) {
                     return '请传入日k的数据格式';
                 }
             }
-            dealHisData.wHisDataCore(hisData);
+            return dealHisData.wHisDataCore(hisData);
         } else {
             return "暂不支持这个转换";
 
@@ -120,6 +142,7 @@ dealHisData.MToAnyDataCore = function (data, target) {
 }
 /* 月是 0-11 改变成  1-12 */
 dealHisData.MToAnyDataCore.getMonth = function (date) {
+    if (transform.timeReg.test(date)) { return date.getMonth(); }
     return (new Date(`${date.slice(0, 4)}-${date.slice(4, 6)}`).getMonth() + 1);
 }
 
@@ -139,10 +162,11 @@ dealHisData.wHisDataCore = function (data) {
         isEnd = true; // 是指当前是不是 周期的初始值
     while (i >= 0) {
         item = data[i];
+        // 这是当前周的初始 最后一天
         if (isEnd) {
             isEnd = false;
             tempObj = {};
-            tempObj.date = item.date;
+            tempObj.date = transform.splitTime(item.date);
             tempObj.close = item.close;
             tempObj.dealMount = +item.dealMount;
 
@@ -150,10 +174,11 @@ dealHisData.wHisDataCore = function (data) {
             tempObj.low = item.low;
 
             startTime = dealHisData.wHisDataCore.getTimes(item.date);
+            // console.log(item.date,i);
         } else {
             /* 证明 item 在 当前周 */
             if ((dealHisData.wHisDataCore.getDay(item.date) < prevW) && ((dealHisData.wHisDataCore.getTimes(item.date) - startTime) <= dealHisData.wHisDataCore.weekTimes)) {
-                tempObj.dealMount += +item.dealMount;
+                tempObj.dealMount += (+item.dealMount);
 
                 // 最高 和 最低值
                 if (item.high > tempObj.high) {
@@ -172,7 +197,7 @@ dealHisData.wHisDataCore = function (data) {
 
             } else { // 不在当前周了
                 // 这里获取 这周的 第一个 开盘价
-                const openItem = data[i - 1];
+                const openItem = data[i + 1];
                 tempObj.open = openItem.open;
 
                 resultArr.unshift(tempObj);
@@ -192,7 +217,6 @@ dealHisData.wHisDataCore = function (data) {
     }
     // 计算数据中的 第一周 的 rate
     resultArr[0].rate = Math.round(resultArr[0].close / resultArr[0].open * 100) / 100;
-    console.log(resultArr);
     return resultArr;
 }
 /**
@@ -200,12 +224,14 @@ dealHisData.wHisDataCore = function (data) {
  * "2020214"
  */
 dealHisData.wHisDataCore.getTimes = function (date) {
+    if (transform.timeReg.test(date)) { return date.getTime(); }
     return new Date(`${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6)}`).getTime();
 }
 /**
  * 获取星期几
  */
 dealHisData.wHisDataCore.getDay = function (date) {
+    if (transform.timeReg.test(date)) { return date.getDay(); }
     return new Date(`${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6)}`).getDay();
 }
 
@@ -237,7 +263,7 @@ dealHisData.mHisDataCore = dealCurData.mCurDataCore = function (data, n) {
         } else {
             // 收盘价,时间:统一使用当前周期最后一分钟线的对应数据(14:00到14:05,收盘价为14:05 的收盘价)
             if (number % n === (n - 1) || number === (len - 1)) {
-                tempObj.date = item.date;
+                tempObj.date = transform.splitTime(item.date);
                 tempObj.close = item.close;
                 tempObj.rate = Math.round(item.close / prevClose * 100) / 100;
                 // 对于 处理尾部 把 最后的 tempObj 放进去, 不足 n 的余数 处理
@@ -261,6 +287,17 @@ dealHisData.mHisDataCore = dealCurData.mCurDataCore = function (data, n) {
     return resultArr;
 }
 
+
+/* 在对应 框架中 处理 是否需要 进行 转换的操作 */
+function dealData(dataGraph = {}, sTt = []) {
+    if (!sTt.length || sTt.length !== 2) { return (dataGraph.data || []); }
+    if (!dataGraph.data && !dataGraph.curData) {
+        return [];
+    }
+
+    return transform({ hisData: dataGraph.data, curData: dataGraph.curData }, sTt[1], sTt[0])
+}
+
 // m1 -> m5
 // transform({ hisData: mData }, 'm5', 'm1');
-export default transform;
+export default dealData;

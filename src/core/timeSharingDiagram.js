@@ -1,4 +1,4 @@
-import { paintLine,isObject, isArray,calValuePos } from "../utils"
+import { paintLine, isObject, isArray, calValuePos } from "../utils"
 import { calcConfig, allGraph } from "../enums"
 
 
@@ -113,10 +113,10 @@ function genMaskCav(QL) {
     canvas.width = QL._DOMWidth * QL._defulatSale, canvas.height = QL._DOMHeight * QL._defulatSale;
     canvas.style.width = `${QL._DOMWidth}px`, canvas.style.height = `${QL._DOMHeight}px`;
 
-    
+
     canvas.className = style["mask-cav"];
 
-    ctx.scale(QL._defulatSale,QL._defulatSale);
+    ctx.scale(QL._defulatSale, QL._defulatSale);
     /* 把 遮罩层 的 canvas 的 ctx 存储到 实例上,可能这个 canvas 会提取到  外部 让 两个 实例 共用 */
     Object.defineProperty(QL, "_maskCtx", {
         get() {
@@ -287,7 +287,7 @@ export function paintTimeSharingDiagram(data) {
                 ctx,
                 sx: curX,//xFactor * i,
                 sy: config[allGraph.line].baseHeight,
-                ex: xFactor * i,
+                ex: curX,
                 ey: config[allGraph.line].baseHeight + config[allGraph.line].totalHeight,
                 style: {
                     color: "#ddd",
@@ -298,7 +298,7 @@ export function paintTimeSharingDiagram(data) {
                 ctx,
                 sx: curX,//xFactor * i,
                 sy: config[allGraph.dealMount].baseHeight,
-                ex: xFactor * i,
+                ex: curX,
                 ey: config[allGraph.dealMount].baseHeight + config[allGraph.dealMount].totalHeight,
                 style: {
                     color: "#ddd",
@@ -331,6 +331,37 @@ export function paintTimeSharingDiagram(data) {
                 color: i % 2 === 0 ? (QL._theme.time.dealMount.even || "#000") : QL._theme.time.dealMount.odd || "#000"
             }
         })
+    }
+    /* 对于当前 的 走势图的 值 不够 对应 的 区间 需要自动补全 */
+    const tempLen = chartData.length, range = 60, maxRange = 240;
+    let n = Math.ceil(tempLen / range), tempSX = 0;
+    
+    while ((tempLen < (range * n)) && (range * n < maxRange)) {
+        paintConfig.paintTimeX.push(xFactor * range * n);
+        tempSX = xFactor * range * n;
+        paintLine({
+            ctx,
+            sx: tempSX,
+            sy: config[allGraph.line].baseHeight,
+            ex: tempSX,
+            ey: config[allGraph.line].baseHeight + config[allGraph.line].totalHeight,
+            style: {
+                color: "#ddd",
+                setLineDash: [4],
+            }
+        })
+        paintLine({
+            ctx,
+            sx: tempSX,
+            sy: config[allGraph.dealMount].baseHeight,
+            ex: tempSX,
+            ey: config[allGraph.dealMount].baseHeight + config[allGraph.dealMount].totalHeight,
+            style: {
+                color: "#ddd",
+                setLineDash: [4],
+            }
+        })
+        n++;
     }
     paintConfig.paintTimeX.push(240 * xFactor);
 

@@ -3,6 +3,9 @@ import { splitNumber } from "../../../utils/index";
 import QLStockMarket from "../../../core"
 import styles from "../../../common/pc/kLineGraph.scss"
 
+import dealData from "../../../transformCal";
+
+
 /* 
     传入的props的值：
         dataGraph
@@ -39,18 +42,39 @@ class KLineGraphPC extends Component {
             },
             valueBorder: null,
             upToData: {},
-            upToDateY: 0 //就是 页面中时间显示的位置
+            upToDateY: 0, //就是 页面中时间显示的位置
+
+            curDataGraph: props.dataGraph, // 用于 存储 从 props 传进来的 原始的 dataGraph
+            curSTT: props.sTt, // 用于存储 从 props 获取的 sTt
         }
+        // console.log(props);
     }
     static getDerivedStateFromProps(nextProps, prevState) {
         // console.log(nextProps);
-        if (nextProps.dataGraph && prevState.QLStockMarketIns._data && _.difference(prevState.QLStockMarketIns._data.data, nextProps.dataGraph.data).length) {
-            // console.log("========");
-            prevState.QLStockMarketIns._data = {
-                data: nextProps.dataGraph.data,
+        const resultObj = {};
+        if (nextProps.dataGraph && prevState.QLStockMarketIns._data && !(_.isEqual(prevState.curDataGraph, nextProps.dataGraph))) {
+            console.log(prevState.curDataGraph, nextProps.dataGraph);
+            // 这里如果 去修改 对应的 实例的化，导致 数据更新 混乱；
+            /* prevState.QLStockMarketIns._data = {
+                data: dealData(nextProps.dataGraph, nextProps.sTt)//nextProps.dataGraph.data,
+            } */
+
+            resultObj.curDataGraph = nextProps.dataGraph;
+        }
+        if (!(_.isEqual(prevState.curSTT, nextProps.sTt))) {
+            resultObj.curSTT = nextProps.sTt;
+        }
+
+        return resultObj;
+    }
+    shouldComponentUpdate(nextProps, nextState) {
+        if (!(_.isEqual(this.state.curDataGraph, nextState.curDataGraph)) || !(_.isEqual(this.state.curSTT, nextState.curSTT))) {
+            // console.log(nextState);
+            nextState.QLStockMarketIns._data = {
+                data: dealData(nextState.curDataGraph, nextProps.sTt)
             }
         }
-        return null;
+        return true;
     }
     getUpToDataData(data) {
         let upToData = data;
@@ -59,16 +83,20 @@ class KLineGraphPC extends Component {
         this.setState({ upToData, upOrDown })
     }
     getChangeData(data) {
-        let curData = data[data.length-1];
+        let curData = data[data.length - 1];
         let upOrDown = curData.rate < 0 ? "down" : "up";
-        this.setState({curData,upOrDown})
+        this.setState({ curData, upOrDown })
     }
     componentDidMount() {
         const me = this;
+        const tempData = {
+            data: dealData(me.state.curDataGraph, me.props.sTt)
+        }
+
         let QLStockMarketIns = new QLStockMarket({
             selector: "#qlStockMarketK",
             data: {
-                kData: me.props.dataGraph || {},
+                kData: tempData || {},
             },
             config: me.props.config || {},
             emit: {
@@ -138,6 +166,17 @@ class KLineGraphPC extends Component {
                                     key={index}
                                     style={{ top: `${QLStockMarketIns._paintConfig.valueRange.valueYPos[index] || 0}px` }}
                                 >{item}</span>
+                            ))
+                        ) : null
+                    }
+                    {
+                        QLStockMarketIns._paintConfig.dealRange.actuallyValue.length ? (
+                            QLStockMarketIns._paintConfig.dealRange.actuallyValue.map((item, index) => (
+                                <span
+                                    className={`${styles.valueItem} ${index > valueBorder ? [styles[`${theme}DownColor`]] : ""} ${index < valueBorder ? [styles[`${theme}UpColor`]] : ""}`}
+                                    key={index}
+                                    style={{ top: `${QLStockMarketIns._paintConfig.dealRange.valueYPos[index] || 0}px` }}
+                                >{splitNumber(item)}</span>
                             ))
                         ) : null
                     }

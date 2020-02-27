@@ -5,6 +5,8 @@ import QLStockMarket from "../../../core"
 import { isFunction } from "../../../utils/types"
 import styles from "../../../common/h5/KLineGraphH5.scss"
 
+import dealData from "../../../transformCal";
+
 /* 
     传入的props的值：
         dataGraph
@@ -41,18 +43,37 @@ class KLineGraphH5 extends Component {
             },
             valueBorder: null,
             upToData: {},
-            upToDateY: 0 //就是 页面中时间显示的位置
+            upToDateY: 0, //就是 页面中时间显示的位置
+
+            curDataGraph: props.dataGraph, // 用于 存储 从 props 传进来的 原始的 dataGraph
         }
     }
     static getDerivedStateFromProps(nextProps, prevState) {
         // console.log(nextProps);
-        if (nextProps.dataGraph && prevState.QLStockMarketIns._data && _.difference(prevState.QLStockMarketIns._data.data, nextProps.dataGraph.data).length) {
-            // console.log("========");
-            prevState.QLStockMarketIns._data = {
-                data: nextProps.dataGraph.data,
+        const resultObj = {};
+        if (nextProps.dataGraph && prevState.QLStockMarketIns._data && !(_.isEqual(prevState.curDataGraph, nextProps.dataGraph))) {
+            console.log(prevState.curDataGraph, nextProps.dataGraph);
+            // 这里如果 去修改 对应的 实例的化，导致 数据更新 混乱；
+            /* prevState.QLStockMarketIns._data = {
+                data: dealData(nextProps.dataGraph, nextProps.sTt)//nextProps.dataGraph.data,
+            } */
+
+            resultObj.curDataGraph = nextProps.dataGraph;
+        }
+        if (!(_.isEqual(prevState.curSTT, nextProps.sTt))) {
+            resultObj.curSTT = nextProps.sTt;
+        }
+
+        return resultObj;
+    }
+    shouldComponentUpdate(nextProps, nextState) {
+        if (!(_.isEqual(this.state.curDataGraph, nextState.curDataGraph)) || !(_.isEqual(this.state.curSTT, nextState.curSTT))) {
+            // console.log(nextState);
+            nextState.QLStockMarketIns._data = {
+                data: dealData(nextState.curDataGraph, nextProps.sTt)
             }
         }
-        return null;
+        return true;
     }
     getUpToDataData(data) {
         let upToData = data;
@@ -67,10 +88,14 @@ class KLineGraphH5 extends Component {
     }
     componentDidMount() {
         const me = this;
+        const tempData = {
+            data: dealData(me.state.curDataGraph, me.props.sTt)
+        }
+
         let QLStockMarketIns = new QLStockMarket({
             selector: "#qlStockMarketK",
             data: {
-                kData: me.props.dataGraph || {},
+                kData: tempData || {},
             },
             config: me.props.config || {},
             emit: {

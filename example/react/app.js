@@ -3,30 +3,37 @@ import ReactDOM from "react-dom"
 
 import styles from "./app.scss"
 
-import {KLineGraphPC,TimeSharingPC,TimeSharingH5,KLineGraphH5} from "../../src/reactCom"
+import { KLineGraphPC, TimeSharingPC, TimeSharingH5, KLineGraphH5 } from "../../src/reactCom"
 
 
 // 外部传进来
 import { timeSharing, prevPrice, kData } from "../../src/enums/dataJSON";
 import { insType } from "../../src/enums";
 
+// k线周期 转换的数据
+import { mData, dData } from "../../src/transformCal/response";
 
 class App extends Component {
     constructor() {
         super();
         this.state = {
             timeSharingData: timeSharing,
-            kData: kData
+            kData: dData,//kData
+            isShow: true,
+            sTt: ['d', 'w']
         }
     }
     click() {
+        let tempShow = !this.state.isShow;
         this.setState({
+            isShow: tempShow,
             timeSharingData: timeSharing.slice(0, 100),
-            kData:kData.slice(0, 50)
+            kData:/* kData */dData.slice(0, 50),
+            sTt: tempShow ? [] : ["d", "w"]
         })
     }
     render() {
-        const { timeSharingData,kData } = this.state;
+        const { timeSharingData, kData,sTt } = this.state;
 
         const timeProps = {
             dataGraph: {
@@ -45,7 +52,8 @@ class App extends Component {
             config: {
                 insType: insType.kLineGraph,
                 theme: "light"
-            }
+            },
+            sTt //这是对应的 资源转换配置
         }
         return (
             <div className={styles.containerH5}>
@@ -53,8 +61,8 @@ class App extends Component {
                     头部内容
                 </div>
                 <div className={styles.content}>
-                    <TimeSharingH5 {...timeProps} height="267px"></TimeSharingH5>
-                    {/* <KLineGraphH5 {...kProps} height="267px"></KLineGraphH5> */}
+                    {/* <TimeSharingH5 {...timeProps} height="267px"></TimeSharingH5> */}
+                    <KLineGraphH5 {...kProps} height="267px"></KLineGraphH5>
                 </div>
                 <div className={styles.btn} onClick={this.click.bind(this)}>click</div>
             </div>
@@ -67,8 +75,8 @@ class App extends Component {
             //         <div className={styles.btn} onClick={this.click.bind(this)}>点击</div>
             //         </div>
             //         <div className={styles.main}>
-            //             <TimeSharingPC {...timeProps} />
-            //             {/* <KLineGraphPC {...kProps} /> */}
+            //             {/* <TimeSharingPC {...timeProps} /> */}
+            //             <KLineGraphPC {...kProps} />
             //         </div>
             //         <div
             //             className={styles.right}

@@ -307,20 +307,85 @@ function scalOrSkewForH5(e) {
 /* 计算  startI,endI,showNumber 的值 */
 /* 
 ssValue:是带有 符号的 放大缩小倍数
+    负数 变少,是 将 showNumber 减少
+    整数 变多 , 是 将 showNumber 增多
+    showMinData: 10,//最少 canvas 显示的 数据条数
+    showMaxData: 200,//最多 canvas 显示 的 数据条数
+    initShowN = showNumber = 20; 初始值
 */
 function calSES(QL, ssValue, posX) {
     let { _kMess: { startI, endI, showNumber }, _DOMWidth: width, _data: data } = QL;
-    // console.log(startI, endI, showNumber);
 
-    /* 
-        边界 应该 是 要 指定 canvas 最多 显示的 条数 showMaxData.length，以及 最小 展示条数 showMinData.length ，在此基础上进行计算
-    */
+    const { kLineGraph: { showMaxData, showMinData } } = calcConfig;
+
     const borderRight = data.data.length, borderLeft = 0;
+    /* 
+        判断逻辑：
+        1、先判断当前是 放大 还是 缩小，再用 现有的 showNumber 和 showMaxData 或者 showMinData 这个两个 范围值进行比较，如果在范围内 再有 后续操作；
+        2、如果在范围内(有放大或者缩小的空间)，在 计算 用现有的 比例 计算出对应的值；
+        3、判定 两个边界值，如果 都超出了 边界值或者有另一边超出，就删去超出的部分进行 放大 缩小；
+    */
+    //    这块逻辑处理有问题，到时候看看；
+    // if ((ssValue > 0 && (showNumber >= Math.min(showMaxData, borderRight))) || (ssValue < 0 && Math.min(showNumber, borderRight) <= showMinData)) {
+    //     console.log("不能进行操作了");
+    //     return "不能进行操作了";
+    // }
+    // console.log(ssValue);
+
+    // let leftN = Math.ceil(posX / width * ssValue); //带符号，左边界移动的个数
+    // let rightN = ssValue - leftN;//带符号，有边界移动的个数
+
+    // startI -= leftN, endI += rightN;
+
+    // let leftDValue = 0, rightDValue = 0;
+
+    // console.log(startI, endI);
+    // if (ssValue > 0) {
+    //     console.log("整数 变多");
+    //     /* 变多的逻辑 */
+    //     if (startI < borderLeft) {
+    //         console.log("startI", startI, leftN);
+    //         leftDValue = Math.abs(startI);
+    //         startI = borderLeft;
+    //     }
+    //     if (endI > borderRight) {
+    //         console.log("endI", endI, rightN);
+    //         rightDValue = Math.abs(endI - borderRight);
+    //         endI = borderRight;
+    //     }
+
+    // } else {
+    //     console.log("负数 变少");
+    //     /* 这是变少的逻辑 */
+    //     if (endI > startI) {
+    //         console.log(endI, startI);
+    //         const resultData = Math.min(showMinData,borderRight);
+    //         if (endI - startI > resultData) {
+    //             const moreN = endI - startI - resultData;
+    //             leftDValue = Math.ceil(posX / width * moreN);
+    //             rightDValue = moreN - leftDValue;
+    //             console.log(moreN, leftDValue, rightDValue);
+    //             startI -= leftDValue;
+    //             endI += rightDValue;
+    //         }
+    //     } else {
+    //         console.log("放大的量出问题了");
+    //         return "放大的量出问题了";
+    //     }
+    // }
+
+    // showNumber += (ssValue - leftDValue - rightDValue);
+    // console.log(showNumber);
+
+
+
+    // 这块逻辑不具备完备性
     let leftN = Math.ceil(posX / width * ssValue); //带符号
     let rightN = ssValue - leftN;//带符号
 
     startI -= leftN, endI += rightN;
-    if (startI >= endI || endI - startI < calcConfig.kLineGraph.showMinData) {
+
+    if (startI >= endI || endI - startI < showMinData || borderRight < showMinData) {
         return "不能在放大了"
     }
     /* 判断边界 */
@@ -338,11 +403,13 @@ function calSES(QL, ssValue, posX) {
         showNumber += (ssValue - Math.abs(startI - borderLeft))
         startI = borderLeft;
     } else {
+        // showNumber 14 startI -2.912295327975456 endI 17.08770467202455 borderRight 17 showMinData 20
+        console.log("showNumber",showNumber,"startI",startI,"endI",endI,"borderRight",borderRight);
         return "不能在缩小了"
     }
 
     /* 禁止 一屏最多 显示 的 条数 */
-    if (Math.min(borderRight, calcConfig.kLineGraph.showMaxData) < showNumber) {
+    if (Math.min(borderRight, showMaxData) < showNumber) {
         return "不能在缩小了"
     }
 
@@ -381,15 +448,17 @@ function mouseDown(e) {
         const n = Math.abs(curX - preX) / perRectWidth,
             delta = curX - preX > 0 ? 1 : -1;
 
-
+        // console.log(n);
 
         const borderRight = data.data.length, borderLeft = 0;
 
         startI -= n * delta, endI -= n * delta;
         if (startI < borderLeft) {
+            // console.log(startI, borderLeft, "不能左移了");
             return "不能左移了"
         }
-        if (endI > borderRight) {
+        if (Math.floor(endI) > borderRight) {
+            // console.log(endI, borderRight,"不能右移了");
             return "不能右移了"
         }
 

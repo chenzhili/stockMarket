@@ -55,7 +55,8 @@ export function calValuePos({ min, max, factorMaxInc, totalHeight, baseHeight, n
     }
 
     return new Array(n).fill(1).reduce((prev, next, index) => {
-        let tempValue = parseInt((max - index * valueIncrement) * 100) / 100;
+        let tempValue = max - index * valueIncrement;
+        tempValue = parseInt(tempValue * (tempValue < 100 ? 1000 : 100)) / (tempValue < 100 ? 1000 : 100);
         let tempPos = parseInt((baseHeight + index * yPosIncrement) * 100) / 100;
         let tempF = f ? parseInt((factorMaxInc - f * index) * 100) / 100 : null;
         prev.actuallyValue.push(tempValue);

@@ -1,5 +1,5 @@
-import { isObject, isString, isFunction,browserRedirect } from "../utils"
-import { insType, Theme,calcConfig } from "../enums"
+import { isObject, isString, isFunction, browserRedirect } from "../utils"
+import { insType, Theme, calcConfig } from "../enums"
 
 import { initTimeSharingDiagram, paintTimeSharingDiagram } from "./timeSharingDiagram"
 import { initkLineGraph, kLineGraphPaint } from "./kLineGraph"
@@ -12,13 +12,19 @@ export default function initCanvas(QLStockMarket) {
 
         const { selector, data, config, emit } = options;
 
+        // 测试 es6的import 的数据是 共享还是 只是值 ,获取到的 结果是可以 对于 修改的值 进行共享；
+        // 初始化外部的配置项
+        if (config.insType === insType.kLineGraph) {
+            calcConfig.kLineGraph = config;
+        }
+
         if (isObject(emit) && isFunction(emit.getUpToDataData)) {
             /*这里要注意私有方法 和 共有方法 的区别 */
             // 这种写法 有问题，这种放到 原型链上 共享 是有 问题的，特别注意
             // QLStockMarket.prototype.getUpToDataData = emit.getUpToDataData;
             // 解决 办法 应该 是吧 当前 方法 作为 私有方法
-            Object.defineProperty(QL,"getUpToDataData",{
-                get(){
+            Object.defineProperty(QL, "getUpToDataData", {
+                get() {
                     return emit.getUpToDataData;
                 }
             })
@@ -27,8 +33,8 @@ export default function initCanvas(QLStockMarket) {
         if (isObject(emit) && isFunction(emit.getChangeData)) {
             // QLStockMarket.prototype.getChangeData = emit.getChangeData;
             // 同上
-            Object.defineProperty(QL,"getChangeData",{
-                get(){
+            Object.defineProperty(QL, "getChangeData", {
+                get() {
                     return emit.getChangeData;
                 }
             })
@@ -57,8 +63,8 @@ export default function initCanvas(QLStockMarket) {
             }
             // 配置只读属性
             Object.defineProperties(QL, {
-                _defulatSale:{
-                    get(){
+                _defulatSale: {
+                    get() {
                         return window.devicePixelRatio || 1;
                     }
                 },

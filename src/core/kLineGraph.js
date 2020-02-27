@@ -1,5 +1,5 @@
-import { paintLine, paintRect,isObject, isArray, isFunction,calValuePos } from "../utils"
-import { strokeOrFill,calcConfig, allGraph } from "../enums"
+import { paintLine, paintRect, isObject, isArray, isFunction, calValuePos } from "../utils"
+import { strokeOrFill, calcConfig, allGraph } from "../enums"
 
 import style from "./index.scss"
 
@@ -13,7 +13,7 @@ export function initkLineGraph(QL, data) {
     canvas.style.width = `${QL._DOMWidth}px`, canvas.style.height = `${QL._DOMHeight}px`;
 
     canvas.style.background = QL._theme.bg || "transparent";
-    
+
     const ctx = canvas.getContext("2d");
 
     if (!ctx) return "initkLineGraph:canvas不支持";
@@ -28,6 +28,9 @@ export function initkLineGraph(QL, data) {
 
     /* 初始化 展示的 数量 的 区间 范围,并存储到 实例中，为了 做 事件的 时候使用 */
     let startI = data.data.length - calcConfig.kLineGraph.initShowN, endI = data.data.length;
+    /* 如果 总长度 小于 initShowN 的时候 */
+    startI = startI < 0 ? 0 : startI;
+    endI = endI < calcConfig.kLineGraph.initShowN ? calcConfig.kLineGraph.initShowN : endI;
     Object.defineProperty(QL, "_kMess", {
         get() {
             return {
@@ -122,12 +125,12 @@ function genMaskCav(QL) {
     const ctx = canvas.getContext("2d");
     canvas.innerHTML = "不支持canvas";
 
-    canvas.width = QL._DOMWidth*QL._defulatSale, canvas.height = QL._DOMHeight*QL._defulatSale;
+    canvas.width = QL._DOMWidth * QL._defulatSale, canvas.height = QL._DOMHeight * QL._defulatSale;
     canvas.style.width = `${QL._DOMWidth}px`, canvas.style.height = `${QL._DOMHeight}px`;
 
     canvas.className = style["mask-cav"];
 
-    ctx.scale(QL._defulatSale,QL._defulatSale);
+    ctx.scale(QL._defulatSale, QL._defulatSale);
     /* 把 遮罩层 的 canvas 的 ctx 存储到 实例上,可能这个 canvas 会提取到  外部 让 两个 实例 共用 */
     Object.defineProperty(QL, "_maskCtx", {
         get() {
@@ -234,7 +237,7 @@ export function kLineGraphPaint(data) {
             colorStroke = asend ? QL._theme.k.asendStroke : QL._theme.k.descStroke;
             colorFill = asend ? QL._theme.k.asendFill : QL._theme.k.descFill;
         } catch (error) {
-
+            console.log(error);
         }
 
         /* 绘制 k线 走势图 */

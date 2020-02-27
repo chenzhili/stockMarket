@@ -50,6 +50,8 @@ import styles from "../../../common/pc/kLineGraph.scss";
 import QLStockMarket from "../../../core";
 import { splitNumber } from "../../../utils/index";
 
+import dealData from "../../../transformCal";
+
 // 周期转换
 
 const showMess = [
@@ -114,19 +116,39 @@ export default {
     dataGraph: {
       deep: true,
       handler(nv) {
-        // console.log("============");
+        console.log("============", nv);
+        const me = this;
         this.QLStockMarketIns._data = {
-          data: nv.data
+          // data: nv.data
+          data:dealData(nv, me.sTt)
         };
+        console.log(this.QLStockMarketIns._data);
+      }
+      // immediate: true,
+    },
+    sTt: {
+      deep: true,
+      handler(nv) {
+        console.log("============", nv);
+        const me = this;
+        this.QLStockMarketIns._data = {
+          // data: nv.data
+          data:dealData(me.dataGraph, nv)
+        };
+        console.log(this.QLStockMarketIns._data);
       }
       // immediate: true,
     }
   },
   async mounted() {
+    const dataGraph = {
+      data:dealData(this.dataGraph,this.sTt)
+    }
+    console.log(dataGraph);
     let QLStockMarketIns = new QLStockMarket({
       selector: "#qlStockMarketK",
       data: {
-        kData: this.dataGraph
+        kData: dataGraph
       },
       config: this.config,
       emit: {
@@ -149,11 +171,6 @@ export default {
       QLStockMarketIns._paintConfig,
       this.valueBorder
     );
-  },
-  created() {
-    // 这里对于 数据进行转换
-    console.log(this.dataGraph);
-    
   },
   destroyed() {
     this.QLStockMarketIns.cancelEventListener();
@@ -179,7 +196,8 @@ export default {
         return {};
       }
     },
-    sTt: { // source 到 target 的装换 ，数组(模拟字典)的格式 ['m1','m5']
+    sTt: {
+      // source 到 target 的转换 ，数组(模拟字典)的格式 ['m1','m5']
       type: Array,
       default: function() {
         return [];

@@ -326,92 +326,85 @@ function calSES(QL, ssValue, posX) {
         3、判定 两个边界值，如果 都超出了 边界值或者有另一边超出，就删去超出的部分进行 放大 缩小；
     */
     //    这块逻辑处理有问题，到时候看看；
-    // if ((ssValue > 0 && (showNumber >= Math.min(showMaxData, borderRight))) || (ssValue < 0 && Math.min(showNumber, borderRight) <= showMinData)) {
-    //     console.log("不能进行操作了");
-    //     return "不能进行操作了";
-    // }
-    // console.log(ssValue);
+    if ((ssValue > 0 && (showNumber >= Math.min(showMaxData, borderRight))) || (ssValue < 0 && Math.min(showNumber, borderRight) <= showMinData)) {
+        return "不能进行操作了";
+    }
 
-    // let leftN = Math.ceil(posX / width * ssValue); //带符号，左边界移动的个数
-    // let rightN = ssValue - leftN;//带符号，有边界移动的个数
+    let leftN = Math.ceil(posX / width * ssValue); //带符号，左边界移动的个数
+    let rightN = ssValue - leftN;//带符号，有边界移动的个数
+    
+    startI -= leftN, endI += rightN;
 
-    // startI -= leftN, endI += rightN;
+    let leftDValue = 0, rightDValue = 0;
 
-    // let leftDValue = 0, rightDValue = 0;
 
-    // console.log(startI, endI);
-    // if (ssValue > 0) {
-    //     console.log("整数 变多");
-    //     /* 变多的逻辑 */
-    //     if (startI < borderLeft) {
-    //         console.log("startI", startI, leftN);
-    //         leftDValue = Math.abs(startI);
-    //         startI = borderLeft;
-    //     }
-    //     if (endI > borderRight) {
-    //         console.log("endI", endI, rightN);
-    //         rightDValue = Math.abs(endI - borderRight);
-    //         endI = borderRight;
-    //     }
+    if (ssValue > 0) {
+        // console.log("整数 变多");
+        /* 变多的逻辑 */
+        if (startI < borderLeft) {
+            // console.log("startI", startI, leftN);
+            leftDValue = Math.abs(startI);
+            startI = borderLeft;
+        }
+        if (endI > borderRight) {
+            // console.log("endI", endI, rightN);
+            rightDValue = Math.abs(endI - borderRight);
+            endI = borderRight;
+        }
 
-    // } else {
-    //     console.log("负数 变少");
-    //     /* 这是变少的逻辑 */
-    //     if (endI > startI) {
-    //         console.log(endI, startI);
-    //         const resultData = Math.min(showMinData,borderRight);
-    //         if (endI - startI > resultData) {
-    //             const moreN = endI - startI - resultData;
-    //             leftDValue = Math.ceil(posX / width * moreN);
-    //             rightDValue = moreN - leftDValue;
-    //             console.log(moreN, leftDValue, rightDValue);
-    //             startI -= leftDValue;
-    //             endI += rightDValue;
-    //         }
-    //     } else {
-    //         console.log("放大的量出问题了");
-    //         return "放大的量出问题了";
-    //     }
-    // }
-
-    // showNumber += (ssValue - leftDValue - rightDValue);
+    } else {
+        // console.log("负数 变少");
+        /* 这是变少的逻辑 */
+        if (endI > startI) {
+            if ((endI - startI) < showMinData) {
+                const moreN = showMinData - (endI - startI);
+                leftDValue = Math.ceil(posX / width * moreN);
+                rightDValue = moreN - leftDValue;
+                startI -= leftDValue;
+                endI += rightDValue;
+            }
+        } else {
+            return "放大的量出问题了";
+        }
+    }
+    showNumber = endI - startI;
     // console.log(showNumber);
 
 
 
     // 这块逻辑不具备完备性
-    let leftN = Math.ceil(posX / width * ssValue); //带符号
-    let rightN = ssValue - leftN;//带符号
+    // let leftN = Math.ceil(posX / width * ssValue); //带符号
+    // let rightN = ssValue - leftN;//带符号
 
-    startI -= leftN, endI += rightN;
+    // startI -= leftN, endI += rightN;
 
-    if (startI >= endI || endI - startI < showMinData || borderRight < showMinData) {
-        return "不能在放大了"
-    }
-    /* 判断边界 */
-    if (startI >= borderLeft && endI <= borderRight) {
-        // /* 这里面 加一个 判断 放大 的 界限，不能小于 最小展示条数 */
-        // if(endI - startI < 10 || showNumber < 10){
-        //     console.log(endI,startI);
-        //     return "不能在放大了";
-        // }
-        showNumber += ssValue;
-    } else if (startI >= borderLeft) {
-        showNumber += (ssValue - Math.abs(endI - borderRight))
-        endI = borderRight;
-    } else if (endI <= borderRight) {
-        showNumber += (ssValue - Math.abs(startI - borderLeft))
-        startI = borderLeft;
-    } else {
-        // showNumber 14 startI -2.912295327975456 endI 17.08770467202455 borderRight 17 showMinData 20
-        console.log("showNumber",showNumber,"startI",startI,"endI",endI,"borderRight",borderRight);
-        return "不能在缩小了"
-    }
+    // if (startI >= endI || endI - startI < showMinData || borderRight < showMinData) {
+    //     return "不能在放大了"
+    // }
+    // /* 判断边界 */
+    // if (startI >= borderLeft && endI <= borderRight) {
+    //     // /* 这里面 加一个 判断 放大 的 界限，不能小于 最小展示条数 */
+    //     // if(endI - startI < 10 || showNumber < 10){
+    //     //     console.log(endI,startI);
+    //     //     return "不能在放大了";
+    //     // }
+    //     showNumber += ssValue;
+    // } else if (startI >= borderLeft) {
+    //     showNumber += (ssValue - Math.abs(endI - borderRight))
+    //     endI = borderRight;
+    // } else if (endI <= borderRight) {
+    //     showNumber += (ssValue - Math.abs(startI - borderLeft))
+    //     startI = borderLeft;
+    // } else {
+    //     // showNumber 14 startI -2.912295327975456 endI 17.08770467202455 borderRight 17 showMinData 20
+    //     console.log("showNumber",showNumber,"startI",startI,"endI",endI,"borderRight",borderRight);
+    //     return "不能在缩小了"
+    // }
 
-    /* 禁止 一屏最多 显示 的 条数 */
-    if (Math.min(borderRight, showMaxData) < showNumber) {
-        return "不能在缩小了"
-    }
+    // /* 禁止 一屏最多 显示 的 条数 */
+    // if (Math.min(borderRight, showMaxData) < showNumber) {
+    //     return "不能在缩小了"
+    // }
 
     Object.defineProperty(QL, "_kMess", {
         get() {

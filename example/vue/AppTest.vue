@@ -7,8 +7,8 @@
         <div class="btn" @click="click">点击</div>
       </div>
       <div class="main">
-        <!-- <TimeSharing :dataGraph="dataGraphForTime" :config="configForTime"></TimeSharing> -->
-        <KLineGraphCom :dataGraph="dataGraphForK" :config="configForK" :sTt="sTt"></KLineGraphCom>
+        <TimeSharing :dataGraph="dataGraphForTime" :config="configForTime"></TimeSharing>
+        <!-- <KLineGraphCom :dataGraph="dataGraphForK" :config="configForK" :sTt="sTt"></KLineGraphCom> -->
       </div>
       <div
         class="right"
@@ -27,7 +27,7 @@ export default {
     return {
       title: "Lorem ipsum dolor sit amet consectetur",
       dataGraphForTime: {
-        data: timeSharing,
+        data: timeSharing.slice(0,50),
         preClosePrice: prevPrice
       },
       dataGraphForK: { 

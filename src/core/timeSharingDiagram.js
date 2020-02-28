@@ -44,6 +44,8 @@ export function initTimeSharingDiagram(QL, data) {
 /* 测算 最大值 和 最小值，并且 实际 绘制 的 上浮和下浮 值 在这里 定义 */
 /* 
     获取的 值 包括 curPrice,avPrice
+
+    这里的逻辑是：中线 是以 昨日收盘价为基准，然后对应的 上下值的 判定，需要 以当前 所有 值 为 参照物进行 浮动；
 */
 function calRangeValue(targetValue, closePrice) {
     if (!isArray(targetValue) || !targetValue.length) return "calRangeValue：没数据";
@@ -58,16 +60,41 @@ function calRangeValue(targetValue, closePrice) {
         curMin = temArrByCur[0],
         avMax = tempArrByav[len - 1],
         avMin = tempArrByav[0];
-    //加上 浮动的 值
-    max = Math.max(curMax, avMax), min = Math.min(curMin, avMin);
 
-    const dTotal = max - min;
-    max += dTotal * calcConfig.upAndDown;
-    min -= dTotal * calcConfig.upAndDown;
-    dValue = max - closePrice;
-    if ((closePrice - dValue) < min) {
-        min = closePrice - dValue;
+    /*这里的 逻辑 需要重写
+        对于 上下界限 为了有 容错性，把 最大值 和 最小值，以及 默认 浮动 比例 ，来做这块；
+    */
+    const floatRate = 0.1; // 以 内陆 股市 为基准；
+    const floatUp = closePrice * (1 + floatRate), floatDown = closePrice * (1 - floatRate);
+
+    /* 对于 max 值 的 判定 */
+    if (closePrice >= Math.max(curMax, avMax)) { // 说明 基准线的 上面沒值
+        max = floatUp;
+    } else {
+        max = Math.max(curMax, avMax);
     }
+
+    /* 对于 min 值 的判定 */
+    if (closePrice <= Math.min(curMin, avMin)) {
+        min = floatDown;
+    } else {
+        min = Math.min(curMin, avMin);
+    }
+
+    const dUpValue = max - closePrice, dDownValue = closePrice - min;
+    max += dUpValue * calcConfig.upAndDown;
+    min -= dDownValue * calcConfig.upAndDown;
+
+    // //加上 浮动的 值
+    // max = Math.max(curMax, avMax), min = Math.min(curMin, avMin);
+
+    // const dTotal = max - min;
+    // max += dTotal * calcConfig.upAndDown;
+    // min -= dTotal * calcConfig.upAndDown;
+    // dValue = max - closePrice;
+    // if ((closePrice - dValue) < min) {
+    //     min = closePrice - dValue;
+    // }
     return { max, min }
 }
 
@@ -128,31 +155,38 @@ function genMaskCav(QL) {
     return canvas;
 
 }
+// 计算 走势 对应 的 布局数据
+function calTimeValuePos({ min, max, prevClose, totalHeight, baseHeight, n }) {
+    const yPosIncrement = totalHeight / (n - 1);
+    const halfN = Math.floor(n / 2);
 
-/* 计算 对应的 坐标 系数 */
-// function calValuePos({ min, max, factorMaxInc, totalHeight, baseHeight, n }) {
-//     console.log(totalHeight);
-//     const valueIncrement = (max - min) / (n - 1), yPosIncrement = totalHeight / (n - 1);
-//     const config = {
-//         actuallyValue: [],
-//         valueYPos: [],
-//     };
-//     let f = null;
-//     if (factorMaxInc) {
-//         f = factorMaxInc / ((n - 1) / 2);
-//         config.factorInc = [];
-//     }
+    const factorInc = [], // rate 值
+        actuallyValue = [], // 现价
+        valueYPos = []; // 实际 纵坐标
 
-//     return new Array(n).fill(1).reduce((prev, next, index) => {
-//         let tempValue = parseInt((max - index * valueIncrement) * 100) / 100;
-//         let tempPos = parseInt((baseHeight + index * yPosIncrement) * 100) / 100;
-//         let tempF = f ? parseInt((factorMaxInc - f * index) * 100) / 100 : null;
-//         prev.actuallyValue.push(tempValue);
-//         prev.valueYPos.push(tempPos);
-//         f && prev.factorInc.push(tempF);
-//         return prev;
-//     }, config);
-// }
+    const upFactor = (max - prevClose) / halfN, downFactor = (prevClose - min) / halfN;
+
+    let i = 0, actuallyFactor = null, curAct = null, curInc = null;
+    while (i < n) {
+        valueYPos.push(parseInt((baseHeight + i * yPosIncrement) * 100) / 100);
+
+        // 处理 现价 和  rate 值
+        if (i === halfN) {
+            curAct = prevClose;
+            curInc = 0;
+        } else {
+            actuallyFactor = i < halfN ? upFactor : downFactor;
+            curAct = +prevClose + (halfN - i) * actuallyFactor;
+            curAct = parseInt(curAct * (curAct < 100 ? 1000 : 100)) / (curAct < 100 ? 1000 : 100);
+            curInc = parseInt((curAct - prevClose) / prevClose * 1000 * 100) / 1000;
+            console.log(curInc);
+        }
+        actuallyValue.push(curAct);
+        factorInc.push(curInc);
+        i++;
+    }
+    return { factorInc, actuallyValue, valueYPos };
+}
 export function paintTimeSharingDiagram(data) {
     const QL = this;
 
@@ -164,18 +198,17 @@ export function paintTimeSharingDiagram(data) {
 
     const config = calActuallyHeight(QL, calcConfig.timeSharingDiagram);
 
+
     const { data: chartData, preClosePrice } = data;
 
     // 用于外部 绘制 ui 用的信息 
     const paintConfig = {};
 
     // console.log(chartData, preClosePrice);
-    let LMin = null, LMax = null, LYFactor = null,//这是 line图的
+    let LMin = null, LMax = null, LYFactor = null, LYUpFactor = null, LYDownFator = null,//这是 line图的,需要对于 基准线上下进行区分
+
         DMin = null, DMax = null, DYFactor = null, // deal 图
         xFactor = QL._DOMWidth / 240; //这里的 240 是指 分成了 4段 ，每段 分为 60min
-
-
-
 
 
     // 时分的 line 图
@@ -183,7 +216,11 @@ export function paintTimeSharingDiagram(data) {
         let lineRange = calRangeValue(chartData, preClosePrice);
         console.log("lineRange", lineRange, preClosePrice);
         LMin = lineRange.min, LMax = lineRange.max;
-        LYFactor = config[allGraph.line].totalHeight / (LMax - LMin);
+
+        // LYFactor = config[allGraph.line].totalHeight / (LMax - LMin);
+        /* LYFactor 新的逻辑 */
+        LYUpFactor = config[allGraph.line].totalHeight / 2 / (LMax - preClosePrice);
+        LYDownFator = config[allGraph.line].totalHeight / 2 / (preClosePrice - LMin);
 
         if (!QL._gapD) {
             Object.defineProperty(QL, "_gapD", {
@@ -196,19 +233,10 @@ export function paintTimeSharingDiagram(data) {
 
         paintConfig.dealMountPos = config[allGraph.line].totalHeight;
 
-        // 计算 指数 对应 位置的值
-        paintConfig.valueRange = calValuePos({ min: LMin, max: LMax, factorMaxInc: LMax / preClosePrice, totalHeight: config[allGraph.line].totalHeight, baseHeight: config[allGraph.line].baseHeight, n: 5 });
 
-        /* paintLine({
-            ctx,
-            sx: 0,
-            sy: config[allGraph.line].totalHeight,
-            ex: QL._DOMWidth,
-            ey: config[allGraph.line].totalHeight,
-            style: {
-                color: "#00f"
-            }
-        }) */
+        paintConfig.valueRange = calTimeValuePos({ min: LMin, max: LMax, prevClose: preClosePrice, totalHeight: config[allGraph.line].totalHeight, baseHeight: config[allGraph.line].baseHeight, n: 5 });
+
+        /* 这跟线 对应的就是 昨日收盘价 */
         paintLine({
             ctx,
             sx: 0,
@@ -250,37 +278,17 @@ export function paintTimeSharingDiagram(data) {
         console.log("成交量", DMin, DMax, config[allGraph.dealMount].totalHeight);
         // 计算 指数 对应 位置的值
         paintConfig.dealRange = calValuePos({ min: DMin, max: DMax, totalHeight: config[allGraph.dealMount].totalHeight, baseHeight: config[allGraph.dealMount].baseHeight, n: 3 });
-
-        /* paintLine({
-            ctx,
-            sx: 0,
-            sy: config[allGraph.dealMount].baseHeight,
-            ex: QL._DOMWidth,
-            ey: config[allGraph.dealMount].baseHeight,
-            style: {
-                color: "#ff0"
-            }
-        })
-        paintLine({
-            ctx,
-            sx: 0,
-            sy: config[allGraph.dealMount].baseHeight + config[allGraph.dealMount].totalHeight,
-            ex: QL._DOMWidth,
-            ey: config[allGraph.dealMount].baseHeight + config[allGraph.dealMount].totalHeight,
-            style: {
-                color: "#0f0"
-            }
-        }) */
     }
 
     /* 初始化 时间的 位置信息 */
 
     paintConfig.paintTimeX = [0];
 
-    /* 若果到时候 需要 绘制 区域 面积，重新 绘制一个 */
-
+    /* 如果到时候 需要 绘制 区域 面积，重新 绘制一个 */
+    let curX = null;
     for (let i = 0, len = chartData.length; i < len; i++) {
-        const curX = xFactor * i;
+        curX = xFactor * i;
+        /* 放入实际 开盘的 时间以及图 */
         if (i % 60 === 0 && i != 240 && i !== 0) {
             paintConfig.paintTimeX.push(curX);
             paintLine({
@@ -306,7 +314,33 @@ export function paintTimeSharingDiagram(data) {
                 }
             })
         }
-        if (LYFactor) {
+        if (i > 0 && LYUpFactor && LYDownFator) {
+            let cx = xFactor * i, cy, sy;
+            if (chartData[i].curPrice >= preClosePrice) {
+                cy = config[allGraph.line].baseHeight + LYUpFactor * (LMax - chartData[i].curPrice);
+            } else {
+                cy = config[allGraph.line].baseHeight + config[allGraph.line].totalHeight / 2 + LYDownFator * (preClosePrice - chartData[i].curPrice);
+            }
+            if (chartData[i - 1].curPrice >= preClosePrice) {
+                sy = config[allGraph.line].baseHeight + LYUpFactor * (LMax - chartData[i - 1].curPrice);
+            } else {
+                sy = config[allGraph.line].baseHeight + config[allGraph.line].totalHeight / 2 + LYDownFator * (preClosePrice - chartData[i - 1].curPrice);
+            }
+
+            chartData[i].actuallyX = cx;
+            chartData[i].actuallyY = cy;
+            i > 0 && paintLine({
+                ctx,
+                sx: xFactor * (i - 1),
+                sy: sy,
+                ex: cx,
+                ey: cy,
+                style: {
+                    color: QL._theme.time.line.curPrice || "#000",
+                }
+            });
+        }
+        /* if (LYFactor) {
             let cx = xFactor * i, cy = config[allGraph.line].baseHeight + config[allGraph.line].totalHeight - LYFactor * (chartData[i].curPrice - LMin);
             chartData[i].actuallyX = cx;
             chartData[i].actuallyY = cy;
@@ -320,7 +354,8 @@ export function paintTimeSharingDiagram(data) {
                     color: QL._theme.time.line.curPrice || "#000",
                 }
             });
-        }
+        } */
+        /* 画成交量 */
         DYFactor && paintLine({
             ctx,
             sx: curX,
@@ -335,7 +370,7 @@ export function paintTimeSharingDiagram(data) {
     /* 对于当前 的 走势图的 值 不够 对应 的 区间 需要自动补全 */
     const tempLen = chartData.length, range = 60, maxRange = 240;
     let n = Math.ceil(tempLen / range), tempSX = 0;
-    
+
     while ((tempLen < (range * n)) && (range * n < maxRange)) {
         paintConfig.paintTimeX.push(xFactor * range * n);
         tempSX = xFactor * range * n;
@@ -365,17 +400,6 @@ export function paintTimeSharingDiagram(data) {
     }
     paintConfig.paintTimeX.push(240 * xFactor);
 
-    /* paintLine({
-        ctx,
-        sx: parseInt(xFactor * (chartData.length - 1)) - 2,
-        sy: config[allGraph.line].baseHeight + config[allGraph.line].totalHeight - LYFactor * (chartData[chartData.length - 1].curPrice - LMin),
-        ex: parseInt(xFactor * (chartData.length - 1)) - 2,
-        ey: config[allGraph.line].totalHeight,
-        style: {
-            color: QL._theme.time.line.curPrice || "#000",
-            setLineDash: [4],
-        }
-    }) */
     Object.defineProperty(QL, "_paintConfig", {
         get() {
             return paintConfig;

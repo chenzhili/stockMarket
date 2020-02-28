@@ -102,7 +102,6 @@ export default function initCanvas(QLStockMarket) {
                         if (config.insType === insType.timeSharingDiagram) {
                             // console.log(newValue);
                             tempData = newValue;
-                            debugger
                             /* 这里 进行重绘 */
                             QL.paintTimeSharingDiagram(tempData);
                         }

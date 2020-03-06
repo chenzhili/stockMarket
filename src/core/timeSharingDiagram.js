@@ -156,7 +156,7 @@ function genMaskCav(QL) {
 
 }
 // 计算 走势 对应 的 布局数据
-function calTimeValuePos({ min, max, prevClose, totalHeight, baseHeight, n }) {
+function calTimeValuePos({ min, max, prevClose, totalHeight, baseHeight, n, decimal = 100 }) {
     const yPosIncrement = totalHeight / (n - 1);
     const halfN = Math.floor(n / 2);
 
@@ -177,9 +177,9 @@ function calTimeValuePos({ min, max, prevClose, totalHeight, baseHeight, n }) {
         } else {
             actuallyFactor = i < halfN ? upFactor : downFactor;
             curAct = +prevClose + (halfN - i) * actuallyFactor;
-            curAct = parseInt(curAct * (curAct < 100 ? 1000 : 100)) / (curAct < 100 ? 1000 : 100);
-            curInc = parseInt((curAct - prevClose) / prevClose * 1000 * 100) / 1000;
-            console.log(curInc);
+            curAct = parseInt(curAct * decimal) / decimal.toFixed((decimal + '').length-1);
+            curInc = parseInt((curAct - prevClose) / prevClose * decimal * 100) / decimal.toFixed((decimal + '').length);
+            // console.log(curInc);
         }
         actuallyValue.push(curAct);
         factorInc.push(curInc);
@@ -214,7 +214,7 @@ export function paintTimeSharingDiagram(data) {
     // 时分的 line 图
     if (config[allGraph.line]) {
         let lineRange = calRangeValue(chartData, preClosePrice);
-        console.log("lineRange", lineRange, preClosePrice);
+        // console.log("lineRange", lineRange, preClosePrice);
         LMin = lineRange.min, LMax = lineRange.max;
 
         // LYFactor = config[allGraph.line].totalHeight / (LMax - LMin);
@@ -234,7 +234,7 @@ export function paintTimeSharingDiagram(data) {
         paintConfig.dealMountPos = config[allGraph.line].totalHeight;
 
 
-        paintConfig.valueRange = calTimeValuePos({ min: LMin, max: LMax, prevClose: preClosePrice, totalHeight: config[allGraph.line].totalHeight, baseHeight: config[allGraph.line].baseHeight, n: 5 });
+        paintConfig.valueRange = calTimeValuePos({ min: LMin, max: LMax, prevClose: preClosePrice, totalHeight: config[allGraph.line].totalHeight, baseHeight: config[allGraph.line].baseHeight, n: 5, decimal: QL._decimal });
 
         /* 这跟线 对应的就是 昨日收盘价 */
         paintLine({
@@ -275,9 +275,9 @@ export function paintTimeSharingDiagram(data) {
         DMin = dealRange.min, DMax = dealRange.max;
         DYFactor = config[allGraph.dealMount].totalHeight / (DMax - DMin);
 
-        console.log("成交量", DMin, DMax, config[allGraph.dealMount].totalHeight);
+        // console.log("成交量", DMin, DMax, config[allGraph.dealMount].totalHeight);
         // 计算 指数 对应 位置的值
-        paintConfig.dealRange = calValuePos({ min: DMin, max: DMax, totalHeight: config[allGraph.dealMount].totalHeight, baseHeight: config[allGraph.dealMount].baseHeight, n: 3 });
+        paintConfig.dealRange = calValuePos({ min: DMin, max: DMax, totalHeight: config[allGraph.dealMount].totalHeight, baseHeight: config[allGraph.dealMount].baseHeight, n: 3, decimal: QL._decimal });
     }
 
     /* 初始化 时间的 位置信息 */
@@ -285,7 +285,42 @@ export function paintTimeSharingDiagram(data) {
     paintConfig.paintTimeX = [0];
 
     /* 如果到时候 需要 绘制 区域 面积，重新 绘制一个 */
-    let curX = null;
+    let curX = null, actuallyItem;
+
+    /**
+     * 绘制线 的 方法
+     * @param {*} param0 
+     */
+    const paintLineFun = ({ i, paintType, cx }) => {
+        let cy, sy;
+        if (chartData[i][paintType] >= preClosePrice) {
+            cy = config[allGraph.line].baseHeight + LYUpFactor * (LMax - chartData[i][paintType]);
+        } else {
+            cy = config[allGraph.line].baseHeight + config[allGraph.line].totalHeight / 2 + LYDownFator * (preClosePrice - chartData[i][paintType]);
+        }
+        if (chartData[i - 1][paintType] >= preClosePrice) {
+            sy = config[allGraph.line].baseHeight + LYUpFactor * (LMax - chartData[i - 1][paintType]);
+        } else {
+            sy = config[allGraph.line].baseHeight + config[allGraph.line].totalHeight / 2 + LYDownFator * (preClosePrice - chartData[i - 1][paintType]);
+        }
+
+        // 这个是 现价需要的值
+        /* chartData[i].actuallyX = cx;
+        chartData[i].actuallyY = cy; */
+        i > 0 && paintLine({
+            ctx,
+            sx: xFactor * (i - 1),
+            sy: sy,
+            ex: cx,
+            ey: cy,
+            style: {
+                color: QL._theme.time.line[paintType] || "#000",
+            }
+        });
+        return { actuallyX: cx, actuallyY: cy }
+    }
+
+
     for (let i = 0, len = chartData.length; i < len; i++) {
         curX = xFactor * i;
         /* 放入实际 开盘的 时间以及图 */
@@ -315,46 +350,11 @@ export function paintTimeSharingDiagram(data) {
             })
         }
         if (i > 0 && LYUpFactor && LYDownFator) {
-            let cx = xFactor * i, cy, sy;
-            if (chartData[i].curPrice >= preClosePrice) {
-                cy = config[allGraph.line].baseHeight + LYUpFactor * (LMax - chartData[i].curPrice);
-            } else {
-                cy = config[allGraph.line].baseHeight + config[allGraph.line].totalHeight / 2 + LYDownFator * (preClosePrice - chartData[i].curPrice);
-            }
-            if (chartData[i - 1].curPrice >= preClosePrice) {
-                sy = config[allGraph.line].baseHeight + LYUpFactor * (LMax - chartData[i - 1].curPrice);
-            } else {
-                sy = config[allGraph.line].baseHeight + config[allGraph.line].totalHeight / 2 + LYDownFator * (preClosePrice - chartData[i - 1].curPrice);
-            }
-
-            chartData[i].actuallyX = cx;
-            chartData[i].actuallyY = cy;
-            i > 0 && paintLine({
-                ctx,
-                sx: xFactor * (i - 1),
-                sy: sy,
-                ex: cx,
-                ey: cy,
-                style: {
-                    color: QL._theme.time.line.curPrice || "#000",
-                }
-            });
+            actuallyItem = paintLineFun({ i, paintType: "curPrice", cx: curX });
+            chartData[i].actuallyX = actuallyItem.actuallyX;
+            chartData[i].actuallyY = actuallyItem.actuallyY;
+            paintLineFun({ i, paintType: "avPrice", cx: curX });
         }
-        /* if (LYFactor) {
-            let cx = xFactor * i, cy = config[allGraph.line].baseHeight + config[allGraph.line].totalHeight - LYFactor * (chartData[i].curPrice - LMin);
-            chartData[i].actuallyX = cx;
-            chartData[i].actuallyY = cy;
-            i > 0 && paintLine({
-                ctx,
-                sx: xFactor * (i - 1),
-                sy: config[allGraph.line].baseHeight + config[allGraph.line].totalHeight - LYFactor * (chartData[i - 1].curPrice - LMin),
-                ex: cx,
-                ey: cy,
-                style: {
-                    color: QL._theme.time.line.curPrice || "#000",
-                }
-            });
-        } */
         /* 画成交量 */
         DYFactor && paintLine({
             ctx,

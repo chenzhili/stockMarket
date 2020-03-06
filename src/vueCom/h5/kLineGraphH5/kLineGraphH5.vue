@@ -7,7 +7,7 @@
           {{item.name || curData.date}}:
           <span
             :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}"
-          >{{splitNumber(upToData[item.key] || curData[item.key])}}</span>
+          >{{formatNumber(upToData[item.key] || curData[item.key],decimal)}}{{item.key === 'rate' ? '%' : ''}}</span>
         </span>
       </template>
     </div>
@@ -30,6 +30,17 @@
           >{{splitNumber(item)}}</span>
         </template>
       </div>
+      <!-- MA均线 -->
+      <div :class="styles.updateMA">
+        <template v-for="(item,index) of QLStockMarketIns._MAConfig">
+          <span
+            v-if="Object.keys(upToData).length?upToData[`MA${item}`]: curData[`MA${item}`]"
+            :class="styles.ma"
+            :key="index"
+            :style="{color:QLStockMarketIns._theme.k.MAColor[index]}"
+          >MA{{item}}:{{Object.keys(upToData).length ? formatNumber(upToData[`MA${item}`],decimal): formatNumber(curData[`MA${item}`],decimal)}}</span>
+        </template>
+      </div>
       <div
         v-if="upToData.close"
         :class="[styles.updateValue,styles[upToData.rate>0?`${theme}UpColorBg`:`${theme}DownColorBg`]]"
@@ -48,7 +59,7 @@
 import styles from "../../../common/h5/kLineGraphH5.scss";
 
 import QLStockMarket from "../../../core";
-import { splitNumber } from "../../../utils/index";
+import { splitNumber,formatNumber } from "../../../utils/index";
 import { isFunction } from "../../../utils/types";
 
 import dealData from "../../../transformCal";
@@ -58,7 +69,7 @@ const showMess = [
   { key: "high", name: "高" },
   { key: "low", name: "低" },
   { key: "close", name: "收" },
-  { key: "rate", name: "涨跌" },
+  // { key: "rateUpDown", name: "涨跌" },
   { key: "rate", name: "涨幅" }
 ];
 
@@ -84,7 +95,8 @@ export default {
       },
       valueBorder: null,
       upToData: {},
-      upToDateY: 0 //就是 页面中时间显示的位置
+      upToDateY: 0, //就是 页面中时间显示的位置
+      decimal: 100 // 默认的保留位数
     };
   },
   computed: {
@@ -97,6 +109,7 @@ export default {
   },
   methods: {
     splitNumber,
+    formatNumber,
     /* 在 hover 事件 的运用 */
     getUpToDataData(data) {
       //   console.log("==============", data);
@@ -127,13 +140,13 @@ export default {
     sTt: {
       deep: true,
       handler(nv) {
-        console.log("============", nv);
+        // console.log("============", nv);
         const me = this;
         this.QLStockMarketIns._data = {
           // data: nv.data
           data: dealData(me.dataGraph, nv)
         };
-        console.log(this.QLStockMarketIns._data);
+        // console.log(this.QLStockMarketIns._data);
       }
       // immediate: true,
     }
@@ -142,7 +155,7 @@ export default {
     const dataGraph = {
       data: dealData(this.dataGraph, this.sTt)
     };
-    console.log(dataGraph);
+    // console.log(dataGraph);
     let QLStockMarketIns = new QLStockMarket({
       selector: "#qlStockMarketK",
       data: {
@@ -163,12 +176,12 @@ export default {
         QLStockMarketIns._paintConfig.valueRange.valueYPos.length - 1
       ];
     this.$set(this, "QLStockMarketIns", QLStockMarketIns);
-
-    console.log(
-      QLStockMarketIns,
-      QLStockMarketIns._paintConfig,
-      this.valueBorder
-    );
+    this.decimal = QLStockMarketIns._decimal;
+    // console.log(
+    //   QLStockMarketIns,
+    //   QLStockMarketIns._paintConfig,
+    //   this.valueBorder
+    // );
   },
   destroyed() {
     if (

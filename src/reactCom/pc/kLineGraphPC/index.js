@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { splitNumber } from "../../../utils/index";
+import { splitNumber, formatNumber } from "../../../utils/index";
 import QLStockMarket from "../../../core"
 import styles from "../../../common/pc/kLineGraph.scss"
 
@@ -19,7 +19,7 @@ const showMess = [
     { key: "high", name: "高" },
     { key: "low", name: "低" },
     { key: "close", name: "收" },
-    { key: "rate", name: "涨跌" },
+    // { key: "rateUpDown", name: "涨跌" },
     { key: "rate", name: "涨幅" }
 ];
 class KLineGraphPC extends Component {
@@ -46,6 +46,7 @@ class KLineGraphPC extends Component {
 
             curDataGraph: props.dataGraph, // 用于 存储 从 props 传进来的 原始的 dataGraph
             curSTT: props.sTt, // 用于存储 从 props 获取的 sTt
+            decimal: 100 // 默认的保留位数
         }
         // console.log(props);
     }
@@ -113,14 +114,15 @@ class KLineGraphPC extends Component {
         ];
 
         this.setState({
-            valueBorder, upToDateY, QLStockMarketIns
+            valueBorder, upToDateY, QLStockMarketIns,
+            decimal: QLStockMarketIns._decimal
         });
     }
     render() {
         let { width, height, config } = this.props;
         width = width || "100%", height = height || "100%";
         const theme = config && config.theme ? config.theme : "light";
-        const { upToData, curData, QLStockMarketIns, upOrDown, valueBorder, upToDateY } = this.state;
+        const { upToData, curData, QLStockMarketIns, upOrDown, valueBorder, upToDateY, decimal } = this.state;
         return (
             <div style={{ width: width, height: height }} className={`${styles.container} ${styles[`${theme}Bg`]}`}>
                 <div className={styles.content}>
@@ -132,7 +134,7 @@ class KLineGraphPC extends Component {
                                     {item.name || curData.date}:
                                 <span
                                         className={`${upOrDown === 'down' ? [styles[`${theme}DownColor`]] : ""} ${upOrDown === 'up' ? [styles[`${theme}UpColor`]] : ""}`}
-                                    >{splitNumber(upToData[item.key] || curData[item.key])}</span>
+                                    >{formatNumber(upToData[item.key] || curData[item.key], decimal)}{item.key === 'rate' ? '%' : ''}</span>
                                 </span>
                             ))
                         }
@@ -154,6 +156,20 @@ class KLineGraphPC extends Component {
                                 >{upToData.date}</div>
                             ) : null
                         }
+                        {/* MA均线 */}
+                        <div className={styles.updateMA}>
+                            {
+                                QLStockMarketIns._MAConfig && QLStockMarketIns._MAConfig.length ? (QLStockMarketIns._MAConfig.map((item, index) => (
+                                    ((Object.keys(upToData).length ? upToData[`MA${item}`] : curData[`MA${item}`]) ? <span
+                                        className={styles.ma}
+                                        key={index}
+                                        style={{ color: QLStockMarketIns._theme.k.MAColor[index] }}
+                                    >MA{item}:{Object.keys(upToData).length ? formatNumber(upToData[`MA${item}`], decimal) : formatNumber(curData[`MA${item}`], decimal)}
+                                    </span> : null)
+                                ))) : null
+
+                            }
+                        </div>
                     </div>
                     <div className={`${styles.marketMess} ${styles[`${theme}GenText`]}`}>预留地方</div>
                 </div>
@@ -181,7 +197,7 @@ class KLineGraphPC extends Component {
                         ) : null
                     }
                 </div>
-            </div>
+            </div >
         )
     }
 }

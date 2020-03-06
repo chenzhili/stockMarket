@@ -18,7 +18,7 @@
         background:#eee;
         padding:4px 6px;
         span{
-            flex:33%;
+            flex:33% 0 1;
             line-height:1.2rem;
             &:first-child{
                 flex:100%;
@@ -56,7 +56,7 @@
     .qlContainer{
         flex:1;
         position: relative;
-        .updateValue,.updateDate{
+        .updateValue,.updateDate,.updateMA{
             position: absolute;
             z-index:100;
             color:#fff;
@@ -68,6 +68,16 @@
         .updateDate{
             line-height:20px;
             transform:translateX(-50%);
+        }
+        .updateMA{
+            top:0;
+            line-height:20px;
+            width:100%;
+            overflow: hidden;
+            .ma{
+                margin-left: .5em;
+                transform:scale(.8);
+            }
         }
     }
 }

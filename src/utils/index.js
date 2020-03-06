@@ -3,11 +3,11 @@ import { pcOrH5 } from "../enums"
 /* 统一 文件 出口 */
 // import {} from "./calculation"
 import { paintLine, paintRect } from "./paintCom"
-import { isString, isNumber, isBoolean, isArray, isObject, isFunction, isNull, isUndefined } from "./types"
+import { isString, isNumber, isBoolean, isArray, isObject, isFunction, isNull, isUndefined, type } from "./types"
 
 export {
     paintLine, paintRect,
-    isString, isNumber, isBoolean, isArray, isObject, isFunction, isNull, isUndefined
+    isString, isNumber, isBoolean, isArray, isObject, isFunction, isNull, isUndefined, type
 }
 
 /* 判断 当前 是 pc 还是 h5 */
@@ -41,7 +41,7 @@ export function splitNumber(num) {
 }
 
 /* 计算 对应的 坐标 系数 */
-export function calValuePos({ min, max, factorMaxInc, totalHeight, baseHeight, n }) {
+export function calValuePos({ min, max, factorMaxInc, totalHeight, baseHeight, n, decimal = 100 }) {
     // console.log(totalHeight);
     const valueIncrement = (max - min) / (n - 1), yPosIncrement = totalHeight / (n - 1);
     const config = {
@@ -56,7 +56,7 @@ export function calValuePos({ min, max, factorMaxInc, totalHeight, baseHeight, n
 
     return new Array(n).fill(1).reduce((prev, next, index) => {
         let tempValue = max - index * valueIncrement;
-        tempValue = parseInt(tempValue * (tempValue < 100 ? 1000 : 100)) / (tempValue < 100 ? 1000 : 100);
+        tempValue = (parseInt(tempValue * decimal) / decimal).toFixed((decimal + '').length-1);
         let tempPos = parseInt((baseHeight + index * yPosIncrement) * 100) / 100;
         let tempF = f ? parseInt((factorMaxInc - f * index) * 100) / 100 : null;
         prev.actuallyValue.push(tempValue);
@@ -64,4 +64,20 @@ export function calValuePos({ min, max, factorMaxInc, totalHeight, baseHeight, n
         f && prev.factorInc.push(tempF);
         return prev;
     }, config);
+}
+
+/* 统一处理需要的位数 */
+export function getDecimalValue(value) {
+    value += "";
+    let len = value.split(".")[1].length;
+    value = "1";
+    while (len > 0) {
+        value += 0;
+        len--;
+    }
+    return (+value);
+}
+/* 格式化 数 */
+export function formatNumber(number, decimal) {
+    return ((parseInt(number * decimal) / decimal).toFixed((decimal + '').length-1));
 }

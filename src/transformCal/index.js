@@ -1,5 +1,12 @@
-import { periodConfig, staticPeriod } from './staticConfig';
+import { periodConfig, staticPeriod, MA, RSI } from './staticConfig';
 import { isArray, isString } from '../utils/types';
+
+// 指标线模块
+import uniformDealData from './calcRSI'
+
+export { periodConfig, staticPeriod, MA, RSI }
+
+export { uniformDealData }
 
 import { dData, mData } from "./response";
 /* 存储对应的 历史数据的最后一项值，用于对于 收盘价的 获取 */
@@ -283,7 +290,7 @@ dealHisData.mHisDataCore = dealCurData.mCurDataCore = function (data, n) {
         }
         number++;
     }
-    console.log(resultArr);
+    // console.log(resultArr);
     return resultArr;
 }
 

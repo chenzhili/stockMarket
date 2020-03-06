@@ -1,4 +1,4 @@
-import { isObject, isString, isFunction, browserRedirect } from "../utils"
+import { isObject, isString, isFunction, browserRedirect, getDecimalValue } from "../utils"
 import { insType, Theme, calcConfig } from "../enums"
 
 import { initTimeSharingDiagram, paintTimeSharingDiagram } from "./timeSharingDiagram"
@@ -12,11 +12,12 @@ export default function initCanvas(QLStockMarket) {
 
         const { selector, data, config, emit } = options;
 
-        // 测试 es6的import 的数据是 共享还是 只是值 ,获取到的 结果是可以 对于 修改的值 进行共享；
-        // 初始化外部的配置项
-        if (config.insType === insType.kLineGraph) {
-            calcConfig.kLineGraph = config;
-        }
+        // 在 initData 中 进行初始化
+        // // 测试 es6的import 的数据是 共享还是 只是值 ,获取到的 结果是可以 对于 修改的值 进行共享；
+        // // 初始化外部的配置项
+        // if (config.insType === insType.kLineGraph) {
+        //     calcConfig.kLineGraph = config;
+        // }
 
         if (isObject(emit) && isFunction(emit.getUpToDataData)) {
             /*这里要注意私有方法 和 共有方法 的区别 */
@@ -49,7 +50,7 @@ export default function initCanvas(QLStockMarket) {
 
         const device = browserRedirect();
 
-        console.log(DOM, width, height);
+        // console.log(DOM, width, height);
 
         dealTheme(QL, config.theme);
 
@@ -61,8 +62,25 @@ export default function initCanvas(QLStockMarket) {
             if (config.insType === insType.kLineGraph) {
                 tempData = data.kData
             }
+            console.log(tempData);
             // 配置只读属性
             Object.defineProperties(QL, {
+                // 初始化 小数位数
+                _decimal: {
+                    get() {
+                        if (tempData.data.length) {
+                            return 100;
+                        } else {
+                            if (config.insType === insType.timeSharingDiagram) {
+                                return getDecimalValue(tempData.data[0].curPrice);
+                            }
+                            if (config.insType === insType.kLineGraph) {
+                                return getDecimalValue(tempData.data[0].close);
+                            }
+                        }
+                    },
+                    configurable: true
+                },
                 _defulatSale: {
                     get() {
                         return window.devicePixelRatio || 1;
@@ -99,29 +117,59 @@ export default function initCanvas(QLStockMarket) {
                         return tempData
                     },
                     set(newValue) {
+                        /* 出现了指标线 计算，需要在 set的 时候，将获取到的 值 进行 处理 */
+                        let typeData = config.insType === insType.timeSharingDiagram ? { chartData: newValue } : { kData: newValue };
+
+                        typeData = QL.outputData({ ...options, data: typeData });
+
                         if (config.insType === insType.timeSharingDiagram) {
                             // console.log(newValue);
-                            tempData = newValue;
-                            /* 这里 进行重绘 */
-                            QL.paintTimeSharingDiagram(tempData);
-                        }
-                        if (config.insType === insType.kLineGraph) {
-                            tempData = newValue;
-                            /* 初始化 展示的 数量 的 区间 范围,并存储到 实例中，为了 做 事件的 时候使用 */
-                            let startI = tempData.data.length - calcConfig.kLineGraph.initShowN, endI = tempData.data.length;
-                            Object.defineProperty(QL, "_kMess", {
+                            tempData = typeData.chartData;
+
+                            // 修改 小数位数
+                            Object.defineProperty(QL, "_decimal", {
                                 get() {
-                                    return {
-                                        startI,
-                                        endI,
-                                        showNumber: calcConfig.kLineGraph.initShowN
+                                    if (tempData.data.length) {
+                                        return 100;
+                                    } else {
+                                        return getDecimalValue(tempData.data[0].curPrice);
                                     }
                                 },
                                 configurable: true
                             })
 
                             /* 这里 进行重绘 */
-                            // console.log('====重绘');
+                            QL.paintTimeSharingDiagram(tempData);
+                        }
+                        if (config.insType === insType.kLineGraph) {
+                            tempData = typeData.kData;
+                            /* 初始化 展示的 数量 的 区间 范围,并存储到 实例中，为了 做 事件的 时候使用 */
+                            let startI = tempData.data.length - calcConfig.kLineGraph.initShowN, endI = tempData.data.length;
+                            Object.defineProperties(QL, {
+                                "_kMess": {
+                                    get() {
+                                        return {
+                                            startI,
+                                            endI,
+                                            showNumber: calcConfig.kLineGraph.initShowN
+                                        }
+                                    },
+                                    configurable: true
+                                },
+                                "_decimal": {
+                                    get() {
+                                        if (tempData.data.length) {
+                                            return 100;
+                                        } else {
+                                            return getDecimalValue(tempData.data[0].close);
+                                        }
+                                    },
+                                    configurable: true
+                                }
+                            })
+
+                            /* 这里 进行重绘 */
+                            // console.log('====重绘', tempData);
                             QL.kLineGraphPaint(tempData);
                         }
                     },
@@ -162,7 +210,7 @@ function dealTheme(QL, theme) {
     if (isObject(theme)) {
         paintTheme = theme;
     }
-    console.log(paintTheme);
+    // console.log(paintTheme);
     Object.defineProperty(QL, "_theme", {
         get() {
             return paintTheme

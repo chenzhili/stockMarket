@@ -7,8 +7,13 @@
           <span :key="index">
             {{item.name || curData.date}}:
             <span
+              v-if="item.key !== 'rateUpDown'"
               :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}"
-            >{{splitNumber(upToData[item.key] || curData[item.key])}}</span>
+            >{{formatNumber(upToData[item.key] || curData[item.key],decimal)}}{{item.key === 'rate' ? '%' : ''}}</span>
+            <!-- <span
+              v-if="item.key === 'rateUpDown'"
+              :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}"
+            >{{formatNumber(upToData[item.key] || curData[item.key],decimal)}}</span> -->
           </span>
         </template>
       </div>
@@ -18,11 +23,23 @@
           :class="[styles.updateValue,styles[upToData.rate>0?`${theme}UpColorBg`:`${theme}DownColorBg`]]"
           :style="{top:upToData.actuallyY+'px'}"
         >{{upToData.close}}</div>
+        <!-- 显示的日期 -->
         <div
-          v-if="upToData.date"
           :class="styles.updateDate"
+          v-if="upToData.date"
           :style="{background:'#000',color:'#fff',top:upToDateY+'px',left:upToData.actuallyX+'px'}"
         >{{upToData.date}}</div>
+        <!-- MA均线 -->
+        <div :class="styles.updateMA">
+          <template v-for="(item,index) of QLStockMarketIns._MAConfig">
+            <span
+              v-if="Object.keys(upToData).length?upToData[`MA${item}`]: curData[`MA${item}`]"
+              :class="styles.ma"
+              :key="index"
+              :style="{color:QLStockMarketIns._theme.k.MAColor[index]}"
+            >MA{{item}}:{{Object.keys(upToData).length ? formatNumber(upToData[`MA${item}`],decimal): formatNumber(curData[`MA${item}`],decimal)}}</span>
+          </template>
+        </div>
       </div>
       <div :class="[styles.marketMess,styles[`${theme}GenText`]]">预留地方</div>
     </div>
@@ -48,7 +65,7 @@
 import styles from "../../../common/pc/kLineGraph.scss";
 
 import QLStockMarket from "../../../core";
-import { splitNumber } from "../../../utils/index";
+import { splitNumber, formatNumber } from "../../../utils/index";
 
 import dealData from "../../../transformCal";
 
@@ -59,7 +76,7 @@ const showMess = [
   { key: "high", name: "高" },
   { key: "low", name: "低" },
   { key: "close", name: "收" },
-  { key: "rate", name: "涨跌" },
+  // { key: "rateUpDown", name: "涨跌" },
   { key: "rate", name: "涨幅" }
 ];
 
@@ -85,7 +102,8 @@ export default {
       },
       valueBorder: null,
       upToData: {},
-      upToDateY: 0 //就是 页面中时间显示的位置
+      upToDateY: 0, //就是 页面中时间显示的位置
+      decimal: 100 // 默认的保留位数
     };
   },
   computed: {
@@ -98,6 +116,7 @@ export default {
   },
   methods: {
     splitNumber,
+    formatNumber,
     /* 在 hover 事件 的运用 */
     getUpToDataData(data) {
       // console.log("==============", data);
@@ -120,7 +139,7 @@ export default {
         const me = this;
         this.QLStockMarketIns._data = {
           // data: nv.data
-          data:dealData(nv, me.sTt)
+          data: dealData(nv, me.sTt)
         };
         console.log(this.QLStockMarketIns._data);
       }
@@ -133,7 +152,7 @@ export default {
         const me = this;
         this.QLStockMarketIns._data = {
           // data: nv.data
-          data:dealData(me.dataGraph, nv)
+          data: dealData(me.dataGraph, nv)
         };
         console.log(this.QLStockMarketIns._data);
       }
@@ -142,8 +161,8 @@ export default {
   },
   async mounted() {
     const dataGraph = {
-      data:dealData(this.dataGraph,this.sTt)
-    }
+      data: dealData(this.dataGraph, this.sTt)
+    };
     console.log(dataGraph);
     let QLStockMarketIns = new QLStockMarket({
       selector: "#qlStockMarketK",
@@ -165,6 +184,7 @@ export default {
         QLStockMarketIns._paintConfig.valueRange.valueYPos.length - 1
       ];
     this.$set(this, "QLStockMarketIns", QLStockMarketIns);
+    this.decimal = QLStockMarketIns._decimal;
 
     console.log(
       QLStockMarketIns,

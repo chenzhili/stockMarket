@@ -19,7 +19,9 @@
     }
     .marketMess{
         display:flex;
-        height:1.4rem;
+        flex-wrap: wrap;
+        // justify-content: space-around;
+        // height:1.4rem;
         align-items:center;
         span{
             margin-left:0.2rem;

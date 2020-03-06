@@ -4,11 +4,11 @@
     <div class="content">
       <div class="left">
         左侧内容：Lorem ipsum, dolor sit amet consectetur adipisicing elit. Debitis perspiciatis provident, necessitatibus quae labore, similique id dignissimos sit mollitia vero ullam repudiandae veniam molestias, ratione possimus magnam nihil nobis enim.
-        <div class="btn" @click="click">点击</div>
+        <div class="btn" @click="click">点击切换日k和周K</div>
       </div>
       <div class="main">
-        <TimeSharing :dataGraph="dataGraphForTime" :config="configForTime"></TimeSharing>
-        <!-- <KLineGraphCom :dataGraph="dataGraphForK" :config="configForK" :sTt="sTt"></KLineGraphCom> -->
+        <!-- <TimeSharing :dataGraph="dataGraphForTime" :config="configForTime"></TimeSharing> -->
+        <KLineGraphCom :dataGraph="dataGraphForK" :config="configForK" :sTt="sTt"></KLineGraphCom>
       </div>
       <div
         class="right"
@@ -27,23 +27,26 @@ export default {
     return {
       title: "Lorem ipsum dolor sit amet consectetur",
       dataGraphForTime: {
-        data: timeSharing.slice(0,50),
+        data: timeSharing.slice(0, 50),
         preClosePrice: prevPrice
       },
-      dataGraphForK: { 
-        data: kData//mData.slice(0,50)//dData //mData//kData
+      dataGraphForK: {
+        data: dData //.slice(0,50)//dData //mData//kData
       },
-      sTt: [],
+      sTt: [
+        /* "m1", "m5" */
+        "d", "w"
+      ],
       isShow: true
     };
   },
   methods: {
     click() {
       // this.$set(this.dataGraphForTime, "data", timeSharing.slice(0, 100));
-      this.$set(this.dataGraphForK, "data", mData.slice(0, 500));
+      this.$set(this.dataGraphForK, "data", dData.slice(0, 500));
       this.isShow = !this.isShow;
 
-      this.sTt = this.isShow ? [] : ["m1", "m5"];
+      this.sTt = this.isShow ? [] : ["d", "w"];
     }
   },
   computed: {
@@ -57,7 +60,8 @@ export default {
       return {
         insType: insType.kLineGraph,
         theme: "light",
-        // initShowN:40
+        initShowN: 40
+        // rectLineHeight:1
       };
     }
   }

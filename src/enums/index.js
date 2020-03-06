@@ -34,7 +34,8 @@ export const Theme = Object.freeze({
                 desc: "#00E600"
             },
             line: {
-                curPrice: "#fff"
+                curPrice: "#fff",
+                avPrice: "#F3B232",
             },
         },
         k: {
@@ -42,6 +43,7 @@ export const Theme = Object.freeze({
             descStroke: "#54FFFF",
             asendFill: "#000000",
             asendStroke: "#FF5454",
+            MAColor: ["#1F6195", "#E0AC58", "#9C73AF"]
         },
         bg: "#000",
         maskLine: "rgba(255,255,255,1)"
@@ -57,7 +59,8 @@ export const Theme = Object.freeze({
                 desc: "#6CA584"
             },
             line: {
-                curPrice: "#4188B9"
+                curPrice: "#4188B9",
+                avPrice: "#F3B232",
             },
         },
         k: {
@@ -65,6 +68,7 @@ export const Theme = Object.freeze({
             descStroke: "#15713B",
             asendFill: "#EC5F4C",
             asendStroke: "#900F00",
+            MAColor: ["#1F6195", "#E0AC58", "#9C73AF"]
         },
         bg: "#fff",
         maskLine: "rgba(0,0,0,.3)"

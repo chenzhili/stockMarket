@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 
-import { splitNumber } from "../../../utils/index";
+import { splitNumber, formatNumber } from "../../../utils/index";
 import QLStockMarket from "../../../core"
 import { isFunction } from "../../../utils/types"
 import styles from "../../../common/h5/KLineGraphH5.scss"
@@ -20,7 +20,7 @@ const showMess = [
     { key: "high", name: "高" },
     { key: "low", name: "低" },
     { key: "close", name: "收" },
-    { key: "rate", name: "涨跌" },
+    // { key: "rateUpDown", name: "涨跌" },
     { key: "rate", name: "涨幅" }
 ];
 class KLineGraphH5 extends Component {
@@ -46,6 +46,7 @@ class KLineGraphH5 extends Component {
             upToDateY: 0, //就是 页面中时间显示的位置
 
             curDataGraph: props.dataGraph, // 用于 存储 从 props 传进来的 原始的 dataGraph
+            decimal: 100 // 默认的保留位数
         }
     }
     static getDerivedStateFromProps(nextProps, prevState) {
@@ -112,7 +113,8 @@ class KLineGraphH5 extends Component {
         ];
 
         this.setState({
-            valueBorder, upToDateY, QLStockMarketIns
+            valueBorder, upToDateY, QLStockMarketIns,
+            decimal: QLStockMarketIns._decimal
         });
     }
     componentWillUnmount() {
@@ -124,7 +126,7 @@ class KLineGraphH5 extends Component {
         let { width, height, config } = this.props;
         width = width || "100%", height = height || "100%";
         const theme = config && config.theme ? config.theme : "light";
-        const { upToData, curData, QLStockMarketIns, upOrDown, valueBorder, upToDateY } = this.state;
+        const { upToData, curData, QLStockMarketIns, upOrDown, valueBorder, upToDateY, decimal } = this.state;
         return (
             <div style={{ width: width, height: height }} className={`${styles.container} ${styles[`${theme}Bg`]}`}>
                 {
@@ -137,7 +139,7 @@ class KLineGraphH5 extends Component {
                                         {item.name || curData.date}:
                                     <span
                                             className={`${upOrDown === 'down' ? [styles[`${theme}DownColor`]] : ""} ${upOrDown === 'up' ? [styles[`${theme}UpColor`]] : ""}`}
-                                        >{splitNumber(upToData[item.key] || curData[item.key])}</span>
+                                        >{formatNumber(upToData[item.key] || curData[item.key], decimal)}{item.key === 'rate' ? '%' : ''}</span>
                                     </span>
                                 ))
                             }
@@ -165,6 +167,20 @@ class KLineGraphH5 extends Component {
                                     style={{ top: `${QLStockMarketIns._paintConfig.dealRange.valueYPos[QLStockMarketIns._paintConfig.dealRange.valueYPos.length - 1 - index] || 0}px` }}
                                 >{splitNumber(item)}</span>
                             ))) : null
+                        }
+                    </div>
+                    {/* MA均线 */}
+                    <div className={styles.updateMA}>
+                        {
+                            QLStockMarketIns._MAConfig && QLStockMarketIns._MAConfig.length ? (QLStockMarketIns._MAConfig.map((item, index) => (
+                                ((Object.keys(upToData).length ? upToData[`MA${item}`] : curData[`MA${item}`]) ? <span
+                                    className={styles.ma}
+                                    key={index}
+                                    style={{ color: QLStockMarketIns._theme.k.MAColor[index] }}
+                                >MA{item}:{Object.keys(upToData).length ? formatNumber(upToData[`MA${item}`], decimal) : formatNumber(curData[`MA${item}`], decimal)}
+                                </span> : null)
+                            ))) : null
+
                         }
                     </div>
                     {

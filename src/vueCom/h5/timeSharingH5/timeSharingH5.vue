@@ -5,8 +5,27 @@
       <template v-for="(item,index) of showMess">
         <span :key="index">
           <span
+            v-if="item.key==='rateUpDown'"
+            :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}"
+          >{{formatNumber((upToData.curPrice?upToData.curPrice:curData.curPrice) - dataGraph.preClosePrice,decimal)}}</span>
+
+          <span
+            v-else-if="item.key==='dealMount' || item.key==='totalMoney'"
             :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}"
           >{{splitNumber(upToData[item.key] || curData[item.key])}}</span>
+
+          <span
+            v-else-if="item.key==='rate'"
+            :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}"
+          >{{splitNumber(upToData[item.key] || curData[item.key])}}%</span>
+
+          <span
+            v-else-if="item.key==='curPrice'||item.key==='avPrice'"
+            :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}"
+          >{{formatNumber(upToData[item.key] || curData[item.key],decimal)}}</span>
+          <!-- <span
+            :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}"
+          >{{splitNumber(upToData[item.key] || curData[item.key])}}</span>-->
         </span>
       </template>
     </div>
@@ -61,14 +80,14 @@
 import styles from "../../../common/h5/timeSharingH5.scss";
 
 import QLStockMarket from "../../../core";
-import { splitNumber } from "../../../utils/index";
+import { splitNumber, formatNumber } from "../../../utils/index";
 import { isFunction } from "../../../utils/types";
 
 const timeArr = ["09:30", "10:30", "11:30/13:00", "14:00", "15:00"];
 const showMess = [
   { key: "curPrice", name: "现价" },
   { key: "avPrice", name: "均价" },
-  { key: "rate", name: "涨跌" },
+  { key: "rateUpDown", name: "涨跌" },
   { key: "rate", name: "涨幅" },
   { key: "dealMount", name: "量" },
   { key: "totalMoney", name: "额" }
@@ -98,7 +117,8 @@ export default {
       }, //存储 实例化的 走势 对象
       valueBorder: null,
       upToData: {}, //时时数据
-      upOrDown: false //看看当前 是 涨还是跌
+      upOrDown: false, //看看当前 是 涨还是跌
+      decimal: 100 // 默认的保留位数
     };
   },
   computed: {
@@ -114,6 +134,7 @@ export default {
   },
   methods: {
     splitNumber,
+    formatNumber,
     getUpToDataData(data) {
       // console.log("==============",data);
       this.upToData = data;
@@ -163,7 +184,8 @@ export default {
     );
     // 判定当前 是 涨还是 跌;
     this.upOrDown = this.curData.rate < 0 ? "down" : "up";
-    console.log(this, this.QLStockMarketIns, QLStockMarketIns._paintConfig);
+    this.decimal = QLStockMarketIns._decimal;
+    // console.log(this, this.QLStockMarketIns, QLStockMarketIns._paintConfig);
   },
   destroyed() {
     if (

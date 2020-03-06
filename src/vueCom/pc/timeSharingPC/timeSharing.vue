@@ -16,8 +16,24 @@
           <span :key="index">
             {{item.name}}:
             <span
+              v-if="item.key==='rateUpDown'"
+              :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}"
+            >{{formatNumber((upToData.curPrice?upToData.curPrice:curData.curPrice) - dataGraph.preClosePrice,decimal)}}</span>
+
+            <span
+              v-else-if="item.key==='dealMount' || item.key==='totalMoney'"
               :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}"
             >{{splitNumber(upToData[item.key] || curData[item.key])}}</span>
+
+            <span
+              v-else-if="item.key==='rate'"
+              :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}"
+            >{{splitNumber(upToData[item.key] || curData[item.key])}}%</span>
+
+            <span
+              v-else-if="item.key==='curPrice'||item.key==='avPrice'"
+              :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}"
+            >{{formatNumber(upToData[item.key] || curData[item.key],decimal)}}</span>
           </span>
         </template>
       </div>
@@ -31,7 +47,7 @@
           v-if="upToData.rate"
           :class="styles.updateRate"
           :style="{background:'#f00',top:upToData.actuallyY+'px'}"
-        >{{splitNumber(upToData.rate)}}%</div>
+        >{{formatNumber(upToData.rate,this.QLStockMarketIns._decimal)}}%</div>
         <div
           :class="[styles.dealMount,styles[`${theme}GenText`]]"
           :style="{top:QLStockMarketIns._paintConfig.dealMountPos+'px'}"
@@ -65,24 +81,22 @@
     </div>
   </div>
 </template>
-<script> 
+<script>
 import styles from "../../../common/pc/timeSharing.scss";
 
 import QLStockMarket from "../../../core";
-import { splitNumber } from "../../../utils/index";
-
+import { splitNumber, formatNumber } from "../../../utils/index";
 
 const timeArr = ["09:30", "10:30", "11:30/13:00", "14:00", "15:00"];
 const showMess = [
   { key: "curPrice", name: "现价" },
   { key: "avPrice", name: "均价" },
-  { key: "rate", name: "涨跌" },
+  { key: "rateUpDown", name: "涨跌" },
   { key: "rate", name: "涨幅" },
   { key: "dealMount", name: "量" },
   { key: "totalMoney", name: "额" }
 ];
 
-console.log(styles);
 export default {
   name: "TimeSharing",
   data: function() {
@@ -107,7 +121,8 @@ export default {
       }, //存储 实例化的 走势 对象
       valueBorder: null,
       upToData: {}, //时时数据
-      upOrDown: false //看看当前 是 涨还是跌
+      upOrDown: false, //看看当前 是 涨还是跌
+      decimal: 100 // 默认的保留位数
     };
   },
   computed: {
@@ -123,8 +138,9 @@ export default {
   },
   methods: {
     splitNumber,
+    formatNumber,
     getUpToDataData(data) {
-      // console.log("==============",data);
+      // console.log("==============", data);
       this.upToData = data;
       // 判定当前 是 涨还是 跌;
       this.upOrDown = this.upToData.rate < 0 ? "down" : "up";
@@ -134,7 +150,7 @@ export default {
     dataGraph: {
       deep: true,
       handler(nv) {
-        console.log("============");
+        // console.log("============");
         this.QLStockMarketIns._data = {
           data: nv.data,
           preClosePrice: nv.preClosePrice
@@ -172,6 +188,7 @@ export default {
     );
     // 判定当前 是 涨还是 跌;
     this.upOrDown = this.curData.rate < 0 ? "down" : "up";
+    this.decimal = this.QLStockMarketIns._decimal;
     console.log(this, this.QLStockMarketIns, QLStockMarketIns._paintConfig);
   },
   destroyed() {

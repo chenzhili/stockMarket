@@ -86,6 +86,8 @@ function dealCurData(curData, target, source) {
         const n = periodConfig[target] / staticPeriod[source];
         return dealCurData.mCurDataCore(curData, n);
     }
+    // 这里如果 不做任何处理，直接 返回了
+    return curData;
     // 日k 或者 月k 的转换 暂时 不用；
 }
 
@@ -176,6 +178,7 @@ dealHisData.wHisDataCore = function (data) {
             tempObj.date = transform.splitTime(item.date);
             tempObj.close = item.close;
             tempObj.dealMount = +item.dealMount;
+            tempObj.amount = +item.amount;
 
             tempObj.high = item.high;
             tempObj.low = item.low;
@@ -186,6 +189,7 @@ dealHisData.wHisDataCore = function (data) {
             /* 证明 item 在 当前周 */
             if ((dealHisData.wHisDataCore.getDay(item.date) < prevW) && ((dealHisData.wHisDataCore.getTimes(item.date) - startTime) <= dealHisData.wHisDataCore.weekTimes)) {
                 tempObj.dealMount += (+item.dealMount);
+                tempObj.amount += (+item.amount);
 
                 // 最高 和 最低值
                 if (item.high > tempObj.high) {
@@ -267,6 +271,7 @@ dealHisData.mHisDataCore = dealCurData.mCurDataCore = function (data, n) {
             tempObj.low = item.low;
 
             tempObj.dealMount = +item.dealMount;
+            tempObj.amount = +item.amount;
         } else {
             // 收盘价,时间:统一使用当前周期最后一分钟线的对应数据(14:00到14:05,收盘价为14:05 的收盘价)
             if (number % n === (n - 1) || number === (len - 1)) {
@@ -286,7 +291,8 @@ dealHisData.mHisDataCore = dealCurData.mCurDataCore = function (data, n) {
             if (item.low < tempObj.low) {
                 tempObj.low = item.low;
             }
-            tempObj.dealMount += +item.dealMount;
+            tempObj.dealMount += (+item.dealMount);
+            tempObj.amount += (+item.amount);
         }
         number++;
     }

@@ -68,7 +68,7 @@ export default function initCanvas(QLStockMarket) {
                 // 初始化 小数位数
                 _decimal: {
                     get() {
-                        if (tempData.data.length) {
+                        if (!tempData.data.length) {
                             return 100;
                         } else {
                             if (config.insType === insType.timeSharingDiagram) {

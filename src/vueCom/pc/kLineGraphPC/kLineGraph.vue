@@ -7,13 +7,17 @@
           <span :key="index">
             {{item.name || curData.date}}:
             <span
-              v-if="item.key !== 'rateUpDown'"
+              v-if="(item.key !== 'rateUpDown'&&item.key !== 'dealMount'&&item.key!=='amount')"
               :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}"
             >{{formatNumber(upToData[item.key] || curData[item.key],decimal)}}{{item.key === 'rate' ? '%' : ''}}</span>
+            <span
+              v-if="(item.key === 'dealMount'||item.key === 'amount')"
+              :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}"
+            >{{splitNumber(upToData[item.key] || curData[item.key])}}</span>
             <!-- <span
               v-if="item.key === 'rateUpDown'"
               :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}"
-            >{{formatNumber(upToData[item.key] || curData[item.key],decimal)}}</span> -->
+            >{{formatNumber(upToData[item.key] || curData[item.key],decimal)}}</span>-->
           </span>
         </template>
       </div>
@@ -77,7 +81,9 @@ const showMess = [
   { key: "low", name: "低" },
   { key: "close", name: "收" },
   // { key: "rateUpDown", name: "涨跌" },
-  { key: "rate", name: "涨幅" }
+  { key: "rate", name: "涨幅" },
+  { key: "dealMount", name: "成交量" },
+  { key: "amount", name: "成交额" }
 ];
 
 export default {

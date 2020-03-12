@@ -75,8 +75,8 @@ class App extends Component {
                     <div className={styles.btn} onClick={this.click.bind(this)}>点击</div>
                     </div>
                     <div className={styles.main}>
-                        {/* <TimeSharingPC {...timeProps} /> */}
-                        <KLineGraphPC {...kProps} />
+                        <TimeSharingPC {...timeProps} />
+                        {/* <KLineGraphPC {...kProps} /> */}
                     </div>
                     <div
                         className={styles.right}

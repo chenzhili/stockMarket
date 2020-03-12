@@ -63,7 +63,6 @@ export default function initData(QLStockMarket) {
  * @param {*} staticConfig 参照config
  */
 function initKLineGraphConfig(config, staticConfig) {
-    debugger
     // 对于显示区域的grid的配置
     const i = staticConfig.kLineGraph.sort.indexOf(allGraph.rectDealMount);
     config.sort = [...staticConfig.kLineGraph.sort];

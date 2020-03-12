@@ -20,10 +20,11 @@ describe("src中的所有utils中的 方法测试", () => {
 
     describe("calValuePos test", () => {
         const calValuePosData = {
-            actuallyValue: [20, 15.25, 10.5, 5.75, 1],
+            actuallyValue: ["20.00", "15.25", "10.50", "5.75", "1.00"],
             valueYPos: [100, 150, 200, 250, 300]
         };
         test("calValuePos split structure", () => {
+            console.log('test', splitNumber.mock);
             expect(calValuePos({ min: 1, max: 20, totalHeight: 200, baseHeight: 100, n: 5 })).toEqual(calValuePosData)
         })
     })

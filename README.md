@@ -60,3 +60,18 @@
     2、Selenium：这个算是对于 webDriver 这套东西的 实现，比较流行并且全面的实现；相当于是一种库；安装：selenium-server(由于这个是 java写的，虽然实现了其他语言，实测需要安装 java JDK)
     3、对于webDriver 针对不同的厂商，实现了不同的 WebDriver(微型浏览器)，比如：geckodriver、chromedriver等等，到 Nightwatch 官网上看；
 
+
+
+# 20200312时间节点后
+
+## jest 大体
+```js
+    /* 
+        1、matches =====> 匹配 数字，字符串，iterate 的 值的 匹配
+        2、test async code ====> 测试 异步函数 的 结果或者是 想 测试的点
+        3、setup and teardown：组装和拆卸 ====> 就是在每次测试的时候，可以用钩子一样的东西，写一次数据多次用beforeEach,afterEach
+        4、mock Fuction ====> 用jest的fn模拟，获取不同的数据，还可以用于接口测试
+        5、jest platform ====> jest 中的功能，可以单独 作为 package 用于 有 特征的功能；
+    */
+```
+

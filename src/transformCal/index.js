@@ -37,7 +37,7 @@ function transform(data = { curData: '', hisData: '' }, target, source) {
 
     /* 对于 历史数据 的 处理 */
     if (isArray(hisData) && hisData.length) {
-        tempItem = hisData[hisData.length - 1];
+        tempItem = hisData[0];
         // console.time()
         resultHisData = dealHisData(hisData, target, source);
         // console.timeEnd();
@@ -215,7 +215,7 @@ dealHisData.wHisDataCore = function (data) {
 
                 // 这里开始算 rate ,这里 获取的 值 不包含 第一周的；
                 if (resultArr[0]) {
-                    resultArr[0].rate = Math.round(resultArr[0].close / openItem.close * 100) / 100;
+                    resultArr[0].rate = Math.floor((resultArr[0].close - openItem.close) / openItem.close * 100 * 100) / 100;
                 }
 
                 isEnd = true;
@@ -227,7 +227,7 @@ dealHisData.wHisDataCore = function (data) {
         i--;
     }
     // 计算数据中的 第一周 的 rate
-    resultArr[0].rate = Math.round(resultArr[0].close / resultArr[0].open * 100) / 100;
+    resultArr[0].rate = Math.ceil((resultArr[0].close - resultArr[0].open) / resultArr[0].open * 100 * 100) / 100;
     return resultArr;
 }
 /**
@@ -250,19 +250,21 @@ dealHisData.wHisDataCore.weekTimes = 6 * 24 * 60 * 60 * 1000;
 
 
 // {date,dealMount,open,high,low,close,rate}
-// rate = 如果有昨天的数据，就用今天close/昨天close , 如果没有昨天的数据今天close/今天的open
+// rate = 如果有昨天的数据，就用(今天close - 昨天close)/ , 如果没有昨天的数据(今天close - 今天的open)/今天的open
 dealHisData.mHisDataCore = dealCurData.mCurDataCore = function (data, n) {
     const len = data.length;
     let number = 0;
     let tempObj,
         resultArr = [],
         item,
-        prevClose = tempItem.close || data[data.length - 1].open;/* 昨天close; */
+        prevClose = tempItem.close || data[0].open;/* 昨天close; */
     while (number < len) {
         item = data[number];
         if (number % n === 0) {
             if (number !== 0) {
                 resultArr.push(tempObj);
+
+                /* 获取上一个的 close 值*/
                 prevClose = tempObj.close;
             }
             tempObj = {};
@@ -277,10 +279,12 @@ dealHisData.mHisDataCore = dealCurData.mCurDataCore = function (data, n) {
             if (number % n === (n - 1) || number === (len - 1)) {
                 tempObj.date = transform.splitTime(item.date);
                 tempObj.close = item.close;
-                tempObj.rate = Math.round(item.close / prevClose * 100) / 100;
+                console.log(item,prevClose);
+                tempObj.rate = Math.floor((item.close - prevClose) / prevClose * 100 * 100) / 100;
                 // 对于 处理尾部 把 最后的 tempObj 放进去, 不足 n 的余数 处理
                 if (number === (len - 1)) {
                     resultArr.push(tempObj);
+                    break;
                 }
             }
 
@@ -296,14 +300,18 @@ dealHisData.mHisDataCore = dealCurData.mCurDataCore = function (data, n) {
         }
         number++;
     }
-    // console.log(resultArr);
+    console.log(resultArr);
     return resultArr;
 }
 
 
 /* 在对应 框架中 处理 是否需要 进行 转换的操作 */
 function dealData(dataGraph = {}, sTt = []) {
-    if (!sTt.length || sTt.length !== 2) { return (dataGraph.data || []); }
+    if (!sTt.length || sTt.length !== 2) {
+        dataGraph.data = dataGraph.data && dataGraph.data.length ? dataGraph.data : [];
+        dataGraph.curData = dataGraph.curData && dataGraph.curData.length ? dataGraph.curData : [];
+        return [...dataGraph.data, ...dataGraph.curData];
+    }
     if (!dataGraph.data && !dataGraph.curData) {
         return [];
     }

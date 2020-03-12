@@ -7,7 +7,7 @@
           {{item.name || curData.date}}:
           <span
             :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}"
-          >{{formatNumber(upToData[item.key] || curData[item.key],decimal)}}{{item.key === 'rate' ? '%' : ''}}</span>
+          >{{formatNumber(upToData[item.key] == null ? curData[item.key] : upToData[item.key],decimal)}}{{item.key === 'rate' ? '%' : ''}}</span>
         </span>
       </template>
     </div>

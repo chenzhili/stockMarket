@@ -12,17 +12,17 @@
           <span
             v-else-if="item.key==='dealMount' || item.key==='totalMoney'"
             :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}"
-          >{{splitNumber(upToData[item.key] || curData[item.key])}}</span>
+          >{{splitNumber(upToData[item.key] == null ? curData[item.key] : upToData[item.key])}}</span>
 
           <span
             v-else-if="item.key==='rate'"
             :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}"
-          >{{splitNumber(upToData[item.key] || curData[item.key])}}%</span>
+          >{{splitNumber(upToData[item.key] == null ? curData[item.key] : upToData[item.key])}}%</span>
 
           <span
             v-else-if="item.key==='curPrice'||item.key==='avPrice'"
             :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}"
-          >{{formatNumber(upToData[item.key] || curData[item.key],decimal)}}</span>
+          >{{formatNumber(upToData[item.key] == null ? curData[item.key] : upToData[item.key],decimal)}}</span>
           <!-- <span
             :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}"
           >{{splitNumber(upToData[item.key] || curData[item.key])}}</span>-->
@@ -63,7 +63,7 @@
       <div
         :class="[styles.dealMount,styles[`${theme}GenText`]]"
         :style="{top:QLStockMarketIns._paintConfig.dealMountPos+'px'}"
-      >成交量:{{splitNumber(upToData.dealMount || curData.dealMount)}}</div>
+      >成交量:{{splitNumber(upToData.dealMount == null ? curData.dealMount : upToData.dealMount)}}</div>
     </div>
     <div :class="styles.marketTime">
       <template v-for="(item,index) of QLStockMarketIns._paintConfig.paintTimeX">

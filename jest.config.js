@@ -3,7 +3,7 @@
 
 module.exports = {
   // All imported modules in your tests should be mocked automatically
-  // automock: false,
+  automock: false, // 当这里 出现了 jest 内置的 jest platform 中的 function的 时候 会报错，不知道怎么处理的？
 
   // Stop running tests after `n` failures
   // bail: 0,

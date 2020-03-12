@@ -111,7 +111,9 @@ function dealCalRangeValue(targetValue) {
     // console.log(newTargetArr);
     let max = null, min = null;
     max = (newTargetArr[len - 1].dealMount - 0);
-    min = newTargetArr[0].dealMount;
+
+    // 这会要注意哈，如果 len 为 1 的化 需要 特殊处理
+    min = len === 1 ? 0 :newTargetArr[0].dealMount;
 
     const dTotal = max - min;
     /* 上浮 */
@@ -216,7 +218,6 @@ export function kLineGraphPaint(data) {
 
         // 计算 指数 对应 位置的值
         paintConfig.dealRange = calValuePos({ min: RDMin, max: RDMax, totalHeight: config[allGraph.rectDealMount].totalHeight, baseHeight: config[allGraph.rectDealMount].baseHeight, n: 3 });
-
     }
     /* 
         统一绘制 分割线 --- 这里就是 对应的 时间值显示的地方

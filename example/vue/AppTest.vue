@@ -22,6 +22,8 @@ import { insType } from "../../src/enums";
 
 import { mData, dData } from "../../src/transformCal/response";
 
+console.log(mData.slice(0,20));
+
 export default {
   data() {
     return {
@@ -31,11 +33,11 @@ export default {
         preClosePrice: prevPrice
       },
       dataGraphForK: {
-        data: dData //.slice(0,50)//dData //mData//kData
+        data: mData //.slice(0,50)//dData //mData//kData
       },
       sTt: [
-        /* "m1", "m5" */
-        "d", "w"
+        "m1", "m30"
+        /* "d", "w" */
       ],
       isShow: true
     };

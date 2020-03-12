@@ -28,7 +28,9 @@
     "publish:coms:vue": "cross-env Frame=Vue webpack --progress --config ./webpack-config/webapck-component.js",
     "publish:coms:react": "cross-env Frame=React webpack --progress --config ./webpack-config/webapck-component.js",
     "publish:common": "cross-env MINIFY=fals webpack --progress --config ./webpack-config/webpack-common.js",
-    "test": "jest"
+
+    "test": "jest",
+    "coverage":"jest --coverage"
   },
   "author": "ql",
   "license": "MIT",

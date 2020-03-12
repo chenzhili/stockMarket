@@ -25,9 +25,20 @@
     .qlContainer{
         flex:1;
         position: relative;
+        .modalMess{
+            position:absolute;
+            border:1px solid #ddd;
+            border-radius:1em;
+            padding:.6em;
+            white-space: nowrap;
+            background:rgba(255,255,255,.7);
+            line-height:2em;
+            text-align:left;
+            z-index:100;
+        }
         .updateValue,.updateDate,.updateMA{
             position: absolute;
-            z-index:100;
+            z-index:99;
             color:#fff;
             user-select: none;
         }

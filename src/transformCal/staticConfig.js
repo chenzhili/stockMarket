@@ -2,6 +2,7 @@
 // 转换目标
 const periodConfig = Object.freeze({
     m5: 5,
+    m15: 15,
     m30: 30,
     m60: 60,
     w: 70,

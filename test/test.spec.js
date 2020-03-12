@@ -57,3 +57,9 @@ describe.each([[1, 1, 2], [1, 2, 3], [2, 1, 3]])(
         });
     },
 );
+
+describe("测试 it 和 test的区别",()=>{
+    it('return test',()=>{
+        expect(1).toBe(1);
+    })
+})

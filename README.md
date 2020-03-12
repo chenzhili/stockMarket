@@ -74,4 +74,22 @@
         5、jest platform ====> jest 中的功能，可以单独 作为 package 用于 有 特征的功能；
     */
 ```
+```js
+    /* 
+        1、snapshot 快照对比，其实就是 ui层的 对比；
+            注意：由于快照对比，有缓存，如果后期修改组件后，比较，需要更新 快照：jest --updateSnapshot
+     */
+    // 运用个用 jest + Enzyme 给 react 的 ui 组件 做测试
+    /* 
+        enzyme提供了三种渲染方式，render、mount、shallow，分别存在以下区别：
+
+            1、render采用的是第三方库Cheerio的渲染，渲染结果是普通的html结构，对于snapshot使用render比较合适。
+
+            2、shallow和mount对组件的渲染结果不是html的dom树，而是react树，如果你chrome装了react devtool插件，他的渲染结果就是react devtool tab下查看的组件结构，而render函数的结果是element tab下查看的结果。
+
+            3、shallow和mount的结果是个被封装的ReactWrapper，可以进行多种操作，譬如find()、parents()、children()等选择器进行元素查找；state()、props()进行数据查找，setState()、setprops()操作数据；simulate()模拟事件触发。
+
+            4、shallow只渲染当前组件，只能能对当前组件做断言；mount会渲染当前组件以及所有子组件，对所有子组件也可以做上述操作。一般交互测试都会关心到子组件，我使用的都是mount。但是mount耗时更长，内存啥的也都占用的更多，如果没必要操作和断言子组件，可以使用shallow。
+    */
+```
 

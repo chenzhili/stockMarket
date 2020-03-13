@@ -1,5 +1,12 @@
-import { TimeSharingPC } from '../../src/reactCom/pc/timeSharingPC'
-import { shallow } from 'enzyme'
+// import { TimeSharingPC } from '../../src/reactCom/pc/timeSharingPC'
+import TestCom from '../../src/reactCom/test'
+import React,{ Component } from 'react'
+import Enzyme,{ shallow } from 'enzyme'
+// import Adapter from 'enzyme-adapter-react-15';
+
+beforeAll(() => {
+    return Enzyme.configure({ adapter: new Adapter() });
+})
 
 
 describe('第一个 react的ui测试 snapshot', () => {
@@ -39,8 +46,8 @@ describe('第一个 react的ui测试 snapshot', () => {
             theme: 'light'
         }
     }
-    const com = shallow(<TimeSharingPC {...config}/>)
-    test('TimeSharingPC',()=>{
+    const com = shallow(<TestCom/>)
+    test('TestCom',()=>{
         expect(com).toMatchSnapshot()
     })
 })

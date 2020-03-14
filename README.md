@@ -92,4 +92,5 @@
             4、shallow只渲染当前组件，只能能对当前组件做断言；mount会渲染当前组件以及所有子组件，对所有子组件也可以做上述操作。一般交互测试都会关心到子组件，我使用的都是mount。但是mount耗时更长，内存啥的也都占用的更多，如果没必要操作和断言子组件，可以使用shallow。
     */
 ```
+## 解决 安装包模块 报错 node-gyp node-sass 的错误 https://blog.csdn.net/kevinyankai/article/details/104736594/
 

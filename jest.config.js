@@ -151,8 +151,8 @@ module.exports = {
   //   "\\\\node_modules\\\\"
   // ],
 
-  // The regexp pattern or array of patterns that Jest uses to detect test files
-  // testRegex: [],
+  // The regexp pattern or array of patterns that Jest uses to detect test files 这个可以默认写需要测试的文件，当 vscode的 jest插件不起作用的时候
+  testRegex: 'reactCom.spec.js',//[],
 
   // This option allows the use of a custom results processor
   // testResultsProcessor: null,

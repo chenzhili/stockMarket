@@ -1,4 +1,4 @@
-import { Component } from 'react'
+import React from 'react'
 
 function TempCom(props) {
     return (
@@ -10,7 +10,7 @@ function TempCom(props) {
     );
 }
 
-class TestCom extends Component {
+class TestCom extends React.Component {
     constructor(props) {
         super();
         this.state = {
@@ -28,6 +28,7 @@ class TestCom extends Component {
         const { value } = this.state;
         return (
             <div>
+                <h1>sdfdsd</h1>
                 <input value={value} onChange={this.change} />
                 <TempCom value={value} />
             </div>

@@ -96,3 +96,11 @@
 
 ## eslint + prettier 的URL： https://segmentfault.com/a/1190000015315545?utm_source=tag-newest
 
+## 对于 jest 中的 snapshot（快照）
+注意：在 插件 发生变化 的时候，想 更新 快照 的命令： jest -u  （jest update的意思）
+enzyme 和 react-test-renderer 在 生成快照的时候，react-test-renderer 生成的时候 reactDOM，而 enzyme 生成的是 `ReactWrapper {}`；
+********
+    如果 想让 enzyme 也显示 reactDOM 的 jSON 字符的快照，用上 enzyme-to-json 来 格式化
+********
+
+

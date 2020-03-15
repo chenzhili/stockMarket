@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`第一个 react的ui测试 snapshot TestCom 1`] = `
+<TestCom>
+  <div>
+    <h1>
+      sdfdsd
+    </h1>
+    <input
+      onChange={[Function]}
+      value=""
+    />
+    <TempCom
+      value=""
+    >
+      <div />
+    </TempCom>
+  </div>
+</TestCom>
+`;

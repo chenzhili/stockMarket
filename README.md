@@ -94,3 +94,5 @@
 ```
 ## 解决 安装包模块 报错 node-gyp node-sass 的错误 https://blog.csdn.net/kevinyankai/article/details/104736594/
 
+## eslint + prettier 的URL： https://segmentfault.com/a/1190000015315545?utm_source=tag-newest
+

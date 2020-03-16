@@ -56,7 +56,7 @@ export function calValuePos({ min, max, factorMaxInc, totalHeight, baseHeight, n
 
     return new Array(n).fill(1).reduce((prev, next, index) => {
         let tempValue = max - index * valueIncrement;
-        tempValue = (parseInt(tempValue * decimal) / decimal).toFixed((decimal + '').length-1);
+        tempValue = (parseInt(tempValue * decimal) / decimal).toFixed((decimal + '').length - 1);
         let tempPos = parseInt((baseHeight + index * yPosIncrement) * 100) / 100;
         let tempF = f ? parseInt((factorMaxInc - f * index) * 100) / 100 : null;
         prev.actuallyValue.push(tempValue);
@@ -69,6 +69,9 @@ export function calValuePos({ min, max, factorMaxInc, totalHeight, baseHeight, n
 /* 统一处理需要的位数 */
 export function getDecimalValue(value) {
     value += "";
+    if (!value.split(".")[1]) {
+        return 0;
+    }
     let len = value.split(".")[1].length;
     value = "1";
     while (len > 0) {
@@ -79,5 +82,8 @@ export function getDecimalValue(value) {
 }
 /* 格式化 数 */
 export function formatNumber(number, decimal) {
-    return ((parseInt(number * decimal) / decimal).toFixed((decimal + '').length-1));
+    if (decimal === 0) {
+        return '' + number;
+    }
+    return ((parseInt(number * decimal) / decimal).toFixed((decimal + '').length - 1));
 }

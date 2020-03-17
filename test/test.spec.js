@@ -58,8 +58,16 @@ describe.each([[1, 1, 2], [1, 2, 3], [2, 1, 3]])(
     },
 );
 
-describe("测试 it 和 test的区别",()=>{
-    it('return test',()=>{
+describe("测试 it 和 test的区别", () => {
+    it('return test', () => {
         expect(1).toBe(1);
     })
+})
+
+function getDefault(a = 1) {
+    return a;
+}
+test('测试 function的默认参数', () => {
+
+    expect(getDefault()).toBe(1)
 })

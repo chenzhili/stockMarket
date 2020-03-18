@@ -279,7 +279,6 @@ dealHisData.mHisDataCore = dealCurData.mCurDataCore = function (data, n) {
             if (number % n === (n - 1) || number === (len - 1)) {
                 tempObj.date = transform.splitTime(item.date);
                 tempObj.close = item.close;
-                console.log(item,prevClose);
                 tempObj.rate = Math.floor((item.close - prevClose) / prevClose * 100 * 100) / 100;
                 // 对于 处理尾部 把 最后的 tempObj 放进去, 不足 n 的余数 处理
                 if (number === (len - 1)) {

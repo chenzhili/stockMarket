@@ -69,14 +69,15 @@ module.exports = {
   // ],
 
   // An array of file extensions your modules use
-  // moduleFileExtensions: [
-  //   "js",
-  //   "json",
-  //   "jsx",
-  //   "ts",
-  //   "tsx",
-  //   "node"
-  // ],
+  moduleFileExtensions: [
+    "js",
+    "vue",
+    "json",
+    "jsx",
+    "ts",
+    "tsx",
+    "node",
+  ],
 
   // A map from regular expressions to module names that allow to stub out resources with a single module
   // moduleNameMapper: {},
@@ -129,7 +130,7 @@ module.exports = {
   // setupFilesAfterEnv: [],
 
   // A list of paths to snapshot serializer modules Jest should use for snapshot testing
-  // snapshotSerializers: [],
+  snapshotSerializers: ['jest-serializer-vue'],
 
   // The test environment that will be used for testing
   // testEnvironment: "jest-environment-jsdom",
@@ -152,7 +153,8 @@ module.exports = {
   // ],
 
   // The regexp pattern or array of patterns that Jest uses to detect test files 这个可以默认写需要测试的文件，当 vscode的 jest插件不起作用的时候
-  testRegex: 'paintCom.spec.js$',//[],
+  // testRegex: 'paintCom.spec.js$',//[],
+  testRegex: 'timeSharing.spec.js$',//[],
 
   // This option allows the use of a custom results processor
   // testResultsProcessor: null,
@@ -167,7 +169,12 @@ module.exports = {
   // timers: "real",
 
   // A map from regular expressions to paths to transformers
-  // transform: null,
+  // 这里需要注意下，就是在 加入了 其他 语言的转换器的时候，想用 babel-jest 的时候，需要 显示的 申明 出来；
+  transform: {
+    "^.+\\.[t|j]sx?$": "babel-jest",
+    ".*\\.(vue)$": "vue-jest",
+    // "^.+\\.js$": "<rootDir>/node_modules/babel-jest"
+  },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
   // transformIgnorePatterns: [

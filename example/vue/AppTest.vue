@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <VueTest/>
     <h2 class="title">{{title}}</h2>
     <div class="content">
       <div class="left">
@@ -22,9 +23,15 @@ import { insType } from "../../src/enums";
 
 import { mData, dData } from "../../src/transformCal/response";
 
+// 测试组件
+import VueTest from '../../src/vueCom/VueTest.vue';
+
 console.log(mData.slice(0,20));
 
 export default {
+  components:{
+    VueTest
+  },
   data() {
     return {
       title: "Lorem ipsum dolor sit amet consectetur",

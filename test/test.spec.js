@@ -71,3 +71,19 @@ test('测试 function的默认参数', () => {
 
     expect(getDefault()).toBe(1)
 })
+
+
+
+jest.mock("=../src/utils/test", () => {
+    return jest.fn(() => {return 1223;})
+});
+import test from "../src/utils/test"
+let Wrapper;
+beforeEach(() => {
+    Wrapper = shallowMount(VueTest);
+})
+it('测试模块模拟', () => {
+    console.log(test());
+    // expect(test()).toBeUndefined();
+    expect(test()).toBe(1223);
+})

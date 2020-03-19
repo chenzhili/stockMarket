@@ -43,6 +43,7 @@ export function splitNumber(num) {
 /* 计算 对应的 坐标 系数 */
 export function calValuePos({ min, max, factorMaxInc, totalHeight, baseHeight, n, decimal = 100 }) {
     // console.log(totalHeight);
+    decimal = decimal == 0 ? 1 : decimal;
     const valueIncrement = (max - min) / (n - 1), yPosIncrement = totalHeight / (n - 1);
     const config = {
         actuallyValue: [],

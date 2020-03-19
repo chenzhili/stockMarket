@@ -78,10 +78,11 @@
         >{{item}}</span>
       </template>
       <template v-for="(item,index) of QLStockMarketIns._paintConfig.dealRange.actuallyValue">
+        <!-- QLStockMarketIns._paintConfig.dealRange.valueYPos.length-1-index -->
         <span
           :class="[styles.valueItem,styles[`${theme}DealMount`]]"
           :key="QLStockMarketIns._paintConfig.valueRange.actuallyValue.length+index"
-          :style="{top:`${QLStockMarketIns._paintConfig.dealRange.valueYPos[QLStockMarketIns._paintConfig.dealRange.valueYPos.length-1-index] || 0}px`}"
+          :style="{top:`${QLStockMarketIns._paintConfig.dealRange.valueYPos[index] || 0}px`}"
         >{{splitNumber(item)}}</span>
       </template>
     </div>

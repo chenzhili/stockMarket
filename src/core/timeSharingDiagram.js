@@ -293,12 +293,12 @@ export function paintTimeSharingDiagram(data) {
      */
     const paintLineFun = ({ i, paintType, cx }) => {
         let cy, sy;
-        if (chartData[i][paintType] >= preClosePrice) {
+        if (chartData[i][paintType] - preClosePrice >= 0) {
             cy = config[allGraph.line].baseHeight + LYUpFactor * (LMax - chartData[i][paintType]);
         } else {
             cy = config[allGraph.line].baseHeight + config[allGraph.line].totalHeight / 2 + LYDownFator * (preClosePrice - chartData[i][paintType]);
         }
-        if (chartData[i - 1][paintType] >= preClosePrice) {
+        if (chartData[i - 1][paintType] - preClosePrice >= 0) {
             sy = config[allGraph.line].baseHeight + LYUpFactor * (LMax - chartData[i - 1][paintType]);
         } else {
             sy = config[allGraph.line].baseHeight + config[allGraph.line].totalHeight / 2 + LYDownFator * (preClosePrice - chartData[i - 1][paintType]);

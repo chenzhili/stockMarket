@@ -23,10 +23,12 @@
       </div>
       <div :class="styles.qlContainer" id="qlStockMarketK">
         <!-- 添加模态框 -->
+
         <div
+          ref="modalRef"
+          v-if="upToData.date"
           :class="styles.modalMess"
-          v-if="upToData.actuallyX"
-          :style="{left:upToData.actuallyX+'px',top:upToData.actuallyY+'px'}"
+          :style="{left:(upToData.reverse ? (upToData.actuallyX - modalDOMMess.width) : upToData.actuallyX) +'px',top:upToData.actuallyY + upToData.yValue+'px'}"
         >
           <div>
             日期:
@@ -50,11 +52,11 @@
           :style="{top:upToData.actuallyY+'px'}"
         >{{upToData.close}}</div>
         <!-- 显示的日期 -->
-        <div
+        <!-- <div
           :class="styles.updateDate"
           v-if="upToData.date"
           :style="{background:'#000',color:'#fff',top:upToDateY+'px',left:upToData.actuallyX+'px'}"
-        >{{upToData.date}}</div>
+        >{{upToData.date}}</div>-->
         <!-- MA均线 -->
         <div :class="styles.updateMA">
           <template v-for="(item,index) of QLStockMarketIns._MAConfig">
@@ -67,7 +69,8 @@
           </template>
         </div>
       </div>
-      <div :class="[styles.marketMess,styles[`${theme}GenText`]]">预留地方</div>
+      <div :class="[styles.marketMess,styles[`${theme}GenText`]]"></div>
+      <!--预留地方-->
     </div>
     <div :class="styles.rightMess">
       <template v-for="(item,index) of QLStockMarketIns._paintConfig.valueRange.actuallyValue">
@@ -147,7 +150,12 @@ export default {
       valueBorder: null,
       upToData: {},
       upToDateY: 0, //就是 页面中时间显示的位置
-      decimal: 100 // 默认的保留位数
+      decimal: 100, // 默认的保留位数
+      modalDOMMess: {
+        width: 120,
+        height: 210
+      },
+      freshTime: null
     };
   },
   computed: {
@@ -163,10 +171,53 @@ export default {
     formatNumber,
     /* 在 hover 事件 的运用 */
     getUpToDataData(data) {
-      console.log("==============", data);
+      // console.log("==============", data, this.QLStockMarketIns);
+      this.freshTime || clearTimeout(this.freshTime);
       this.upToData = data;
       // 判定当前 是 涨还是 跌;
-      this.upOrDown = (this.upToData.rate - 0) < 0 ? "down" : "up";
+      this.upOrDown = this.upToData.rate - 0 < 0 ? "down" : "up";
+      this.freshTime = setTimeout(() => {
+        const modalDOM = this.$refs.modalRef;
+        let width = this.modalDOMMess.width;
+        let height = this.modalDOMMess.height;
+        debugger;
+        if (modalDOM) {
+          const mess = getComputedStyle(modalDOM);
+          /* width操作 */
+          width = parseFloat(mess.width);
+          if (width > this.modalDOMMess.width) {
+            // this.modalDOMMess.width = width;
+            this.$set(this.modalDOMMess, "width", width);
+          } else {
+            width = this.modalDOMMess.width;
+          }
+
+          /* height 操作 */
+          height = parseFloat(mess.height);
+          this.$set(this.modalDOMMess, "height", height);
+          // this.modalDOMMess.height = height;
+        }
+        /* 对于模态 上的 显示问题 */
+        // width
+        if (this.QLStockMarketIns._DOMWidth - data.actuallyX <= width) {
+          // this.upToData.reverse = true;
+          this.$set(this.upToData, "reverse", true);
+        }
+        // height
+        let dValue = 0;
+        if (
+          (dValue =
+            this.QLStockMarketIns._DOMHeight -
+            this.upToData.actuallyY -
+            height) < 0
+        ) {
+          // this.upToData.yValue = dValue;
+          this.$set(this.upToData, "yValue", dValue);
+        } else {
+          // this.upToData.yValue = 0;
+          this.$set(this.upToData, "yValue", 0);
+        }
+      });
     },
     /* 当页面 发生移动 或者 缩放的时候 做的 */
     getChangeData(data) {
@@ -179,42 +230,37 @@ export default {
     dataGraph: {
       deep: true,
       handler(nv) {
-        console.log("============", nv);
+        // console.log("============", nv);
         const me = this;
         const curData = preDealCurData(nv, this.curSTT);
         this.QLStockMarketIns._data = {
           // data: nv.data
           data: dealData({ ...nv, curData }, me.sTt)
         };
-        console.log(this.QLStockMarketIns._data);
       }
       // immediate: true,
     },
     sTt: {
       deep: true,
       handler(nv) {
-        console.log("============", nv);
         const me = this;
         const curData = preDealCurData(me.dataGraph, this.curSTT);
         this.QLStockMarketIns._data = {
           // data: nv.data
           data: dealData({ ...me.dataGraph, curData }, nv)
         };
-        console.log(this.QLStockMarketIns._data);
       }
       // immediate: true,
     },
     curSTT: {
       deep: true,
       handler(nv) {
-        console.log("============", nv);
         const me = this;
         const curData = preDealCurData(me.dataGraph, nv);
         this.QLStockMarketIns._data = {
           // data: nv.data
           data: dealData({ ...me.dataGraph, curData }, me.sTt)
         };
-        console.log(this.QLStockMarketIns._data);
       }
       // immediate: true,
     }
@@ -224,7 +270,6 @@ export default {
     const dataGraph = {
       data: dealData({ ...this.dataGraph, curData }, this.sTt)
     };
-    console.log(dataGraph);
     let QLStockMarketIns = new QLStockMarket({
       selector: "#qlStockMarketK",
       data: {
@@ -246,12 +291,6 @@ export default {
       ];
     this.$set(this, "QLStockMarketIns", QLStockMarketIns);
     this.decimal = QLStockMarketIns._decimal;
-
-    console.log(
-      QLStockMarketIns,
-      QLStockMarketIns._paintConfig,
-      this.valueBorder
-    );
   },
   destroyed() {
     this.QLStockMarketIns.cancelEventListener();

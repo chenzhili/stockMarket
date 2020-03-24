@@ -1,19 +1,23 @@
 import VueTest from '../../src/vueCom/VueTest.vue'
 import { mount, shallowMount } from '@vue/test-utils'
 
-let Wrapper;
-beforeEach(() => {
-    Wrapper = shallowMount(VueTest);
-})
-describe('简单测试 vue 的组件', () => {
-    it('快照测试', () => {
-        
+describe('VueTest 组件的测试', () => {
+    /* 这个 组件 只需要做的测试：
+        1、初始的 快照测试；
+        2、在 value 发生 变化后的  h1 的内容，或者是 快照
+    */
+    it('初始快照测试', () => {
+        const Wrapper = shallowMount(VueTest);
         expect(Wrapper).toMatchSnapshot();
     })
-    it('基本事件逻辑测试', () => {
-        let h1Text = Wrapper.find("h1").text();
-        const modifyText = Wrapper.find("input").setValue('test');
-        console.log(Wrapper.find("h1").text(), Wrapper.find("input").value());
-        expect(Wrapper.find("h1").text()).toBe(h1Text+modifyText)
+    it('值修改后的快照测试', () => {
+        const Wrapper = shallowMount(VueTest, {
+            $data:{
+                value: 'test'
+            }
+        });
+        console.log(Wrapper.find("h1").text());
+        /* 感觉这个测试 还是在 测试 vue 框架的 业务，这有点问题 */
+        expect(Wrapper.find("h1").text()).toBe("初始 测试 vue 111");
     })
 })

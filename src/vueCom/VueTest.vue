@@ -9,7 +9,7 @@ export default {
   name: 'VueTest',
   data: function() {
     return {
-      value: ""
+      value: "111"
     };
   },
   computed: {},
@@ -19,8 +19,10 @@ export default {
         this.value = e.target.value;
       }
   },
+  mounted() {
+    console.log(this);
+  },
   watch: {},
-  async mounted() {},
   destroyed() {},
   props: {}
 };

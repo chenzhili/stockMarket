@@ -17,11 +17,17 @@ module.exports = {
   // Automatically clear mock calls and instances between every test
   clearMocks: true,
 
+  /* 下面两个不用 加上在 test上，在 prod 环境上加上，或者单独执行 coverage 的命令 就好 */
   // Indicates whether the coverage information should be collected while executing the test
-  // collectCoverage: false,
+  // collectCoverage: true,
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
   // collectCoverageFrom: null,
+  // collectCoverageFrom: [
+  //   "**/*.{js,jsx,vue}",
+  //   "!**/node_modules/**",
+  //   "!**/dist/**"
+  // ],
 
   // The directory where Jest should output its coverage files
   coverageDirectory: "coverage",

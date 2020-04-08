@@ -125,18 +125,19 @@ export default {
     }
   },
   watch: {
-    dataGraph: {
-      deep: true,
-      handler(nv) {
-        // console.log("============");
-        const me = this;
-        this.QLStockMarketIns._data = {
-          // data: nv.data
-          data: dealData(nv, me.sTt)
-        };
-      }
-      // immediate: true,
-    },
+    // 在 组件接收 dataGraph 的时候，就已经 将当前 引用对象 赋值了，这时候 行情插件能监听到 set 这个操作
+    // dataGraph: {
+    //   deep: true,
+    //   handler(nv) {
+    //     console.log("============");
+    //     const me = this;
+    //     this.QLStockMarketIns._data = {
+    //       // data: nv.data
+    //       data: dealData(nv, me.sTt)
+    //     };
+    //   }
+    //   // immediate: true,
+    // },
     sTt: {
       deep: true,
       handler(nv) {

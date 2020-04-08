@@ -118,6 +118,7 @@ export default function initCanvas(QLStockMarket) {
                     },
                     set(newValue) {
                         /* 出现了指标线 计算，需要在 set的 时候，将获取到的 值 进行 处理 */
+                        console.log('set执行了嘛');
                         let typeData = config.insType === insType.timeSharingDiagram ? { chartData: newValue } : { kData: newValue };
 
                         typeData = QL.outputData({ ...options, data: typeData });

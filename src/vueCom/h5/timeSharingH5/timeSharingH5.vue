@@ -1,5 +1,9 @@
 <template>
-  <div :style="{width:width,height:height}" :class="[styles.container,styles[`${theme}Bg`]]">
+  <div
+    :style="{width:width,height:height}"
+    :class="[styles.container,styles[`${theme}Bg`]]"
+    v-if="flag"
+  >
     <div :class="[styles.marketMess,styles[`${theme}GenText`]]">
       <span>{{upToData.time || curData.time}}</span>
       <template v-for="(item,index) of showMess">
@@ -29,7 +33,10 @@
         </span>
       </template>
     </div>
-    <div :class="styles.qlContainer" id="qlStockMarketT">
+    <div
+      :class="styles.qlContainer"
+      id="qlStockMarketT"
+    >
       <div>
         <template v-for="(item,index) of QLStockMarketIns._paintConfig.valueRange.factorInc">
           <span
@@ -95,7 +102,7 @@ const showMess = [
 
 export default {
   name: "TimeSharingH5",
-  data: function() {
+  data: function () {
     return {
       styles,
 
@@ -118,34 +125,75 @@ export default {
       valueBorder: null,
       upToData: {}, //时时数据
       upOrDown: false, //看看当前 是 涨还是跌
-      decimal: 100 // 默认的保留位数
+      decimal: 100, // 默认的保留位数
+
+      // 刷新 当前 组件的 控制
+      flag: true
     };
   },
   computed: {
-    showMess() {
+    showMess () {
       return showMess;
     },
-    timeArr() {
+    timeArr () {
       return timeArr;
     },
-    theme() {
+    theme () {
       return this.config.theme ? this.config.theme : "light";
     }
   },
   methods: {
     splitNumber,
     formatNumber,
-    getUpToDataData(data) {
+    getUpToDataData (data) {
       // console.log("==============",data);
       this.upToData = data;
       // 判定当前 是 涨还是 跌;
       this.upOrDown = this.upToData.rate < 0 ? "down" : "up";
+    },
+    // 刷新当前组件
+    refresh (bool) {
+      bool = bool == undefined ? true : false;
+      this.flag = bool;
+    },
+    initQLStockMarket () {
+      // console.log(this.$emit); //用这个进行 子组件向 父组件 传值
+      let QLStockMarketIns = new QLStockMarket({
+        selector: "#qlStockMarketT",
+        data: {
+          chartData: this.dataGraph
+        },
+        config: this.config,
+        emit: {
+          getUpToDataData: this.getUpToDataData,
+          // refresh: this.refresh
+        }
+      });
+
+      /* 动态加入 感觉没意义 */
+      /* let {Theme} = await import("../../../enums");
+      console.log(Theme); */
+
+      this.valueBorder =
+        Math.ceil(
+          QLStockMarketIns._paintConfig.valueRange.actuallyValue.length / 2
+        ) - 1;
+      this.$set(this, "QLStockMarketIns", QLStockMarketIns);
+      this.$set(
+        this,
+        "curData",
+        QLStockMarketIns._data.data[QLStockMarketIns._data.data.length - 1]
+      );
+      // 判定当前 是 涨还是 跌;
+      this.upOrDown = this.curData.rate < 0 ? "down" : "up";
+      this.decimal = QLStockMarketIns._decimal;
+      console.log(this, this.QLStockMarketIns, QLStockMarketIns._paintConfig);
     }
   },
   watch: {
     dataGraph: {
       deep: true,
-      handler(nv) {
+      handler (nv) {
         console.log("============");
         this.QLStockMarketIns._data = {
           data: nv.data,
@@ -153,41 +201,49 @@ export default {
         };
       }
       // immediate: true,
+    },
+    /* 全屏处理 */
+    width: {
+      deep: true,
+      handler (nv) {
+        // console.log("width:" + nv);
+        // this.QLStockMarketIns._DOMWidth = parseFloat(nv);
+        this.refresh(false);
+        setTimeout(() => {
+          this.refresh();
+        })
+      }
+      // immediate: true,
+    },
+    height: {
+      deep: true,
+      handler (nv) {
+        // console.log("height:" + nv);
+        // this.QLStockMarketIns._DOMHeight = parseFloat(nv);
+        this.refresh(false);
+        setTimeout(() => {
+          this.refresh();
+        })
+      }
+      // immediate: true,
+    },
+    flag: {
+      deep: true,
+      handler (nv) {
+        console.log(nv);
+        // this.QLStockMarketIns._DOMHeight = 0;
+        if (nv) {
+          setTimeout(() => {
+            this.initQLStockMarket();
+          })
+        }
+      }
     }
   },
-  async mounted() {
-    // console.log(this.$emit); //用这个进行 子组件向 父组件 传值
-    let QLStockMarketIns = new QLStockMarket({
-      selector: "#qlStockMarketT",
-      data: {
-        chartData: this.dataGraph
-      },
-      config: this.config,
-      emit: {
-        getUpToDataData: this.getUpToDataData
-      }
-    });
-
-    /* 动态加入 感觉没意义 */
-    /* let {Theme} = await import("../../../enums");
-    console.log(Theme); */
-
-    this.valueBorder =
-      Math.ceil(
-        QLStockMarketIns._paintConfig.valueRange.actuallyValue.length / 2
-      ) - 1;
-    this.$set(this, "QLStockMarketIns", QLStockMarketIns);
-    this.$set(
-      this,
-      "curData",
-      QLStockMarketIns._data.data[QLStockMarketIns._data.data.length - 1]
-    );
-    // 判定当前 是 涨还是 跌;
-    this.upOrDown = this.curData.rate < 0 ? "down" : "up";
-    this.decimal = QLStockMarketIns._decimal;
-    // console.log(this, this.QLStockMarketIns, QLStockMarketIns._paintConfig);
+  async mounted () {
+    this.initQLStockMarket();
   },
-  destroyed() {
+  destroyed () {
     if (
       this.QLStockMarketIns &&
       isFunction(this.QLStockMarketIns.cancelEventListener)
@@ -206,13 +262,13 @@ export default {
     },
     dataGraph: {
       type: Object,
-      default: function() {
+      default: function () {
         return {};
       }
     },
     config: {
       type: Object,
-      default: function() {
+      default: function () {
         return {};
       }
     }

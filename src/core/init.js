@@ -4,7 +4,7 @@ import { insType, Theme, calcConfig } from "../enums"
 import { initTimeSharingDiagram, paintTimeSharingDiagram } from "./timeSharingDiagram"
 import { initkLineGraph, kLineGraphPaint } from "./kLineGraph"
 
-export default function initCanvas(QLStockMarket) {
+export default function initCanvas (QLStockMarket) {
     QLStockMarket.prototype.init = function (options) {
         const QL = this;
         // console.log(1111);
@@ -19,23 +19,33 @@ export default function initCanvas(QLStockMarket) {
         //     calcConfig.kLineGraph = config;
         // }
 
-        if (isObject(emit) && isFunction(emit.getUpToDataData)) {
+        if (isObject(emit)) {
             /*这里要注意私有方法 和 共有方法 的区别 */
             // 这种写法 有问题，这种放到 原型链上 共享 是有 问题的，特别注意
             // QLStockMarket.prototype.getUpToDataData = emit.getUpToDataData;
             // 解决 办法 应该 是吧 当前 方法 作为 私有方法
-            Object.defineProperty(QL, "getUpToDataData", {
-                get() {
-                    return emit.getUpToDataData;
-                }
-            })
+            if (isFunction(emit.getUpToDataData)) {
+                Object.defineProperty(QL, "getUpToDataData", {
+                    get () {
+                        return emit.getUpToDataData;
+                    }
+                })
+            }
+            if (isFunction(emit.refresh)) {
+                Object.defineProperty(QL, "refresh", {
+                    get () {
+                        return emit.refresh;
+                    }
+                })
+            }
+            
         }
 
         if (isObject(emit) && isFunction(emit.getChangeData)) {
             // QLStockMarket.prototype.getChangeData = emit.getChangeData;
             // 同上
             Object.defineProperty(QL, "getChangeData", {
-                get() {
+                get () {
                     return emit.getChangeData;
                 }
             })
@@ -55,7 +65,11 @@ export default function initCanvas(QLStockMarket) {
         dealTheme(QL, config.theme);
 
         (function (QL) {
-            let tempData = null;
+            let tempData = null;// 临时数据的 存储
+            let DOMMess = {   // DOM 的 信息存储
+                width: width - (parseFloat(leftWidth) + parseFloat(rightWidth)),
+                height: height - (parseFloat(topWidth) + parseFloat(bottomWidth))
+            } 
             if (config.insType === insType.timeSharingDiagram) {
                 tempData = data.chartData
             }
@@ -67,7 +81,7 @@ export default function initCanvas(QLStockMarket) {
             Object.defineProperties(QL, {
                 // 初始化 小数位数
                 _decimal: {
-                    get() {
+                    get () {
                         if (!tempData.data.length) {
                             return 100;
                         } else {
@@ -82,41 +96,53 @@ export default function initCanvas(QLStockMarket) {
                     configurable: true
                 },
                 _defulatSale: {
-                    get() {
+                    get () {
                         return window.devicePixelRatio || 1;
                     }
                 },
                 _DOM: {
-                    get() {
+                    get () {
                         return DOM
                     }
                 },
                 _DOMWidth: {
-                    get() {
-                        return width - (parseFloat(leftWidth) + parseFloat(rightWidth))
+                    get () {
+                        return DOMMess.width
                     }
+                    // 现在 做成 直接 重新 实例 一个 ins
+                    /* ,
+                    set (newValue) {
+                        console.log("_DOMWidth:变化");
+                        QL.updateView(config.insType, DOMMess);
+                    } */
                 },
                 _DOMHeight: {
-                    get() {
-                        return height - (parseFloat(topWidth) + parseFloat(bottomWidth));
+                    get () {
+                        return DOMMess.height;
                     }
+                    // 现在 做成 直接 重新 实例 一个 ins
+                    /* ,
+                    set (newValue) {
+                        console.log("_DOMHeight:变化");
+                        QL.updateView(config.insType, DOMMess);
+                    } */
                 },
                 _device: {
-                    get() {
+                    get () {
                         return device
                     }
                 },
                 _insType: {
-                    get() {
+                    get () {
                         return config.insType
                     }
                 },
                 // 这个值 是 可以 被 配置的
                 _data: {
-                    get() {
+                    get () {
                         return tempData
                     },
-                    set(newValue) {
+                    set (newValue) {
                         /* 出现了指标线 计算，需要在 set的 时候，将获取到的 值 进行 处理 */
                         console.log('set执行了嘛');
                         let typeData = config.insType === insType.timeSharingDiagram ? { chartData: newValue } : { kData: newValue };
@@ -129,7 +155,7 @@ export default function initCanvas(QLStockMarket) {
 
                             // 修改 小数位数
                             Object.defineProperty(QL, "_decimal", {
-                                get() {
+                                get () {
                                     if (tempData.data.length) {
                                         return 100;
                                     } else {
@@ -148,7 +174,7 @@ export default function initCanvas(QLStockMarket) {
                             let startI = tempData.data.length - calcConfig.kLineGraph.initShowN, endI = tempData.data.length;
                             Object.defineProperties(QL, {
                                 "_kMess": {
-                                    get() {
+                                    get () {
                                         return {
                                             startI,
                                             endI,
@@ -158,7 +184,7 @@ export default function initCanvas(QLStockMarket) {
                                     configurable: true
                                 },
                                 "_decimal": {
-                                    get() {
+                                    get () {
                                         if (tempData.data.length) {
                                             return 100;
                                         } else {
@@ -189,7 +215,7 @@ export default function initCanvas(QLStockMarket) {
         }
 
 
-        // // 初始化 所有监听事件，在 内部 进行 区分 客户端
+        // 初始化 所有监听事件，在 内部 进行 区分 客户端
         QL.eventInit();
     }
 
@@ -201,7 +227,7 @@ export default function initCanvas(QLStockMarket) {
 }
 
 /* 处理 主题，这里可能 对应的 值 不存在，在内部 初始化的时候需要 设置 默认值 */
-function dealTheme(QL, theme) {
+function dealTheme (QL, theme) {
     let defaultTheme = "light", paintTheme = null;
     if (isString(theme)) {
         defaultTheme = Theme[theme] ? theme : "light";
@@ -213,7 +239,7 @@ function dealTheme(QL, theme) {
     }
     // console.log(paintTheme);
     Object.defineProperty(QL, "_theme", {
-        get() {
+        get () {
             return paintTheme
         }
     })

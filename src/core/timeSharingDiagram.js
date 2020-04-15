@@ -28,6 +28,13 @@ export function initTimeSharingDiagram(QL, data) {
         }
     });
 
+    /* 需要获取到 canvas 元素 */
+    Object.defineProperty(QL, "_mainCvs", {
+        get() {
+            return canvas;
+        }
+    });
+
     /* 主要的 页面 绘制的 组合 */
     QL.paintTimeSharingDiagram(data);
 
@@ -151,6 +158,13 @@ function genMaskCav(QL) {
         },
         configurable: true
     })
+
+    /* 需要获取到 canvas 元素 */
+    Object.defineProperty(QL, "_maskCvs", {
+        get() {
+            return canvas;
+        }
+    });
 
     return canvas;
 

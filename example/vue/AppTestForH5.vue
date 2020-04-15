@@ -2,10 +2,11 @@
   <div class="container">
     <div class="header">头部内容</div>
     <div class="content">
-      <!-- <TimeSharingH5 :dataGraph="dataGraphForTime" :config="configForTime" height="267px"></TimeSharingH5> -->
-      <KLineGraphComH5 :dataGraph="dataGraphForK" :config="configForK" height="267px" :sTt="sTt"></KLineGraphComH5>
+      <!-- <TimeSharingH5 :dataGraph="dataGraphForTime" :config="configForTime" :height="height" :width="width"></TimeSharingH5> -->
+      <KLineGraphComH5 :dataGraph="dataGraphForK" :config="configForK" :height="height" :width="width" :sTt="sTt"></KLineGraphComH5>
     </div>
     <div class="btn" @click="click">click</div>
+    <div class="btn" @click="changeSize">全屏处理</div>
   </div>
 </template>
 <script>
@@ -26,7 +27,10 @@ export default {
       dataGraphForK: {
         data: dData //mData//kData
       },
-      sTt: ["d", "w"]
+      sTt: ["d", "w"],
+      /* 全屏的 处理 */
+      height: "267px",
+      width: "100%"
     };
   },
   methods: {
@@ -36,6 +40,10 @@ export default {
       this.isShow = !this.isShow;
 
       this.sTt = this.isShow ? [] : ["d", "w"];
+    },
+    changeSize() {
+      this.height = "400px";
+      // this.width = "300px";
     }
   },
   computed: {

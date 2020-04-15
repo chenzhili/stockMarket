@@ -3,6 +3,10 @@ import initCanvas from "./init"
 import initEvent from "../events"
 import initData from "./initData"
 
+/* 视图更新的方法 需要 单独提出来 */
+/* 不需要目前 */
+// import updateView from './updateView'
+
 /* 
     初始化 需要的 数据量
     options:
@@ -38,6 +42,8 @@ function QLStockMarket(options) {
 initCanvas(QLStockMarket);
 initEvent(QLStockMarket);
 initData(QLStockMarket);
+
+// updateView(QLStockMarket);
 
 
 export default QLStockMarket;

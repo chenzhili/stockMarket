@@ -6,6 +6,7 @@
     font-size:0.625rem;
     position: relative;
     outline:1px solid #ddd;
+    user-select: none;
     .marketMessSpecial{
         display:flex;
         flex-wrap: wrap;
@@ -60,6 +61,7 @@
             position: absolute;
             z-index:100;
             color:#fff;
+            user-select: none;
         }
         .updateValue{
             left:0;

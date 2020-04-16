@@ -31,13 +31,13 @@ export default function initCanvas (QLStockMarket) {
                     }
                 })
             }
-            if (isFunction(emit.refresh)) {
+            /* if (isFunction(emit.refresh)) {
                 Object.defineProperty(QL, "refresh", {
                     get () {
                         return emit.refresh;
                     }
                 })
-            }
+            } */
             
         }
 

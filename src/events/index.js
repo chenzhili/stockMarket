@@ -233,11 +233,11 @@ function mouseLeave(e) {
 */
 /* pc 画布上的 mousemove 的事件 ,h5 上的 长按 然后 move 事件 */
 function mouseMove(e) {
-    // console.log("move", e);
     const QL = this;
     // 这里 根据 设备端 的不同
-    const eventPos = QL._device === pcOrH5.pc ? "originalEvent" : "srcEvent";
-    const { layerX: x } = e[eventPos];
+    // const eventPos = QL._device === pcOrH5.pc ? "originalEvent" : "srcEvent";
+    // const { layerX: x } = e[eventPos];
+    const x = QL._device === pcOrH5.pc ? e.offsetX : e.center.x;
 
     // 如果 对应的 x 的变动 不在 刷新范围内，就直接退出
     if (Math.abs(QL.prevX - x) <= QL._gapD) {
@@ -427,13 +427,11 @@ function mouseDown(e) {
     const QL = this;
 
     // 这里 根据 设备端 的不同
-    const eventPos = QL._device === pcOrH5.pc ? "originalEvent" : "srcEvent";
-    let { layerX: preX } = e[eventPos];
-
+    const eventPos = QL._device === pcOrH5.pc ? "offsetX" : "deltaX";
+    let preX = e[eventPos];
     const mousemove2 = function mousemove2(e) {
 
-        const eventPos = QL._device === pcOrH5.pc ? "originalEvent" : "srcEvent";
-        const { layerX: curX } = e[eventPos];
+        const curX = e[eventPos];
 
         let { _kMess: { startI, endI, showNumber }, _perRectWidth: perRectWidth, _data: data } = QL;
 

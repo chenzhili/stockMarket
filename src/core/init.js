@@ -38,7 +38,7 @@ export default function initCanvas (QLStockMarket) {
                     }
                 })
             } */
-            
+
         }
 
         if (isObject(emit) && isFunction(emit.getChangeData)) {
@@ -55,12 +55,17 @@ export default function initCanvas (QLStockMarket) {
         const DOM = document.querySelector(selector);
         if (!DOM) return "入口node未找到";
 
-        const { width, height } = DOM.getBoundingClientRect();
-        let { "border-left-width": leftWidth, "border-right-width": rightWidth, "border-top-width": topWidth, "border-bottom-width": bottomWidth, } = getComputedStyle(DOM);
-
+        /* 这个获取的 窗口大小，旋转后 width 和 height 对应的 长宽 不一样了 的大小不满足条件了 */
+        const { width: actuallyWidth, height: actuallyHeight } = DOM.getBoundingClientRect();
+        let { "border-left-width": leftWidth, "border-right-width": rightWidth, "border-top-width": topWidth, "border-bottom-width": bottomWidth, width, height } = getComputedStyle(DOM);
+        width = parseFloat(width);
+        height = parseFloat(height);
         const device = browserRedirect();
 
         // console.log(DOM, width, height);
+        // 一次判断 当前 控制 的 是在 x 还是 y上
+        console.log("盒子元素的 width ",width , "盒子的",actuallyWidth);
+        console.log("盒子元素的 width ",height , "盒子的",actuallyHeight);
 
         dealTheme(QL, config.theme);
 
@@ -69,7 +74,7 @@ export default function initCanvas (QLStockMarket) {
             let DOMMess = {   // DOM 的 信息存储
                 width: width - (parseFloat(leftWidth) + parseFloat(rightWidth)),
                 height: height - (parseFloat(topWidth) + parseFloat(bottomWidth))
-            } 
+            }
             if (config.insType === insType.timeSharingDiagram) {
                 tempData = data.chartData
             }

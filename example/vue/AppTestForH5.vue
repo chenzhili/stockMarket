@@ -1,12 +1,26 @@
 <template>
-  <div class="container">
+  <div
+    class="container"
+    ref="container"
+  >
     <div class="header">头部内容</div>
-    <div class="content">
-      <TimeSharingH5 :dataGraph="dataGraphForTime" :config="configForTime" :height="height" :width="width"></TimeSharingH5>
+    <div class="content" :class="full?'active-full':''" :style="{transformOrigin:totalWidth/2 + 'px',width:width,height:height}">
+      <TimeSharingH5
+        :dataGraph="dataGraphForTime"
+        :config="configForTime"
+        :height="height"
+        :width="width"
+      ></TimeSharingH5>
       <!-- <KLineGraphComH5 :dataGraph="dataGraphForK" :config="configForK" :height="height" :width="width" :sTt="sTt"></KLineGraphComH5> -->
     </div>
-    <div class="btn" @click="click">click</div>
-    <div class="btn" @click="changeSize">全屏处理</div>
+    <div
+      class="btn"
+      @click="click"
+    >click</div>
+    <div
+      class="btn"
+      @click="changeSize"
+    >全屏处理</div>
   </div>
 </template>
 <script>
@@ -17,7 +31,7 @@ import { insType } from "../../src/enums";
 import { mData, dData } from "../../src/transformCal/response";
 
 export default {
-  data() {
+  data () {
     return {
       title: "Lorem ipsum dolor sit amet consectetur",
       dataGraphForTime: {
@@ -30,30 +44,44 @@ export default {
       sTt: ["d", "w"],
       /* 全屏的 处理 */
       height: "267px",
-      width: "100%"
+      width: "100%",
+
+      /* 屏幕宽高 */
+      totalHeight: 0,
+      totalWidth: 0,
+      full: false
     };
   },
   methods: {
-    click() {
+    click () {
       // this.$set(this.dataGraphForTime, "data", timeSharing.slice(0, 100));
       this.$set(this.dataGraphForK, "data", kData.slice(0, 500));
       this.isShow = !this.isShow;
 
       this.sTt = this.isShow ? [] : ["d", "w"];
     },
-    changeSize() {
-      this.height = "400px";
+    changeSize () {
+      // this.height = "400px";
       // this.width = "300px";
+      console.log(this.totalHeight, this.totalWidth);
+      this.full = true;
+      this.width = this.totalHeight + 'px';
+      this.height = this.totalWidth + 'px';
     }
   },
+  mounted () {
+    console.log(this.$refs.container);
+    this.totalHeight = this.$refs.container.offsetHeight;
+    this.totalWidth = this.$refs.container.offsetWidth;
+  },
   computed: {
-    configForTime() {
+    configForTime () {
       return {
         insType: insType.timeSharingDiagram,
         theme: "light"
       };
     },
-    configForK() {
+    configForK () {
       return {
         insType: insType.kLineGraph,
         theme: "light"
@@ -62,9 +90,10 @@ export default {
   }
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 :global .container {
   width: 100%;
+  height: 100%;
   .header {
     line-height: 80px;
     border-bottom: 1px solid #ddd;
@@ -74,6 +103,18 @@ export default {
     padding: 0 6px;
     height: 267px;
     border-bottom: 1px solid #ddd;
+  }
+
+  /* 全屏处理 */
+  .active-full {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transform: rotate(90deg);
+    z-index:99;
+    padding-left:0;
   }
 }
 </style>

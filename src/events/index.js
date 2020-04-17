@@ -12,7 +12,7 @@ import { calcConfig } from "../enums/calcEnum"
 
 
 
-export default function initEvent(QLStockMarket) {
+export default function initEvent (QLStockMarket) {
     QLStockMarket.prototype.eventInit = function () {
         const QL = this;
         const DOM = QL._DOM, device = QL._device, ins = QL._insType;
@@ -51,7 +51,7 @@ export default function initEvent(QLStockMarket) {
 
             // 最后合并
             Object.defineProperty(QL, "_isLeave", {
-                get() {
+                get () {
                     return false
                 },
                 configurable: true
@@ -66,7 +66,7 @@ export default function initEvent(QLStockMarket) {
             const hammer = new Hammer(DOM);
 
             Object.defineProperty(QL, "_hammer", {
-                get() {
+                get () {
                     return hammer
                 },
                 configurable: true
@@ -132,14 +132,14 @@ export default function initEvent(QLStockMarket) {
     H5
 */
 /* 判定当前 是 长按 */
-function touchPress(e) {
+function touchPress (e) {
     const QL = this;
     const hammer = QL._hammer;
     hammer.off("panstart panmove panend");
     mouseMove.call(QL, e);
     const move = function (e) {
         if (e.type === "tap") {
-            // console.log("=====","tap");
+            console.log("=====","tap");
             QL._maskCtx.clearRect(0, 0, QL._DOMWidth, QL._DOMHeight);
             if (isFunction(QL.getUpToDataData)) {
                 QL.getUpToDataData({});
@@ -164,7 +164,7 @@ function touchPress(e) {
     hammer.on("panstart panmove panend tap", move)
 }
 /* 判定当前位 pinch 事件 */
-function touchPinch() {
+function touchPinch () {
     const QL = this;
     QL._hammer.on("pinchout pinchin pinchend", function (e) {
         if (e.type === "pinchout") {
@@ -184,12 +184,12 @@ function touchPinch() {
     PC
 */
 /* 需要 绑定一系列事件，来取消 绑定，防止 内存溢出 */
-function mouseEnter(e) {
+function mouseEnter (e) {
     // console.log("enter");
     /* 这里 进行 重新 绑定 move 事件 */
     const QL = this;
     Object.defineProperty(QL, "_isLeave", {
-        get() {
+        get () {
             return false
         },
         configurable: true
@@ -202,13 +202,13 @@ function mouseEnter(e) {
         $(QL._DOM).on(`mousedown.${QL._insType}`, mouseDown.bind(QL));
     }
 }
-function mouseLeave(e) {
+function mouseLeave (e) {
     // console.log("leave");
     /* 清楚 move 事件 */
     const QL = this;
     if (QL._isLeave) return;
     Object.defineProperty(QL, "_isLeave", {
-        get() {
+        get () {
             return true
         },
         configurable: true
@@ -232,21 +232,24 @@ function mouseLeave(e) {
     public
 */
 /* pc 画布上的 mousemove 的事件 ,h5 上的 长按 然后 move 事件 */
-function mouseMove(e) {
+function mouseMove (e) {
     const QL = this;
+    // console.log("move事件触发没");
     // 这里 根据 设备端 的不同
     // const eventPos = QL._device === pcOrH5.pc ? "originalEvent" : "srcEvent";
     // const { layerX: x } = e[eventPos];
-    const x = QL._device === pcOrH5.pc ? e.offsetX : e.center.x;
+    const x = QL._device === pcOrH5.pc ? e.offsetX : e.center[QL._rotate ? 'y' : 'x'];
 
     // 如果 对应的 x 的变动 不在 刷新范围内，就直接退出
     if (Math.abs(QL.prevX - x) <= QL._gapD) {
+        // console.log('不需要重绘');
         return "不需要重绘";
     }
 
     /* 实际 需要 查找的 数据 */
     const actuallyData = QL._insType === insType.timeSharingDiagram ? QL._data.data : QL._kPaintData;
     // 需要 判定的 实际 坐标系 
+    // console.log(actuallyData);
     const existObj = actuallyData.find(z => Math.abs(z.actuallyX - x) <= QL._gapD);
     if (existObj) {
         QL._maskCtx.clearRect(0, 0, QL._DOMWidth, QL._DOMHeight);
@@ -282,7 +285,7 @@ function mouseMove(e) {
 
 /* 对于 k 线图 需要的 缩放 方法 */
 // 这是对于 pc 的
-function scalOrSkew(e) {
+function scalOrSkew (e) {
     e.preventDefault();
 
     const QL = this;
@@ -297,7 +300,7 @@ function scalOrSkew(e) {
     calSES(QL, calcConfig.kLineGraph.scaleOrSkewN * delta, x);
 }
 // 这是 h5 的 
-function scalOrSkewForH5(e) {
+function scalOrSkewForH5 (e) {
     e.preventDefault();
     const QL = this;
     const { scale, center: { x } } = e;
@@ -313,7 +316,7 @@ ssValue:是带有 符号的 放大缩小倍数
     showMaxData: 200,//最多 canvas 显示 的 数据条数
     initShowN = showNumber = 20; 初始值
 */
-function calSES(QL, ssValue, posX) {
+function calSES (QL, ssValue, posX) {
     let { _kMess: { startI, endI, showNumber }, _DOMWidth: width, _data: data } = QL;
 
     const { kLineGraph: { showMaxData, showMinData } } = calcConfig;
@@ -332,7 +335,7 @@ function calSES(QL, ssValue, posX) {
 
     let leftN = Math.ceil(posX / width * ssValue); //带符号，左边界移动的个数
     let rightN = ssValue - leftN;//带符号，有边界移动的个数
-    
+
     startI -= leftN, endI += rightN;
 
     let leftDValue = 0, rightDValue = 0;
@@ -407,7 +410,7 @@ function calSES(QL, ssValue, posX) {
     // }
 
     Object.defineProperty(QL, "_kMess", {
-        get() {
+        get () {
             return {
                 startI,
                 endI,
@@ -423,14 +426,12 @@ function calSES(QL, ssValue, posX) {
 }
 
 /* 页面 进行 translate 的 逻辑 */
-function mouseDown(e) {
+function mouseDown (e) {
     const QL = this;
-
     // 这里 根据 设备端 的不同
-    const eventPos = QL._device === pcOrH5.pc ? "offsetX" : "deltaX";
+    const eventPos = QL._device === pcOrH5.pc ? 'offsetX' : (QL._rotate ? 'deltaY' : 'deltaX');
     let preX = e[eventPos];
-    const mousemove2 = function mousemove2(e) {
-
+    const mousemove2 = function mousemove2 (e) {
         const curX = e[eventPos];
 
         let { _kMess: { startI, endI, showNumber }, _perRectWidth: perRectWidth, _data: data } = QL;
@@ -454,7 +455,7 @@ function mouseDown(e) {
         }
 
         Object.defineProperty(QL, "_kMess", {
-            get() {
+            get () {
                 return {
                     startI,
                     endI,
@@ -481,7 +482,8 @@ function mouseDown(e) {
     }
 
     if (QL._device === pcOrH5.h5) {
-        QL._hammer.on("panmove", _.debounce(mousemove2.bind(QL)))
+        /* move 做 debounce的时候 不知道为啥 在 竖向的 滑动会 卡顿 */
+        QL._hammer.on("panmove", /* _.debounce(mousemove2.bind(QL)) */mousemove2.bind(QL))
         QL._hammer.on("panend", function () {
             QL._hammer.off("panmove panend");
         })

@@ -100,7 +100,7 @@ export default {
     text-align: center;
   }
   .content {
-    padding: 0 6px;
+    // padding: 0 6px;
     height: 267px;
     border-bottom: 1px solid #ddd;
   }

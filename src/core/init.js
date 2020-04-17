@@ -62,10 +62,18 @@ export default function initCanvas (QLStockMarket) {
         height = parseFloat(height);
         const device = browserRedirect();
 
+        // console.log(leftWidth,rightWidth,topWidth,bottomWidth)
+
         // console.log(DOM, width, height);
         // 一次判断 当前 控制 的 是在 x 还是 y上
-        console.log("盒子元素的 width ",width , "盒子的",actuallyWidth);
-        console.log("盒子元素的 width ",height , "盒子的",actuallyHeight);
+        // console.log("盒子元素的 width ",width , "盒子的",actuallyWidth);
+        // console.log("盒子元素的 height ",height , "盒子的",actuallyHeight);
+
+        /* 判断当前 盒子是否 发生了 旋转，旋转以后 事件上 需要 传入不同的参数 */
+        let rotate = false;
+        if (Math.ceil(width) !== Math.ceil(actuallyWidth) && Math.ceil(width) === Math.ceil(actuallyHeight)) {
+            rotate = true;
+        }
 
         dealTheme(QL, config.theme);
 
@@ -84,6 +92,12 @@ export default function initCanvas (QLStockMarket) {
             console.log(tempData);
             // 配置只读属性
             Object.defineProperties(QL, {
+                // 存储 当前 盒子模型 是否发生了 旋转, 这个参数可能 在哪个端都能用，但是 实际用途目前只在 h5 全屏中使用
+                _rotate: {
+                    get () {
+                        return rotate;
+                    }
+                },
                 // 初始化 小数位数
                 _decimal: {
                     get () {

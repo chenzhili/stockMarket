@@ -5,13 +5,13 @@
   >
     <div class="header">头部内容</div>
     <div class="content" :class="full?'active-full':''" :style="{transformOrigin:totalWidth/2 + 'px',width:width,height:height}">
-      <TimeSharingH5
+      <!-- <TimeSharingH5
         :dataGraph="dataGraphForTime"
         :config="configForTime"
         :height="height"
         :width="width"
-      ></TimeSharingH5>
-      <!-- <KLineGraphComH5 :dataGraph="dataGraphForK" :config="configForK" :height="height" :width="width" :sTt="sTt"></KLineGraphComH5> -->
+      ></TimeSharingH5> -->
+      <KLineGraphComH5 :dataGraph="dataGraphForK" :config="configForK" :height="height" :width="width" :sTt="sTt"></KLineGraphComH5>
     </div>
     <div
       class="btn"
@@ -26,7 +26,9 @@
 <script>
 import { timeSharing, prevPrice, kData } from "../../src/enums/dataJSON";
 import { insType } from "../../src/enums";
+import {test} from './test'
 
+console.log(test)
 // k线周期 转换的数据
 import { mData, dData } from "../../src/transformCal/response";
 
@@ -39,9 +41,9 @@ export default {
         preClosePrice: prevPrice
       },
       dataGraphForK: {
-        data: dData //mData//kData
+        data: mData//test.slice(0, 241)//dData //mData//kData
       },
-      sTt: ["d", "w"],
+      sTt: ["m1", "m5"],
       /* 全屏的 处理 */
       height: "267px",
       width: "100%",

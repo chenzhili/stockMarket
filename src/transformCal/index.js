@@ -1,5 +1,5 @@
 import { periodConfig, staticPeriod, MA, RSI } from './staticConfig';
-import { isArray, isString } from '../utils/types';
+import { isArray, isString, isObject } from '../utils/types';
 
 // 指标线模块
 import uniformDealData from './calcRSI'
@@ -18,7 +18,7 @@ let tempItem = {};
  * @param {*} target 转换目标
  * @param {*} source 转换源类型
  */
-function transform(data = { curData: '', hisData: '' }, target, source) {
+function transform (data = { curData: '', hisData: '' }, target, source) {
     if (periodConfig[target] <= staticPeriod[source]) {
         return '转换数据关系错误';
     }
@@ -79,7 +79,7 @@ transform.splitTime = function (date) {
 }
 
 // 当天数据的 处理方式
-function dealCurData(curData, target, source) {
+function dealCurData (curData, target, source) {
     // 分钟内的转换
     if (periodConfig[target] <= 60) {
         // 对应的倍数值
@@ -103,7 +103,7 @@ function dealCurData(curData, target, source) {
     M: 75
 */
 // 历史数据的 处理方式
-function dealHisData(hisData, target, source) {
+function dealHisData (hisData, target, source) {
     // 分钟内的 转换
     if (periodConfig[target] <= 60) {
         // 对应的倍数值
@@ -251,21 +251,42 @@ dealHisData.wHisDataCore.weekTimes = 6 * 24 * 60 * 60 * 1000;
 
 // {date,dealMount,open,high,low,close,rate}
 // rate = 如果有昨天的数据，就用(今天close - 昨天close)/ , 如果没有昨天的数据(今天close - 今天的open)/今天的open
+
+/* 由于 在 实际 每天的 分钟线 数据 有 241 根，所以 第一个 整合的时候 ，9:30-9:35 为 六个 数为 一根 */
 dealHisData.mHisDataCore = dealCurData.mCurDataCore = function (data, n) {
     const len = data.length;
     let number = 0;
     let tempObj,
         resultArr = [],
         item,
-        prevClose = tempItem.close || data[0].open;/* 昨天close; */
+        prevClose = tempItem.close || data[0].open,/* 昨天close; */
+        dealDate;
+    const specialTime = transform.splitTime(data[0].date).slice(-5);
+    let targetN = n + 1;
+    let isFirst = true;
+
+    // 实际循环制
+    let actuallyN = 0;
+    console.log(specialTime);
     while (number < len) {
         item = data[number];
-        if (number % n === 0) {
-            if (number !== 0) {
+        /* 判断 当前 是否 是 第一次 开盘的 时候 */
+        dealDate = transform.splitTime(item.date);
+        if(number >= 240 && number <= 246){
+            console.log(item);
+        }
+        if (actuallyN % targetN === (isFirst ? 0 : 1)) {
+            if (isObject(tempObj) && tempObj.close) {
                 resultArr.push(tempObj);
 
                 /* 获取上一个的 close 值*/
                 prevClose = tempObj.close;
+
+                
+                isFirst = dealDate.slice(-5) === specialTime ? true : false;
+                targetN = isFirst ? (n + 1) : n;
+                isFirst && (actuallyN = 0);
+                
             }
             tempObj = {};
             tempObj.open = item.open;
@@ -274,13 +295,14 @@ dealHisData.mHisDataCore = dealCurData.mCurDataCore = function (data, n) {
 
             tempObj.dealMount = +item.dealMount;
             tempObj.amount = +item.amount;
+            // tempObj.date = dealDate;
         } else {
             // 收盘价,时间:统一使用当前周期最后一分钟线的对应数据(14:00到14:05,收盘价为14:05 的收盘价)
-            if (number % n === (n - 1) || number === (len - 1)) {
-                tempObj.date = transform.splitTime(item.date);
+            if ((actuallyN % targetN === (isFirst ? (targetN - 1) : 0)) || number === (len - 1)) {
+                tempObj.date = dealDate;
                 tempObj.close = item.close;
                 tempObj.rate = Math.floor((item.close - prevClose) / prevClose * 100 * 100) / 100;
-                // 对于 处理尾部 把 最后的 tempObj 放进去, 不足 n 的余数 处理
+                // 对于 处理尾部 把 最后的 tempObj 放进去, 不足 targetN 的余数 处理
                 if (number === (len - 1)) {
                     resultArr.push(tempObj);
                     break;
@@ -298,6 +320,7 @@ dealHisData.mHisDataCore = dealCurData.mCurDataCore = function (data, n) {
             tempObj.amount += (+item.amount);
         }
         number++;
+        actuallyN++;
     }
     console.log(resultArr);
     return resultArr;
@@ -305,7 +328,7 @@ dealHisData.mHisDataCore = dealCurData.mCurDataCore = function (data, n) {
 
 
 /* 在对应 框架中 处理 是否需要 进行 转换的操作 */
-function dealData(dataGraph = {}, sTt = []) {
+function dealData (dataGraph = {}, sTt = []) {
     if (!sTt.length || sTt.length !== 2) {
         dataGraph.data = dataGraph.data && dataGraph.data.length ? dataGraph.data : [];
         dataGraph.curData = dataGraph.curData && dataGraph.curData.length ? dataGraph.curData : [];

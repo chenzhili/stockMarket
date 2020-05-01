@@ -84,30 +84,30 @@
   </div>
 </template>
 <script>
-import styles from "../../../common/h5/timeSharingH5.scss";
+import styles from '../../../common/h5/timeSharingH5.scss';
 
-import QLStockMarket from "../../../core";
-import { splitNumber, formatNumber } from "../../../utils/index";
-import { isFunction } from "../../../utils/types";
+import QLStockMarket from '../../../core';
+import { splitNumber, formatNumber } from '../../../utils/index';
+import { isFunction } from '../../../utils/types';
 
-const timeArr = ["09:30", "10:30", "11:30/13:00", "14:00", "15:00"];
+const timeArr = ['09:30', '10:30', '11:30/13:00', '14:00', '15:00'];
 const showMess = [
-  { key: "curPrice", name: "现价" },
-  { key: "avPrice", name: "均价" },
-  { key: "rateUpDown", name: "涨跌" },
-  { key: "rate", name: "涨幅" },
-  { key: "dealMount", name: "量" },
-  { key: "totalMoney", name: "额" }
+  { key: 'curPrice', name: '现价' },
+  { key: 'avPrice', name: '均价' },
+  { key: 'rateUpDown', name: '涨跌' },
+  { key: 'rate', name: '涨幅' },
+  { key: 'dealMount', name: '量' },
+  { key: 'totalMoney', name: '额' }
 ];
 
 export default {
-  name: "TimeSharingH5",
+  name: 'TimeSharingH5',
   data: function () {
     return {
       styles,
 
       curData: {},
-      stockMarketMess: {}, //存储 所有的 动态 走势 信息
+      stockMarketMess: {}, // 存储 所有的 动态 走势 信息
       QLStockMarketIns: {
         _paintConfig: {
           paintTimeX: [],
@@ -121,10 +121,10 @@ export default {
             valueYPos: []
           }
         }
-      }, //存储 实例化的 走势 对象
+      }, // 存储 实例化的 走势 对象
       valueBorder: null,
-      upToData: {}, //时时数据
-      upOrDown: false, //看看当前 是 涨还是跌
+      upToData: {}, // 时时数据
+      upOrDown: false, // 看看当前 是 涨还是跌
       decimal: 100, // 默认的保留位数
 
       // 刷新 当前 组件的 控制
@@ -139,7 +139,7 @@ export default {
       return timeArr;
     },
     theme () {
-      return this.config.theme ? this.config.theme : "light";
+      return this.config.theme ? this.config.theme : 'light';
     }
   },
   methods: {
@@ -149,23 +149,23 @@ export default {
       // console.log("==============",data);
       this.upToData = data;
       // 判定当前 是 涨还是 跌;
-      this.upOrDown = this.upToData.rate < 0 ? "down" : "up";
+      this.upOrDown = this.upToData.rate < 0 ? 'down' : 'up';
     },
     // 刷新当前组件
     refresh (bool) {
-      bool = bool == undefined ? true : false;
+      bool = bool == null;
       this.flag = bool;
     },
     initQLStockMarket () {
       // console.log(this.$emit); //用这个进行 子组件向 父组件 传值
-      let QLStockMarketIns = new QLStockMarket({
-        selector: "#qlStockMarketT",
+      const QLStockMarketIns = new QLStockMarket({
+        selector: '#qlStockMarketT',
         data: {
           chartData: this.dataGraph
         },
         config: this.config,
         emit: {
-          getUpToDataData: this.getUpToDataData,
+          getUpToDataData: this.getUpToDataData
           // refresh: this.refresh
         }
       });
@@ -178,14 +178,14 @@ export default {
         Math.ceil(
           QLStockMarketIns._paintConfig.valueRange.actuallyValue.length / 2
         ) - 1;
-      this.$set(this, "QLStockMarketIns", QLStockMarketIns);
+      this.$set(this, 'QLStockMarketIns', QLStockMarketIns);
       this.$set(
         this,
-        "curData",
+        'curData',
         QLStockMarketIns._data.data[QLStockMarketIns._data.data.length - 1]
       );
       // 判定当前 是 涨还是 跌;
-      this.upOrDown = this.curData.rate < 0 ? "down" : "up";
+      this.upOrDown = this.curData.rate < 0 ? 'down' : 'up';
       this.decimal = QLStockMarketIns._decimal;
       console.log(this, this.QLStockMarketIns, QLStockMarketIns._paintConfig);
     }
@@ -194,7 +194,7 @@ export default {
     dataGraph: {
       deep: true,
       handler (nv) {
-        console.log("============");
+        console.log('============');
         this.QLStockMarketIns._data = {
           data: nv.data,
           preClosePrice: nv.preClosePrice
@@ -254,11 +254,11 @@ export default {
   props: {
     width: {
       type: String,
-      default: "100%"
+      default: '100%'
     },
     height: {
       type: String,
-      default: "100%"
+      default: '100%'
     },
     dataGraph: {
       type: Object,
@@ -275,4 +275,3 @@ export default {
   }
 };
 </script>
-

@@ -83,29 +83,29 @@
   </div>
 </template>
 <script>
-import styles from "../../../common/pc/timeSharing.scss";
+import styles from '../../../common/pc/timeSharing.scss';
 
-import QLStockMarket from "../../../core";
-import { splitNumber, formatNumber } from "../../../utils/index";
+import QLStockMarket from '../../../core';
+import { splitNumber, formatNumber } from '../../../utils/index';
 
-const timeArr = ["09:30", "10:30", "11:30/13:00", "14:00", "15:00"];
+const timeArr = ['09:30', '10:30', '11:30/13:00', '14:00', '15:00'];
 const showMess = [
-  { key: "curPrice", name: "现价" },
-  { key: "avPrice", name: "均价" },
-  { key: "rateUpDown", name: "涨跌" },
-  { key: "rate", name: "涨幅" },
-  { key: "dealMount", name: "量" },
-  { key: "totalMoney", name: "额" }
+  { key: 'curPrice', name: '现价' },
+  { key: 'avPrice', name: '均价' },
+  { key: 'rateUpDown', name: '涨跌' },
+  { key: 'rate', name: '涨幅' },
+  { key: 'dealMount', name: '量' },
+  { key: 'totalMoney', name: '额' }
 ];
 
 export default {
-  name: "TimeSharing",
-  data: function() {
+  name: 'TimeSharing',
+  data: function () {
     return {
       styles,
 
       curData: {},
-      stockMarketMess: {}, //存储 所有的 动态 走势 信息
+      stockMarketMess: {}, // 存储 所有的 动态 走势 信息
       QLStockMarketIns: {
         _paintConfig: {
           paintTimeX: [],
@@ -119,38 +119,38 @@ export default {
             valueYPos: []
           }
         }
-      }, //存储 实例化的 走势 对象
+      }, // 存储 实例化的 走势 对象
       valueBorder: null,
-      upToData: {}, //时时数据
-      upOrDown: false, //看看当前 是 涨还是跌
+      upToData: {}, // 时时数据
+      upOrDown: false, // 看看当前 是 涨还是跌
       decimal: 100 // 默认的保留位数
     };
   },
   computed: {
-    showMess() {
+    showMess () {
       return showMess;
     },
-    timeArr() {
+    timeArr () {
       return timeArr;
     },
-    theme() {
-      return this.config.theme ? this.config.theme : "light";
+    theme () {
+      return this.config.theme ? this.config.theme : 'light';
     }
   },
   methods: {
     splitNumber,
     formatNumber,
-    getUpToDataData(data) {
+    getUpToDataData (data) {
       // console.log("==============", data);
       this.upToData = data;
       // 判定当前 是 涨还是 跌;
-      this.upOrDown = this.upToData.rate < 0 ? "down" : "up";
+      this.upOrDown = this.upToData.rate < 0 ? 'down' : 'up';
     }
   },
   watch: {
     dataGraph: {
       deep: true,
-      handler(nv) {
+      handler (nv) {
         // console.log("============");
         this.QLStockMarketIns._data = {
           data: nv.data,
@@ -160,10 +160,10 @@ export default {
       // immediate: true,
     }
   },
-  async mounted() {
+  async mounted () {
     // console.log(this.$emit); //用这个进行 子组件向 父组件 传值
-    let QLStockMarketIns = new QLStockMarket({
-      selector: "#qlStockMarketT",
+    const QLStockMarketIns = new QLStockMarket({
+      selector: '#qlStockMarketT',
       data: {
         chartData: this.dataGraph
       },
@@ -181,42 +181,41 @@ export default {
       Math.ceil(
         QLStockMarketIns._paintConfig.valueRange.actuallyValue.length / 2
       ) - 1;
-    this.$set(this, "QLStockMarketIns", QLStockMarketIns);
+    this.$set(this, 'QLStockMarketIns', QLStockMarketIns);
     this.$set(
       this,
-      "curData",
+      'curData',
       QLStockMarketIns._data.data[QLStockMarketIns._data.data.length - 1]
     );
     // 判定当前 是 涨还是 跌;
-    this.upOrDown = this.curData.rate < 0 ? "down" : "up";
+    this.upOrDown = this.curData.rate < 0 ? 'down' : 'up';
     this.decimal = this.QLStockMarketIns._decimal;
     console.log(this, this.QLStockMarketIns, QLStockMarketIns._paintConfig);
   },
-  destroyed() {
+  destroyed () {
     this.QLStockMarketIns.cancelEventListener();
   },
   props: {
     width: {
       type: String,
-      default: "100%"
+      default: '100%'
     },
     height: {
       type: String,
-      default: "100%"
+      default: '100%'
     },
     dataGraph: {
       type: Object,
-      default: function() {
+      default: function () {
         return {};
       }
     },
     config: {
       type: Object,
-      default: function() {
+      default: function () {
         return {};
       }
     }
   }
 };
 </script>
-

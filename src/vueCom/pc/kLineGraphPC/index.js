@@ -1,8 +1,7 @@
-import KLineGraphPC from './kLineGraph';
+import KLineGraphPC from './kLineGraph'
 
+KLineGraphPC.install = function (Vue) {
+  Vue.component(KLineGraphPC.name, KLineGraphPC)
+}
 
-KLineGraphPC.install = function(Vue) {
-  Vue.component(KLineGraphPC.name, KLineGraphPC);
-};
-
-export default KLineGraphPC;
+export default KLineGraphPC

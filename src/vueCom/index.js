@@ -1,11 +1,8 @@
-import install from "./install"
+import install from './install'
 
-function QLStockMarketAll(){
-    
+function QLStockMarketAll () {
+
 }
-QLStockMarketAll.install = install;
+QLStockMarketAll.install = install
 
-
-export default QLStockMarketAll;
-
-
+export default QLStockMarketAll

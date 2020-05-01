@@ -1,13 +1,13 @@
 
-import initCanvas from "./init"
-import initEvent from "../events"
-import initData from "./initData"
+import initCanvas from './init'
+import initEvent from '../events'
+import initData from './initData'
 
 /* 视图更新的方法 需要 单独提出来 */
 /* 不需要目前 */
 // import updateView from './updateView'
 
-/* 
+/*
     初始化 需要的 数据量
     options:
         selector:为选择器
@@ -20,9 +20,9 @@ import initData from "./initData"
             }
 
         emit:接受到的 方法，用于 给 父组件 通信
-    
+
  */
-/* 
+/*
     注释：
     模块区分：
     1、数据处理层；
@@ -33,19 +33,16 @@ import initData from "./initData"
         初始化 canvas 上的 事件系统；
 
 */
-function QLStockMarket(options) {
-    const tempData = this.outputData(options);
-    console.log(tempData);
-    options.data = tempData;
-    this.init(options);
+function QLStockMarket (options) {
+  const tempData = this.outputData(options)
+  console.log(tempData)
+  options.data = tempData
+  this.init(options)
 }
-initCanvas(QLStockMarket);
-initEvent(QLStockMarket);
-initData(QLStockMarket);
+initCanvas(QLStockMarket)
+initEvent(QLStockMarket)
+initData(QLStockMarket)
 
 // updateView(QLStockMarket);
 
-
-export default QLStockMarket;
-
-
+export default QLStockMarket

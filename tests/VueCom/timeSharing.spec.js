@@ -31,60 +31,56 @@ import VueTest from '../../src/vueCom/VueTest.vue'
 // let localVue = createLocalVue();
 // const post = jest.fn((data) => Promise.resolve(data));
 const creatConfig = (overrides) => {
-    const mocks = {
-        // Vue Router
-        //   $router: {
-        //     push: () => { }
-        //   },
-        // Vuex
-        //   $store: {
-        //     state: { list: [{ id: "2", title: "mock-test" }] },
-        //     commit: () => { }
-        //   }
-        $http: {
-            post: (data) => {
-                return Promise.resolve(data)
-            }
-        }
-    };
+  const mocks = {
+    // Vue Router
+    //   $router: {
+    //     push: () => { }
+    //   },
+    // Vuex
+    //   $store: {
+    //     state: { list: [{ id: "2", title: "mock-test" }] },
+    //     commit: () => { }
+    //   }
+    $http: {
+      post: (data) => {
+        return Promise.resolve(data)
+      }
+    }
+  }
 
-    const propsData = {};
-    return Object.assign({ mocks, propsData }, overrides);
+  const propsData = {}
+  return Object.assign({ mocks, propsData }, overrides)
 }
 
-
-
 describe('简单测试', () => {
-    it('1+1', async () => {
-        const config = creatConfig({
-            $http: {
-                post: (data) => {
-                    return Promise.resolve(data)
-                }
-            }
-        })
-        console.log(config);
-
-        let wrapper = shallowMount(VueTest, {
-            ...config
-        })
-        console.log(wrapper.vm.$http);
-        const data = await wrapper.vm.$http.post({ test: 1 });
-        console.log(data);
-
-        expect(data).toEqual({test:1})
-
-
-
-        // expect(1).toBe(1)
-
-        // debugger
-        // wrapper.setData({ entrustPrice: '1.23' })
-        // debugger
-        //  let dom1=wrapper.find('.text3')
-        //  dom1.trigger('click')
-        // let num=1
-        // num+=1
-        // expect(num).toBe(2)
+  it('1+1', async () => {
+    const config = creatConfig({
+      $http: {
+        post: (data) => {
+          return Promise.resolve(data)
+        }
+      }
     })
+    console.log(config)
+
+    const wrapper = shallowMount(VueTest, {
+      ...config
+    })
+    console.log(wrapper.vm.$http)
+    const data = await wrapper.vm.$http.post({ test: 1 })
+    console.log(data)
+
+    expect(data).toEqual({ test: 1 })
+
+    // expect(1).toBe(1)
+
+    // debugger
+    // wrapper.setData({ entrustPrice: '1.23' })
+    // debugger
+    //  let dom1=wrapper.find('.text3')
+    //  dom1.trigger('click')
+    // let num=1
+    // num+=1
+    // expect(num).toBe(2)
+  })
 })

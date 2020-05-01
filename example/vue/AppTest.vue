@@ -18,57 +18,57 @@
   </div>
 </template>
 <script>
-import { timeSharing, prevPrice, kData } from "../../src/enums/dataJSON";
-import { insType } from "../../src/enums";
+import { timeSharing, prevPrice, kData } from '../../src/enums/dataJSON';
+import { insType } from '../../src/enums';
 
-import { mData, dData } from "../../src/transformCal/response";
+import { mData, dData } from '../../src/transformCal/response';
 
 // 测试组件
 import VueTest from '../../src/vueCom/VueTest.vue';
 
-console.log(mData.slice(0,20));
+console.log(mData.slice(0, 20));
 
 export default {
-  components:{
+  components: {
     VueTest
   },
-  data() {
+  data () {
     return {
-      title: "Lorem ipsum dolor sit amet consectetur",
+      title: 'Lorem ipsum dolor sit amet consectetur',
       dataGraphForTime: {
         data: timeSharing.slice(0, 50),
         preClosePrice: prevPrice
       },
       dataGraphForK: {
-        data: mData //.slice(0,50)//dData //mData//kData
+        data: mData // .slice(0,50)//dData //mData//kData
       },
       sTt: [
-        "m1", "m30"
+        'm1', 'm30'
         /* "d", "w" */
       ],
       isShow: true
     };
   },
   methods: {
-    click() {
+    click () {
       // this.$set(this.dataGraphForTime, "data", timeSharing.slice(0, 100));
-      this.$set(this.dataGraphForK, "data", dData.slice(0, 500));
+      this.$set(this.dataGraphForK, 'data', dData.slice(0, 500));
       this.isShow = !this.isShow;
 
-      this.sTt = this.isShow ? [] : ["d", "w"];
+      this.sTt = this.isShow ? [] : ['d', 'w'];
     }
   },
   computed: {
-    configForTime() {
+    configForTime () {
       return {
         insType: insType.timeSharingDiagram,
-        theme: "light"
+        theme: 'light'
       };
     },
-    configForK() {
+    configForK () {
       return {
         insType: insType.kLineGraph,
-        theme: "light",
+        theme: 'light',
         initShowN: 40
         // rectLineHeight:1
       };

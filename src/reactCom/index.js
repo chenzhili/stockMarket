@@ -1,8 +1,8 @@
-import KLineGraphPC from "./pc/kLineGraphPC/index"
-import TimeSharingPC from "./pc/timeSharingPC/index"
+import KLineGraphPC from './pc/kLineGraphPC/index'
+import TimeSharingPC from './pc/timeSharingPC/index'
 
-import TimeSharingH5 from "./h5/timeSharingH5/index"
-import KLineGraphH5 from "./h5/kLineGraphH5/index"
+import TimeSharingH5 from './h5/timeSharingH5/index'
+import KLineGraphH5 from './h5/kLineGraphH5/index'
 
 /* import { pcOrH5 } from "../enums"
 
@@ -21,12 +21,3 @@ requireComponent.keys().forEach(rc => {
 }); */
 
 export { KLineGraphPC, TimeSharingPC, TimeSharingH5, KLineGraphH5 }
-
-
-
-
-
-
-
-
-

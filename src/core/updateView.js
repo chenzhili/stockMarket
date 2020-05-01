@@ -1,7 +1,7 @@
 import { isFunction } from '../utils'
 import { insType } from '../enums'
 
-/* 
+/*
   几个 需要 解决的问题：
     1、监听 width、height 两个 关键值发生变化的 怎样 较少 重复渲染；
     2、当 尺寸 发生变化的时候，需要 改变的 值；
@@ -18,18 +18,18 @@ import { insType } from '../enums'
       2、修改基础 配置，包括 上边 2 的所有 东西
       3、开始进行 差别绘制，绘制 之前 需要 清理 一下 画布(这一步 不用做了，在 paint的时候做了)
 */
-/* 
+/*
   可能 对于 data 数据的改变 一样需要 提取出来，但是是在 后期再来提取把；
   目前 只做 size 发生 变化的 视图 更新；
 */
 
-/* 
+/*
   *******
     解决方案,现在 不在 内部进行 重绘,由于 这个 实例 已经销毁了,这里 直接 重新 实例 一个 新的;
   *******
 */
 export default function updateView (QLStockMarket) {
-  let updateTime = null;
+  const updateTime = null
   /**
    * @ type 实例类型
    * @ DOMMess 实例 为了 修改 QL 实例 内的 值

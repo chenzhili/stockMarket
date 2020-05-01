@@ -7,23 +7,23 @@
 <script>
 export default {
   name: 'VueTest',
-  data: function() {
+  data: function () {
     return {
-      value: "111"
+      value: '111'
     };
   },
   computed: {},
   methods: {
-      changeInput(e) {
-        console.log(e.target.value);
-        this.value = e.target.value;
-      }
+    changeInput (e) {
+      console.log(e.target.value);
+      this.value = e.target.value;
+    }
   },
-  mounted() {
+  mounted () {
     console.log(this);
   },
   watch: {},
-  destroyed() {},
+  destroyed () {},
   props: {}
 };
 </script>

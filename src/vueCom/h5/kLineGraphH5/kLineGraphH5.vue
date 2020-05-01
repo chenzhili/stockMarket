@@ -4,22 +4,18 @@
     :class="[styles.container,styles[`${theme}Bg`]]"
     v-if="flag"
   >
-    <div
-      v-if="upToData.date"
-      :class="[styles.marketMessSpecial,styles[`${theme}GenText`]]"
-    >
+    <div v-if="upToData.date" :class="[styles.marketMessSpecial,styles[`${theme}GenText`]]">
       <span>{{upToData.date || curData.date}}</span>
       <template v-for="(item,index) of showMess">
         <span :key="index">
           {{item.name || curData.date}}:
-          <span :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}">{{formatNumber(upToData[item.key] == null ? curData[item.key] : upToData[item.key],decimal)}}{{item.key === 'rate' ? '%' : ''}}</span>
+          <span
+            :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}"
+          >{{formatNumber(upToData[item.key] == null ? curData[item.key] : upToData[item.key],decimal)}}{{item.key === 'rate' ? '%' : ''}}</span>
         </span>
       </template>
     </div>
-    <div
-      :class="styles.qlContainer"
-      id="qlStockMarketK"
-    >
+    <div :class="styles.qlContainer" id="qlStockMarketK">
       <div>
         <template v-for="(item,index) of QLStockMarketIns._paintConfig.valueRange.actuallyValue">
           <span
@@ -64,31 +60,44 @@
   </div>
 </template>
 <script>
-import styles from "../../../common/h5/kLineGraphH5.scss";
+import styles from '../../../common/h5/kLineGraphH5.scss';
 
-import QLStockMarket from "../../../core";
-import { splitNumber, formatNumber } from "../../../utils/index";
-import { isFunction } from "../../../utils/types";
+import QLStockMarket from '../../../core';
+import { splitNumber, formatNumber } from '../../../utils/index';
+import { isFunction } from '../../../utils/types';
 
-import dealData from "../../../transformCal";
+import dealData from '../../../transformCal';
 
 const showMess = [
-  { key: "open", name: "开" },
-  { key: "high", name: "高" },
-  { key: "low", name: "低" },
-  { key: "close", name: "收" },
+  { key: 'open', name: '开' },
+  { key: 'high', name: '高' },
+  { key: 'low', name: '低' },
+  { key: 'close', name: '收' },
   // { key: "rateUpDown", name: "涨跌" },
-  { key: "rate", name: "涨幅" }
+  { key: 'rate', name: '涨幅' }
 ];
 
+/* 如果 在 传入的参数 有 需要转换 */
+function preDealCurData (data, sTt = []) {
+  if (data.curData && data.curData.length) {
+    if (sTt.length && sTt.length === 2) {
+      return dealData({ curData: data.curData }, sTt);
+    } else {
+      return data.curData;
+    }
+  } else {
+    return [];
+  }
+}
+
 export default {
-  name: "KLineGraphComH5",
+  name: 'KLineGraphComH5',
   data: function () {
     return {
       styles,
 
       curData: {},
-      upOrDown: false, //看看当前 是 涨还是跌
+      upOrDown: false, // 看看当前 是 涨还是跌
       QLStockMarketIns: {
         _paintConfig: {
           valueRange: {
@@ -103,7 +112,7 @@ export default {
       },
       valueBorder: null,
       upToData: {},
-      upToDateY: 0, //就是 页面中时间显示的位置
+      upToDateY: 0, // 就是 页面中时间显示的位置
       decimal: 100, // 默认的保留位数
 
       /* 全屏处理 */
@@ -115,7 +124,7 @@ export default {
       return showMess;
     },
     theme () {
-      return this.config.theme ? this.config.theme : "light";
+      return this.config.theme ? this.config.theme : 'light';
     }
   },
   methods: {
@@ -126,28 +135,29 @@ export default {
       //   console.log("==============", data);
       this.upToData = data;
       // 判定当前 是 涨还是 跌;
-      this.upOrDown = this.upToData.rate < 0 ? "down" : "up";
+      this.upOrDown = this.upToData.rate < 0 ? 'down' : 'up';
     },
     /* 当页面 发生移动 或者 缩放的时候 做的 */
     getChangeData (data) {
       //   console.log("===============", data);
-      this.$set(this, "curData", data[data.length - 1]);
-      this.upOrDown = this.curData.rate < 0 ? "down" : "up";
+      this.$set(this, 'curData', data[data.length - 1]);
+      this.upOrDown = this.curData.rate < 0 ? 'down' : 'up';
     },
     // 刷新当前组件
     refresh (bool) {
-      bool = bool == undefined ? true : false;
+      bool = bool == null;
       this.flag = bool;
     },
     initQLStockMarket () {
+      const curData = preDealCurData(this.dataGraph, this.curSTT);
       const dataGraph = {
-        data: dealData(this.dataGraph, this.sTt)
+        data: dealData({ ...this.dataGraph, curData }, this.sTt)
       };
       // console.log(dataGraph);
-      let QLStockMarketIns = new QLStockMarket({
-        selector: "#qlStockMarketK",
+      const QLStockMarketIns = new QLStockMarket({
+        selector: '#qlStockMarketK',
         data: {
-          kData: dataGraph //this.dataGraph
+          kData: dataGraph // this.dataGraph
         },
         config: this.config,
         emit: {
@@ -161,9 +171,9 @@ export default {
         ) - 1;
       this.upToDateY =
         QLStockMarketIns._paintConfig.valueRange.valueYPos[
-        QLStockMarketIns._paintConfig.valueRange.valueYPos.length - 1
+          QLStockMarketIns._paintConfig.valueRange.valueYPos.length - 1
         ];
-      this.$set(this, "QLStockMarketIns", QLStockMarketIns);
+      this.$set(this, 'QLStockMarketIns', QLStockMarketIns);
       this.decimal = QLStockMarketIns._decimal;
       // console.log(
       //   QLStockMarketIns,
@@ -191,9 +201,10 @@ export default {
       handler (nv) {
         // console.log("============", nv);
         const me = this;
+        const curData = preDealCurData(me.dataGraph, this.curSTT);
         this.QLStockMarketIns._data = {
           // data: nv.data
-          data: dealData(me.dataGraph, nv)
+          data: dealData({ ...me.dataGraph, curData }, nv)
         };
         // console.log(this.QLStockMarketIns._data);
       }
@@ -208,7 +219,7 @@ export default {
         this.refresh(false);
         setTimeout(() => {
           this.refresh();
-        })
+        });
       }
       // immediate: true,
     },
@@ -220,7 +231,7 @@ export default {
         this.refresh(false);
         setTimeout(() => {
           this.refresh();
-        })
+        });
       }
       // immediate: true,
     },
@@ -232,9 +243,21 @@ export default {
         if (nv) {
           setTimeout(() => {
             this.initQLStockMarket();
-          })
+          });
         }
       }
+    },
+    curSTT: {
+      deep: true,
+      handler (nv) {
+        const me = this;
+        const curData = preDealCurData(me.dataGraph, nv);
+        this.QLStockMarketIns._data = {
+          // data: nv.data
+          data: dealData({ ...me.dataGraph, curData }, me.sTt)
+        };
+      }
+      // immediate: true,
     }
   },
   async mounted () {
@@ -251,11 +274,11 @@ export default {
   props: {
     width: {
       type: String,
-      default: "100%"
+      default: '100%'
     },
     height: {
       type: String,
-      default: "100%"
+      default: '100%'
     },
     dataGraph: {
       type: Object,
@@ -271,6 +294,12 @@ export default {
     },
     sTt: {
       // source 到 target 的转换 ，数组(模拟字典)的格式 ['m1','m5']
+      type: Array,
+      default: function () {
+        return [];
+      }
+    },
+    curSTT: {
       type: Array,
       default: function () {
         return [];

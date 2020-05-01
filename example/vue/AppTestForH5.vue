@@ -1,52 +1,55 @@
 <template>
-  <div
-    class="container"
-    ref="container"
-  >
+  <div class="container" ref="container">
     <div class="header">头部内容</div>
-    <div class="content" :class="full?'active-full':''" :style="{transformOrigin:totalWidth/2 + 'px',width:width,height:height}">
+    <div
+      class="content"
+      :class="full?'active-full':''"
+      :style="{transformOrigin:totalWidth/2 + 'px',width:width,height:height}"
+    >
       <!-- <TimeSharingH5
         :dataGraph="dataGraphForTime"
         :config="configForTime"
         :height="height"
         :width="width"
-      ></TimeSharingH5> -->
-      <KLineGraphComH5 :dataGraph="dataGraphForK" :config="configForK" :height="height" :width="width" :sTt="sTt"></KLineGraphComH5>
+      ></TimeSharingH5>-->
+      <KLineGraphComH5
+        :dataGraph="dataGraphForK"
+        :config="configForK"
+        :height="height"
+        :width="width"
+        :sTt="sTt"
+        :curSTT="curSTT"
+      ></KLineGraphComH5>
     </div>
-    <div
-      class="btn"
-      @click="click"
-    >click</div>
-    <div
-      class="btn"
-      @click="changeSize"
-    >全屏处理</div>
+    <div class="btn" @click="click">click</div>
+    <div class="btn" @click="changeSize">全屏处理</div>
   </div>
 </template>
 <script>
-import { timeSharing, prevPrice, kData } from "../../src/enums/dataJSON";
-import { insType } from "../../src/enums";
-import {test} from './test'
+import { timeSharing, prevPrice, kData } from '../../src/enums/dataJSON';
+import { insType } from '../../src/enums';
 
-console.log(test)
+// console.log(mData)
 // k线周期 转换的数据
-import { mData, dData } from "../../src/transformCal/response";
+import { mData, dData } from '../../src/transformCal/response';
 
 export default {
   data () {
     return {
-      title: "Lorem ipsum dolor sit amet consectetur",
+      title: 'Lorem ipsum dolor sit amet consectetur',
       dataGraphForTime: {
         data: timeSharing,
         preClosePrice: prevPrice
       },
       dataGraphForK: {
-        data: mData//test.slice(0, 241)//dData //mData//kData
+        data: mData, // dData //mData//kData
+        curData: mData.slice(0, 20)
       },
-      sTt: ["m1", "m5"],
+      sTt: ['m1', 'm15'],
+      curSTT: [],
       /* 全屏的 处理 */
-      height: "267px",
-      width: "100%",
+      height: '267px',
+      width: '100%',
 
       /* 屏幕宽高 */
       totalHeight: 0,
@@ -57,10 +60,11 @@ export default {
   methods: {
     click () {
       // this.$set(this.dataGraphForTime, "data", timeSharing.slice(0, 100));
-      this.$set(this.dataGraphForK, "data", kData.slice(0, 500));
-      this.isShow = !this.isShow;
+      // this.$set(this.dataGraphForK, "data", kData.slice(0, 500));
+      // this.isShow = !this.isShow;
 
-      this.sTt = this.isShow ? [] : ["d", "w"];
+      this.sTt = this.isShow ? [] : ['m1', 'm60'];
+      this.curSTT = ['m1', 'm5'];
     },
     changeSize () {
       // this.height = "400px";
@@ -80,13 +84,13 @@ export default {
     configForTime () {
       return {
         insType: insType.timeSharingDiagram,
-        theme: "light"
+        theme: 'light'
       };
     },
     configForK () {
       return {
         insType: insType.kLineGraph,
-        theme: "light"
+        theme: 'light'
       };
     }
   }
@@ -115,8 +119,8 @@ export default {
     right: 0;
     bottom: 0;
     transform: rotate(90deg);
-    z-index:99;
-    padding-left:0;
+    z-index: 99;
+    padding-left: 0;
   }
 }
 </style>

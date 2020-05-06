@@ -4,18 +4,22 @@
     :class="[styles.container,styles[`${theme}Bg`]]"
     v-if="flag"
   >
-    <div v-if="upToData.date" :class="[styles.marketMessSpecial,styles[`${theme}GenText`]]">
+    <div
+      v-if="upToData.date"
+      :class="[styles.marketMessSpecial,styles[`${theme}GenText`]]"
+    >
       <span>{{upToData.date || curData.date}}</span>
       <template v-for="(item,index) of showMess">
         <span :key="index">
           {{item.name || curData.date}}:
-          <span
-            :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}"
-          >{{formatNumber(upToData[item.key] == null ? curData[item.key] : upToData[item.key],decimal)}}{{item.key === 'rate' ? '%' : ''}}</span>
+          <span :class="{[styles[`${theme}DownColor`]]:upOrDown === 'down',[styles[`${theme}UpColor`]]:upOrDown === 'up'}">{{formatNumber(upToData[item.key] == null ? curData[item.key] : upToData[item.key],decimal)}}{{item.key === 'rate' ? '%' : ''}}</span>
         </span>
       </template>
     </div>
-    <div :class="styles.qlContainer" id="qlStockMarketK">
+    <div
+      :class="styles.qlContainer"
+      id="qlStockMarketK"
+    >
       <div>
         <template v-for="(item,index) of QLStockMarketIns._paintConfig.valueRange.actuallyValue">
           <span
@@ -171,7 +175,7 @@ export default {
         ) - 1;
       this.upToDateY =
         QLStockMarketIns._paintConfig.valueRange.valueYPos[
-          QLStockMarketIns._paintConfig.valueRange.valueYPos.length - 1
+        QLStockMarketIns._paintConfig.valueRange.valueYPos.length - 1
         ];
       this.$set(this, 'QLStockMarketIns', QLStockMarketIns);
       this.decimal = QLStockMarketIns._decimal;

@@ -84,7 +84,7 @@ function dealCurData (curData, target, source) {
   if (periodConfig[target] <= 60) {
     // 对应的倍数值
     const n = periodConfig[target] / staticPeriod[source]
-    return dealCurData.mCurDataCore(curData, n)
+    return dealCurData.mCurDataCore(curData, n, staticPeriod[source] === staticPeriod.m1)
   }
   // 这里如果 不做任何处理，直接 返回了
   return curData
@@ -108,7 +108,7 @@ function dealHisData (hisData, target, source) {
   if (periodConfig[target] <= 60) {
     // 对应的倍数值
     const n = periodConfig[target] / staticPeriod[source]
-    return dealHisData.mHisDataCore(hisData, n)
+    return dealHisData.mHisDataCore(hisData, n, staticPeriod[source] === staticPeriod.m1)
   } else {
     // 如果目标为 周 只能是 日=>周
     if (periodConfig[target] === periodConfig.w) {
@@ -249,8 +249,8 @@ dealHisData.wHisDataCore.weekTimes = 6 * 24 * 60 * 60 * 1000
 // {date,dealMount,open,high,low,close,rate}
 // rate = 如果有昨天的数据，就用(今天close - 昨天close)/ , 如果没有昨天的数据(今天close - 今天的open)/今天的open
 
-/* 由于 在 实际 每天的 分钟线 数据 有 241 根，所以 第一个 整合的时候 ，9:30-9:35 为 六个 数为 一根 */
-dealHisData.mHisDataCore = dealCurData.mCurDataCore = function (data, n) {
+/* 由于 在 实际 每天的 分钟线 数据 有 241 根，所以 第一个 整合的时候 ，9:30-9:35 为 六个 数为 一根， 这个是 只有 在 分钟资源数据的时候 需要去 加 前面的 */
+dealHisData.mHisDataCore = dealCurData.mCurDataCore = function (data, n, isM1) {
   const len = data.length
   let number = 0
   let tempObj
@@ -259,7 +259,7 @@ dealHisData.mHisDataCore = dealCurData.mCurDataCore = function (data, n) {
   let prevClose = tempItem.close || data[0].open; let /* 昨天close; */
     dealDate
   const specialTime = transform.splitTime(data[0].date).slice(-5)
-  let targetN = n + 1
+  let targetN = isM1 ? n + 1 : n;
   let isFirst = true
 
   // 实际循环制
@@ -270,7 +270,7 @@ dealHisData.mHisDataCore = dealCurData.mCurDataCore = function (data, n) {
     /* 判断 当前 是否 是 第一次 开盘的 时候 */
     dealDate = transform.splitTime(item.date)
 
-    if (actuallyN % targetN === (isFirst ? 0 : 1)) {
+    if (actuallyN % targetN === ((isFirst || !isM1) ? 0 : 1)) {
       if (isObject(tempObj) && tempObj.close) {
         resultArr.push(tempObj)
 
@@ -278,7 +278,7 @@ dealHisData.mHisDataCore = dealCurData.mCurDataCore = function (data, n) {
         prevClose = tempObj.close
 
         isFirst = dealDate.slice(-5) === specialTime
-        targetN = isFirst ? (n + 1) : n
+        targetN = (isFirst && isM1) ? (n + 1) : n
         isFirst && (actuallyN = 0)
       }
       tempObj = {}
@@ -290,7 +290,7 @@ dealHisData.mHisDataCore = dealCurData.mCurDataCore = function (data, n) {
       tempObj.amount = +item.amount
     } else {
       // 收盘价,时间:统一使用当前周期最后一分钟线的对应数据(14:00到14:05,收盘价为14:05 的收盘价)
-      if ((actuallyN % targetN === (isFirst ? (targetN - 1) : 0)) || number === (len - 1)) {
+      if ((actuallyN % targetN === ((isFirst || !isM1) ? (targetN - 1) : 0)) || number === (len - 1)) {
         tempObj.date = dealDate
         tempObj.close = item.close
         tempObj.rate = Math.floor((item.close - prevClose) / prevClose * 100 * 100) / 100

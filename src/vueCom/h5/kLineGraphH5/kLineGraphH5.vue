@@ -175,7 +175,7 @@ export default {
         ) - 1;
       this.upToDateY =
         QLStockMarketIns._paintConfig.valueRange.valueYPos[
-        QLStockMarketIns._paintConfig.valueRange.valueYPos.length - 1
+          QLStockMarketIns._paintConfig.valueRange.valueYPos.length - 1
         ];
       this.$set(this, 'QLStockMarketIns', QLStockMarketIns);
       this.decimal = QLStockMarketIns._decimal;

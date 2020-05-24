@@ -9,9 +9,9 @@ export function initkLineGraph (QL, data) {
   const canvas = document.createElement('canvas')
   canvas.innerHTML = '不支持canvas'
 
-  canvas.width = QL._DOMWidth * QL._defulatSale;
+  canvas.width = QL._DOMWidth * QL._defulatSale
   canvas.height = QL._DOMHeight * QL._defulatSale
-  canvas.style.width = `${QL._DOMWidth}px`;
+  canvas.style.width = `${QL._DOMWidth}px`
   canvas.style.height = `${QL._DOMHeight}px`
 
   canvas.style.background = QL._theme.bg || 'transparent'
@@ -143,9 +143,9 @@ function genMaskCav (QL) {
   const ctx = canvas.getContext('2d')
   canvas.innerHTML = '不支持canvas'
 
-  canvas.width = QL._DOMWidth * QL._defulatSale;
+  canvas.width = QL._DOMWidth * QL._defulatSale
   canvas.height = QL._DOMHeight * QL._defulatSale
-  canvas.style.width = `${QL._DOMWidth}px`;
+  canvas.style.width = `${QL._DOMWidth}px`
   canvas.style.height = `${QL._DOMHeight}px`
 
   canvas.className = style['mask-cav']
@@ -196,7 +196,7 @@ export function kLineGraphPaint (data) {
   // 这是 开收盘图
   if (config[allGraph.rectLine]) {
     const RLRange = calRangeRect(showData)
-    RLMin = RLRange.min;
+    RLMin = RLRange.min
     RLMax = RLRange.max
     RYFactor = config[allGraph.rectLine].totalHeight / (RLMax - RLMin)
 
@@ -215,7 +215,7 @@ export function kLineGraphPaint (data) {
   // 这是 量图
   if (config[allGraph.rectDealMount]) {
     const RDRange = dealCalRangeValue(showData)
-    RDMin = RDRange.min;
+    RDMin = RDRange.min
     RDMax = RDRange.max
     DDFactor = config[allGraph.rectDealMount].totalHeight / (RDMax - RDMin)
 

@@ -259,7 +259,7 @@ dealHisData.mHisDataCore = dealCurData.mCurDataCore = function (data, n, isM1) {
   let prevClose = tempItem.close || data[0].open; let /* 昨天close; */
     dealDate
   const specialTime = transform.splitTime(data[0].date).slice(-5)
-  let targetN = isM1 ? n + 1 : n;
+  let targetN = isM1 ? n + 1 : n
   let isFirst = true
 
   // 实际循环制

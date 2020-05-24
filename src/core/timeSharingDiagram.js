@@ -10,10 +10,10 @@ export function initTimeSharingDiagram (QL, data) {
   if (!isObject(data)) return 'initTimeSharingDiagram:数据格式不对'
   const canvas = document.createElement('canvas')
   canvas.innerHTML = '不支持canvas'
-  canvas.width = QL._DOMWidth * QL._defulatSale;
+  canvas.width = QL._DOMWidth * QL._defulatSale
   canvas.height = QL._DOMHeight * QL._defulatSale
 
-  canvas.style.width = `${QL._DOMWidth}px`;
+  canvas.style.width = `${QL._DOMWidth}px`
   canvas.style.height = `${QL._DOMHeight}px`
 
   canvas.style.background = QL._theme.bg || 'transparent'
@@ -111,7 +111,7 @@ function dealCalRangeValue (targetValue) {
 
   newTargetArr.sort((a, b) => a.dealMount - b.dealMount)
   let max = null; let min = null
-  max = newTargetArr[len - 1].dealMount - 0;
+  max = newTargetArr[len - 1].dealMount - 0
   min = newTargetArr[0].dealMount
 
   /* 上浮 */
@@ -143,7 +143,7 @@ function genMaskCav (QL) {
   const ctx = canvas.getContext('2d')
   canvas.innerHTML = '不支持canvas'
 
-  canvas.width = QL._DOMWidth * QL._defulatSale;
+  canvas.width = QL._DOMWidth * QL._defulatSale
   canvas.height = QL._DOMHeight * QL._defulatSale
   canvas.style.width = `${QL._DOMWidth}px`
   canvas.style.height = `${QL._DOMHeight}px`
@@ -226,7 +226,7 @@ export function paintTimeSharingDiagram (data) {
   if (config[allGraph.line]) {
     const lineRange = calRangeValue(chartData, preClosePrice)
     // console.log("lineRange", lineRange, preClosePrice);
-    LMin = lineRange.min;
+    LMin = lineRange.min
     LMax = lineRange.max
 
     // LYFactor = config[allGraph.line].totalHeight / (LMax - LMin);
@@ -282,7 +282,7 @@ export function paintTimeSharingDiagram (data) {
   // 时分 的 deal 图
   if (config[allGraph.dealMount]) {
     const dealRange = dealCalRangeValue(chartData)
-    DMin = dealRange.min;
+    DMin = dealRange.min
     DMax = dealRange.max
     DYFactor = config[allGraph.dealMount].totalHeight / (DMax - DMin)
 

@@ -134,7 +134,7 @@ class KLineGraphH5 extends Component {
 
   render () {
     let { width, height, config } = this.props
-    width = width || '100%';
+    width = width || '100%'
     height = height || '100%'
     const theme = config && config.theme ? config.theme : 'light'
     const { upToData, curData, QLStockMarketIns, upOrDown, valueBorder, upToDateY, decimal } = this.state

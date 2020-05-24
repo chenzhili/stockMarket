@@ -326,7 +326,7 @@ function calSES (QL, ssValue, posX) {
   const leftN = Math.ceil(posX / width * ssValue) // 带符号，左边界移动的个数
   const rightN = ssValue - leftN// 带符号，有边界移动的个数
 
-  startI -= leftN;
+  startI -= leftN
   endI += rightN
 
   let leftDValue = 0; let rightDValue = 0

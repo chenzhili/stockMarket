@@ -21,37 +21,45 @@ const config = {
         ]
       },
       {
-        test: /\.scss|css$/i,
-        exclude: /node_modules/,
+        test: /\.(sa|sc|c)ss$/,
         use: [
-          'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              modules: {
-                mode: 'local',
-                localIdentName: '[path][name]__[local]--[hash:base64:5]'
-              }
-            }
-
-          },
-          'sass-loader'
-          /* MiniCssExtractPlugin.loader,
-                    {
-                        loader: "css-loader",
-                        options: {
-                            modules: {
-                                mode: 'local',
-                                localIdentName: '[path][name]__[local]--[hash:base64:5]',
-                            }
-                        }
-
-                    },
-                    // "postcss-loader",
-                    "sass-loader" */
-
-        ]
+          MiniCssExtractPlugin.loader,
+          { loader: 'css-loader', options: { url: false, sourceMap: true } },
+          { loader: 'sass-loader', options: { sourceMap: true } }
+        ],
       }
+      // {
+      //   test: /\.scss|css$/i,
+      //   exclude: /node_modules/,
+      //   use: [
+      //     'style-loader',
+      //     {
+      //       loader: 'css-loader',
+      //       options: {
+      //         modules: {
+      //           mode: 'local',
+      //           localIdentName: '[path][name]__[local]--[hash:base64:5]'
+      //         }
+      //       }
+
+      //     },
+      //     'sass-loader'
+      //     /* MiniCssExtractPlugin.loader,
+      //               {
+      //                   loader: "css-loader",
+      //                   options: {
+      //                       modules: {
+      //                           mode: 'local',
+      //                           localIdentName: '[path][name]__[local]--[hash:base64:5]',
+      //                       }
+      //                   }
+
+      //               },
+      //               // "postcss-loader",
+      //               "sass-loader" */
+
+      //   ]
+      // }
     ]
   },
   performance: {

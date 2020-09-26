@@ -64,7 +64,14 @@ const webpackConfig = merge(commonConfig, {
   ],
   resolve: {
     aliasFields: ['browser']
-  }
+  },
+  target: 'web',
+  /* 这句配置就能让 eval 函数消失 */
+  /* 
+    https://github.com/webpack/webpack/issues/5627 
+    Edit: Using webpack 4.1.1 with an explicit override of devtool: 'inline-source-map' to disable the default eval source-map for the development environment, I'm successfully able to produce an eval-less output for both production and development environments.
+  */
+  devtool: false
 })
 
 webpackConfig.mode = process.env.MINIFY && process.env.MINIFY === 'true' ? 'production' : 'development'

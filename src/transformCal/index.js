@@ -4,7 +4,8 @@ import { isArray, isString, isObject } from '../utils/types'
 // 指标线模块
 import uniformDealData from './calcRSI'
 
-import { dData, mData } from './response'
+/* 测试用的 数据 */
+// import { dData, mData } from './response'
 
 export { periodConfig, staticPeriod, MA, RSI }
 

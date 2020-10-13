@@ -21,7 +21,7 @@
 import { timeSharing, prevPrice, kData } from '../../src/enums/dataJSON';
 import { insType } from '../../src/enums';
 
-import { mData, dData } from '../../src/transformCal/response';
+import { mData, dData } from '../response';
 
 // 测试组件
 import VueTest from '../../src/vueCom/VueTest.vue';

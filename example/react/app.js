@@ -12,7 +12,7 @@ import { timeSharing, prevPrice, kData } from '../../src/enums/dataJSON'
 import { insType } from '../../src/enums'
 
 // k线周期 转换的数据
-import { mData, dData } from '../../src/transformCal/response'
+import { mData, dData } from '../response'
 
 class App extends Component {
   constructor () {

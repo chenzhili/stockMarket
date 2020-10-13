@@ -31,7 +31,7 @@ import { insType } from '../../src/enums';
 
 // console.log(mData)
 // k线周期 转换的数据
-import { mData, dData } from '../../src/transformCal/response';
+import { mData, dData } from '../response';
 
 export default {
   data () {

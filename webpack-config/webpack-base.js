@@ -20,14 +20,41 @@ const config = {
           'babel-loader'
         ]
       },
+      /* 满足 浏览器的 csp 策略 做的 */
+      /* 
+        做的尝试：
+          1、更新了 mini-css-extract-plugin 和 css-loader 还是没用
+      */
       {
         test: /\.(sa|sc|c)ss$/,
+        exclude: /node_modules/,
         use: [
-          MiniCssExtractPlugin.loader,
-          { loader: 'css-loader', options: { url: false, sourceMap: true } },
+          {
+            // 这里有个坑 ，未解决，就是 在 css-loader 设置 localIdentName: 'vue__stock--[local]'，抽离生成不了
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              esModule: true,
+              modules: {
+                // namedExport: true,
+              },
+            },
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              esModule: true,
+              modules: {
+                // namedExport: true,
+                // localIdentName: 'vue__stock--[local]',
+                /* 为此修改对应的 样式 */
+                localIdentName: '[local]',
+              },
+            },
+          },
           { loader: 'sass-loader', options: { sourceMap: true } }
         ],
       }
+      /* 将 style 打入 js 中 */
       // {
       //   test: /\.scss|css$/i,
       //   exclude: /node_modules/,

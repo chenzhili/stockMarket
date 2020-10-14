@@ -25,68 +25,68 @@ const config = {
         做的尝试：
           1、更新了 mini-css-extract-plugin 和 css-loader 还是没用
       */
-      {
-        test: /\.(sa|sc|c)ss$/,
-        exclude: /node_modules/,
-        use: [
-          {
-            // 这里有个坑 ，未解决，就是 在 css-loader 设置 localIdentName: 'vue__stock--[local]'，抽离生成不了
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              esModule: true,
-              modules: {
-                // namedExport: true,
-              },
-            },
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              esModule: true,
-              modules: {
-                // namedExport: true,
-                // localIdentName: 'vue__stock--[local]',
-                /* 为此修改对应的 样式 */
-                localIdentName: '[local]',
-              },
-            },
-          },
-          { loader: 'sass-loader', options: { sourceMap: true } }
-        ],
-      }
-      /* 将 style 打入 js 中 */
       // {
-      //   test: /\.scss|css$/i,
+      //   test: /\.(sa|sc|c)ss$/,
       //   exclude: /node_modules/,
       //   use: [
-      //     'style-loader',
+      //     {
+      //       // 这里有个坑 ，未解决，就是 在 css-loader 设置 localIdentName: 'vue__stock--[local]'，抽离生成不了
+      //       loader: MiniCssExtractPlugin.loader,
+      //       options: {
+      //         esModule: true,
+      //         modules: {
+      //           // namedExport: true,
+      //         },
+      //       },
+      //     },
       //     {
       //       loader: 'css-loader',
       //       options: {
+      //         esModule: true,
       //         modules: {
-      //           mode: 'local',
-      //           localIdentName: '[path][name]__[local]--[hash:base64:5]'
-      //         }
-      //       }
-
+      //           // namedExport: true,
+      //           // localIdentName: 'vue__stock--[local]',
+      //           /* 为此修改对应的 样式 */
+      //           localIdentName: '[local]',
+      //         },
+      //       },
       //     },
-      //     'sass-loader'
-      //     /* MiniCssExtractPlugin.loader,
-      //               {
-      //                   loader: "css-loader",
-      //                   options: {
-      //                       modules: {
-      //                           mode: 'local',
-      //                           localIdentName: '[path][name]__[local]--[hash:base64:5]',
-      //                       }
-      //                   }
-
-      //               },
-      //               // "postcss-loader",
-      //               "sass-loader" */
-
-      //   ]
+      //     { loader: 'sass-loader', options: { sourceMap: true } }
+      //   ],
       // }
+      /* 将 style 打入 js 中 */
+      {
+        test: /\.scss|css$/i,
+        exclude: /node_modules/,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules: {
+                mode: 'local',
+                localIdentName: '[path][name]__[local]--[hash:base64:5]'
+              }
+            }
+
+          },
+          'sass-loader'
+          /* MiniCssExtractPlugin.loader,
+                    {
+                        loader: "css-loader",
+                        options: {
+                            modules: {
+                                mode: 'local',
+                                localIdentName: '[path][name]__[local]--[hash:base64:5]',
+                            }
+                        }
+
+                    },
+                    // "postcss-loader",
+                    "sass-loader" */
+
+        ]
+      }
     ]
   },
   performance: {

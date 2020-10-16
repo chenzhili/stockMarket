@@ -1,6 +1,9 @@
 # 项目描述
 
     就是用于制作react 和 vue 的 有关 行情 的 组件
+    目前打包发布的是 vue 相关的组件，如果有react相关使用需求或者只是想用 core.js 可以到github 中 自行打包
+
+    所有示例：github 的 /example中
 
 ## 主要核心目录结构
 
@@ -22,7 +25,7 @@ dataGraph[Object]： 这个是 主数据
     }
 ```
 
-        k线图:
+k线图:
 
 ```js
     /* dataGraph = {
@@ -79,6 +82,7 @@ dataGraph[Object]： 这个是 主数据
 2、vue:
 
 ```js
+import QLStockMarket from 'stock-market-graph'
 Vue.use(QLStockMarket)
 //就可以直接应用 插件了
 kLineGraphPC, TimeSharingPC, kLineGraphForH5, TimeSharingH5
@@ -87,6 +91,7 @@ kLineGraphPC, TimeSharingPC, kLineGraphForH5, TimeSharingH5
 3、react:
 
 ```js
+import QLStockMarket from 'stock-market-graph'
 import {
   kLineGraphPC,
   TimeSharingPC,

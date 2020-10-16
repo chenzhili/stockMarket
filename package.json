@@ -1,6 +1,6 @@
 {
   "name": "stock-market-graph",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "这是一个有关 股市行情的 组件库",
   "keywords": [
     "股市",
@@ -13,6 +13,11 @@
     "market",
     "canvas"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chenzhili/stockMarket"
+  },
+  "homepage": "https://github.com/chenzhili/stockMarket#readme",
   "private": false,
   "main": "dist/ql-stockmarket.min.js",
   "scripts": {

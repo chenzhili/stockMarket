@@ -137,3 +137,13 @@ import {
 ### 在 事件监听中 防止 实例 内部 部分数据的 内存溢出 问题
 
 ## 最后打包问题，详情看 package.json 文件
+
+
+## 20201109 发现的 bug，在 打包的 umd 文件 在 vue-cli 搭建的项目下，在 prod 环境下 找不到文件；解决办法；url： https://juejin.im/post/6844903826592366600
+```bash
+yarn add -D @babel/plugin-transform-modules-umd
+
+# babel-config.js 或者 .babelrc 文件加入 plugins
+
+plugins: ["@babel/plugin-transform-modules-umd"]
+```

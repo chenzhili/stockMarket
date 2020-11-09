@@ -21,7 +21,7 @@ const config = {
         ]
       },
       /* 满足 浏览器的 csp 策略 做的 */
-      /* 
+      /*
         做的尝试：
           1、更新了 mini-css-extract-plugin 和 css-loader 还是没用
       */
@@ -90,8 +90,8 @@ const config = {
     ]
   },
   performance: {
-    hints: 'warning', // 枚举
-    hints: 'error', // 性能提示中抛出错误
+    // hints: 'warning', // 枚举
+    // hints: 'error', // 性能提示中抛出错误
     hints: false, // 关闭性能提示
     maxAssetSize: 200000, // 整数类型（以字节为单位）
     maxEntrypointSize: 400000, // 整数类型（以字节为单位）

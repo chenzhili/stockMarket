@@ -1,7 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`VueTest 组件的测试 初始快照测试 1`] = `
-<div>
-  <h1>初始 测试 vue 111</h1> <input>
-</div>
-`;

@@ -54,8 +54,8 @@ describe('第一个 react的ui测试 snapshot', () => {
           let tree = component.toJSON();
           expect(tree).toMatchSnapshot(); */
     const Wrapper = mount(<TestCom />)
-    console.log(Wrapper.debug())
-    console.dir(Wrapper.find('input').debug())
+    // console.log(Wrapper.debug())
+    // console.dir(Wrapper.find('input').debug())
     // 证明存在 input 的 标签
     expect(Wrapper.find('input')).toBeTruthy()
     // 不知道为啥 snapshot 生成的 快照是 空的

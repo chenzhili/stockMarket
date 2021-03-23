@@ -24,7 +24,7 @@ describe('src中的所有utils中的 方法测试', () => {
       valueYPos: [100, 150, 200, 250, 300]
     }
     it('calValuePos split structure', () => {
-      console.log('test', splitNumber.mock)
+      // console.log('test', splitNumber.mock)
       expect(calValuePos({ min: 1, max: 20, totalHeight: 200, baseHeight: 100, n: 5 })).toEqual(calValuePosData)
     })
   })

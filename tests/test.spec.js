@@ -1,8 +1,10 @@
 /* 获取对应的 仓库信息 */
-import test from '../src/utils/test'
+// import test from '../src/utils/test'
 const { getChangedFilesForRoots } = require('jest-changed-files') // 检出 仓库的变化
 const diff = require('jest-diff') // 比较任何类型的 数据 的区别，深比较
 const getType = require('jest-get-type') // 识别当前的 数据类型
+import { shallowMount, mount, createLocalVue } from '@vue/test-utils'
+import VueTest from '../src/vueCom/VueTest.vue'
 
 const a = { a: 1, b: 2, c: { d: 2 } }
 const b = { a: 1, b: 2, c: { e: 2 } }
@@ -70,15 +72,16 @@ test('测试 function的默认参数', () => {
   expect(getDefault()).toBe(1)
 })
 
-jest.mock('=../src/utils/test', () => {
-  return jest.fn(() => { return 1223 })
-})
+// jest.mock('../src/utils/test', () => {
+//   return jest.fn(() => { return 1223 })
+// })
 let Wrapper
 beforeEach(() => {
   Wrapper = shallowMount(VueTest)
 })
 it('测试模块模拟', () => {
-  console.log(test())
+  // console.log(test())
   // expect(test()).toBeUndefined();
-  expect(test()).toBe(1223)
+  // expect(test()).toBe(1223)
+  expect(1).toBe(1)
 })

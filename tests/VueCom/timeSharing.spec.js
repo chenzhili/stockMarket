@@ -61,14 +61,14 @@ describe('简单测试', () => {
         }
       }
     })
-    console.log(config)
+    // console.log(config)
 
     const wrapper = shallowMount(VueTest, {
       ...config
     })
-    console.log(wrapper.vm.$http)
+    // console.log(wrapper.vm.$http)
     const data = await wrapper.vm.$http.post({ test: 1 })
-    console.log(data)
+    // console.log(data)
 
     expect(data).toEqual({ test: 1 })
 

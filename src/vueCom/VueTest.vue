@@ -15,12 +15,12 @@ export default {
   computed: {},
   methods: {
     changeInput (e) {
-      console.log(e.target.value);
+      // console.log(e.target.value);
       this.value = e.target.value;
     }
   },
   mounted () {
-    console.log(this);
+    // console.log(this);
   },
   watch: {},
   destroyed () {},

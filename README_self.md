@@ -180,3 +180,7 @@ https://juejin.im/post/6844903773094019080
 
 3、删除 某个 包 --- npm unpublish 报名 --force
 
+
+# 20211222 日，由于 当前的 打包依赖的 node-sass 和 sass—loader 的版本太老了，导致 在当前环境一直编译不过 node-sass；解决
+安装Python 2.7（v3.x.x不支持），安装后要配置环境变量。成功后执行npm config set python python2.7
+执行 npm config set msvs_version 2017
